@@ -9,6 +9,12 @@ import java.util.ArrayList;
 
 public class BusCount {
 	
+	/**
+	 * @author umat
+	 * Class stores hour and minute
+	 * Infomation is used to describe time that bus stops on a bus stop.
+	 * 
+	 */
 	public static class HourMinute{
 		private int hour;
 		private int minute;
@@ -45,6 +51,7 @@ public class BusCount {
 		this.sundayList = new ArrayList<HourMinute>();
 	}
 	
+	// add new course to suitable list
 	public void addWeekdayCourse(HourMinute time){
 		this.weekdayList.add(time);
 	}
@@ -55,6 +62,7 @@ public class BusCount {
 		this.sundayList.add(time);
 	}
 
+	// get desired list
 	public ArrayList<HourMinute> getWeekdayList(){
 		return this.weekdayList;
 	}
@@ -66,7 +74,7 @@ public class BusCount {
 	}
 	
 	
-	// method that count elements in the lists.
+	// methods that count elements in the lists.
 	public int getWeekdayCourseCount(){
 		return weekdayList.size();
 	}
@@ -78,6 +86,7 @@ public class BusCount {
 	}
 
 	/**
+	 * Get fetched table as a string where columns are separated with tabulation and rows - with new lines
 	 * @param html link to get data
 	 * @return formatted result. Each row contains: hour \t minutes weekday \t minutes saturday \t minutes sunday
 	 * @throws IOException
@@ -94,34 +103,21 @@ public class BusCount {
          * Column 2: Minute (Saturday)
          * Column 3: Minute (Sunday)
          */
-        for (Element row : rows){
+        for (Element row : rows.subList(3,rows.size()-1)){ //cut 3 rows in the beginning and one at the end (they are unnecessary)
         	Elements columns = row.getElementsByTag("td");
         	
         	//only iterate through rows where column count is 4 (rest is not interesting for us
-        	if(columns.size() == 4){
-        		for(Element column : columns){
-        			CharSequence cellCharSequence = column.text().replaceAll("[^\\d^\\s]",""); //delete all non-numeric characters (excluding spaces)
-            		if(StringUtils.isNumericSpace(cellCharSequence) && cellCharSequence.length() < 30){ //if probably unnecessary
-            			result += cellCharSequence;  			
-            		}
-            		// add tabulation after each column
-            		result+="\t";
+    		for(Element column : columns){
+    			CharSequence cellCharSequence = column.text().replaceAll("[^\\d^\\s^\\p{Punct}]",""); //delete all non-numeric characters (excluding spaces)
+        		if(StringUtils.isNumericSpace(cellCharSequence) /*&& cellCharSequence.length() < 30*/){ //if probably unnecessary
+        			result += cellCharSequence;  			
         		}
-        		// add new line after each row
-        		result += "\n";
-        	} 
-        	else if( columns.size() == 2){
-        		for(Element column : columns){
-        			CharSequence cellCharSequence = column.text().replaceAll("[^\\d^\\s]","");
-            		if(StringUtils.isNumericSpace(cellCharSequence)  && cellCharSequence.length() < 30){
-            			result += cellCharSequence;
-            		}
-            		// add tabulation after each column
-            		result+="\t";
-        		}
-        		// add new line after each row
-        		result += "\n";
-        	}
+        		// add tabulation after each column
+        		result+="\t";
+    		}
+    		// add new line after each row
+    		result += "\n";
+
         }
 
 		return result;
