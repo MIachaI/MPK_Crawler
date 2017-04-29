@@ -78,20 +78,17 @@ public class BusCount {
 	}
 
 	/**
-	 * Function to get bus schedule from MPK website.
-	 * @param html - url Link to MPK site containing desired schedule (eg. http://rozklady.mpk.krakow.pl/?lang=PL&rozklad=20170428&linia=4__2__41)
-	 * @return	BusCount Object - containing all departure times, divided by weekday/saturday/sunday
+	 * @param html link to get data
+	 * @return formatted result. Each row contains: hour \t minutes weekday \t minutes saturday \t minutes sunday
 	 * @throws IOException
 	 */
-	public static BusCount count(String html) throws IOException{
-		BusCount busCount = new BusCount();
+	public static String getFormattedResult(String html) throws IOException{
 		Document document = Jsoup.connect(html).get();
-        //Document document = Jsoup.parse(html);
         Elements rows = document.select("table[style=' width: 700px; '] table tbody tr");     
-     
-        String result = "";
 
-        /**
+		String result = "";
+		
+		/**
          * Column 0: Hour
          * Column 1: Minute (weekday)
          * Column 2: Minute (Saturday)
@@ -103,6 +100,18 @@ public class BusCount {
         	//only iterate through rows where column count is 4 (rest is not interesting for us
         	if(columns.size() == 4){
         		for(Element column : columns){
+        			CharSequence cellCharSequence = column.text().replaceAll("[^\\d^\\s]",""); //delete all non-numeric characters (excluding spaces)
+            		if(StringUtils.isNumericSpace(cellCharSequence)){ //if probably unnecessary
+            			result += cellCharSequence;  			
+            		}
+            		// add tabulation after each column
+            		result+="\t";
+        		}
+        		// add new line after each row
+        		result += "\n";
+        	} else if( columns.size() == 2){
+        		for(Element column : columns){
+        			String[] deleteRedundantChars = column.text().split(" ");
         			CharSequence cellCharSequence = column.text().replaceAll("A","").replaceAll("NZ", "");
             		if(StringUtils.isNumericSpace(cellCharSequence)){
             			result += cellCharSequence; // saves hours without "A" and "NZ", one below saves string with this info            			
@@ -114,6 +123,20 @@ public class BusCount {
         		result += "\n";
         	}
         }
+
+		return result;
+	}
+	
+	
+	/**
+	 * Function to get bus schedule from MPK website.
+	 * @param html - url Link to MPK site containing desired schedule (eg. http://rozklady.mpk.krakow.pl/?lang=PL&rozklad=20170428&linia=4__2__41)
+	 * @return	BusCount Object - containing all departure times, divided by weekday/saturday/sunday
+	 * @throws IOException
+	 */
+	public static BusCount count(String html) throws IOException{
+		BusCount busCount = new BusCount();
+		String result = getFormattedResult(html);
         
         //store information in BusCount class
         String[] lines = result.split("\n");
@@ -124,40 +147,40 @@ public class BusCount {
         	String[] columns = line.split("\t");
         	int colIterator = 0;
         	for(String column : columns){
-        		//hour
-        		if(colIterator == 0){ 
+        		String[] minutes = column.split(" ");
+        		
+        		switch(colIterator){
+        		case 0:
         			rowHour = Integer.parseInt(column);
-        		}
-        		//minutes (weekday)
-        		else if (colIterator == 1){
-        			String[] minutes = column.split(" ");
+        			break;
+        		case 1:
         			for(String minute : minutes){
         				busCount.addWeekdayCourse(new BusCount.HourMinute(
         						rowHour, 
         						Integer.parseInt(minute)
         						));
         			}
-        		}
-        		// minutes (saturday)
-        		else if (colIterator == 2){
-        			String[] minutes = column.split(" ");
+        			break;
+        		case 2:
         			for(String minute : minutes){
         				busCount.addSaturdayCourse(new BusCount.HourMinute(
         						rowHour, 
         						Integer.parseInt(minute)
         						));
         			}
-        		}
-        		//minutes (sunday)
-        		else if (colIterator == 3){
-        			String[] minutes = column.split(" ");
+        			break;
+        		case 3:
         			for(String minute : minutes){
         				busCount.addSundayCourse(new BusCount.HourMinute(
         						rowHour, 
         						Integer.parseInt(minute)
         						));
         			}
+        			break;
         		}
+        		
+        		
+        		
         		colIterator++;
         	}
         }
