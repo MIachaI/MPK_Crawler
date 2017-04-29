@@ -101,7 +101,7 @@ public class BusCount {
         	if(columns.size() == 4){
         		for(Element column : columns){
         			CharSequence cellCharSequence = column.text().replaceAll("[^\\d^\\s]",""); //delete all non-numeric characters (excluding spaces)
-            		if(StringUtils.isNumericSpace(cellCharSequence)){ //if probably unnecessary
+            		if(StringUtils.isNumericSpace(cellCharSequence) && cellCharSequence.length() < 30){ //if probably unnecessary
             			result += cellCharSequence;  			
             		}
             		// add tabulation after each column
@@ -109,12 +109,13 @@ public class BusCount {
         		}
         		// add new line after each row
         		result += "\n";
-        	} else if( columns.size() == 2){
+        	} 
+        	else if( columns.size() == 2){
         		for(Element column : columns){
         			String[] deleteRedundantChars = column.text().split(" ");
-        			CharSequence cellCharSequence = column.text().replaceAll("A","").replaceAll("NZ", "");
-            		if(StringUtils.isNumericSpace(cellCharSequence)){
-            			result += cellCharSequence; // saves hours without "A" and "NZ", one below saves string with this info            			
+        			CharSequence cellCharSequence = column.text().replaceAll("[^\\d^\\s]","");
+            		if(StringUtils.isNumericSpace(cellCharSequence)  && cellCharSequence.length() < 30){
+            			result += cellCharSequence;
             		}
             		// add tabulation after each column
             		result+="\t";
@@ -151,10 +152,12 @@ public class BusCount {
         		
         		switch(colIterator){
         		case 0:
+    				if(StringUtils.isNotBlank(column))
         			rowHour = Integer.parseInt(column);
         			break;
         		case 1:
         			for(String minute : minutes){
+        				if(StringUtils.isNotBlank(minute))
         				busCount.addWeekdayCourse(new BusCount.HourMinute(
         						rowHour, 
         						Integer.parseInt(minute)
@@ -163,6 +166,7 @@ public class BusCount {
         			break;
         		case 2:
         			for(String minute : minutes){
+        				if(StringUtils.isNotBlank(minute))
         				busCount.addSaturdayCourse(new BusCount.HourMinute(
         						rowHour, 
         						Integer.parseInt(minute)
@@ -171,6 +175,7 @@ public class BusCount {
         			break;
         		case 3:
         			for(String minute : minutes){
+        				if(StringUtils.isNotBlank(minute))
         				busCount.addSundayCourse(new BusCount.HourMinute(
         						rowHour, 
         						Integer.parseInt(minute)
@@ -178,8 +183,6 @@ public class BusCount {
         			}
         			break;
         		}
-        		
-        		
         		
         		colIterator++;
         	}
