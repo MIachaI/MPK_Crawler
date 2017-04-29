@@ -112,7 +112,6 @@ public class BusCount {
         	} 
         	else if( columns.size() == 2){
         		for(Element column : columns){
-        			String[] deleteRedundantChars = column.text().split(" ");
         			CharSequence cellCharSequence = column.text().replaceAll("[^\\d^\\s]","");
             		if(StringUtils.isNumericSpace(cellCharSequence)  && cellCharSequence.length() < 30){
             			result += cellCharSequence;
