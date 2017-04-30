@@ -7,17 +7,16 @@ public class Main {
     	Scanner scanner = new Scanner(System.in);
     	String html = scanner.nextLine();
     	scanner.close();
-        BusCount busCount = BusCount.count(html);
-        
+    	// String html = "http://rozklady.mpk.krakow.pl/?lang=PL&rozklad=20170429&linia=151";
+        MPKinfo busCount = new MPKinfo(html);        
         
         System.out.println(busCount);
 
-        System.out.println();
+        System.out.println(busCount.getRawResult(html));
         System.out.println("Lista weekday:\n"+busCount.getWeekdayList());
         System.out.println("Lista Saturday:\n"+busCount.getSaturdayList());
         System.out.println("Lista Sunday:\n"+busCount.getSundayList());
-        System.out.println(busCount.exceptions());
-        
+        System.out.println(busCount.getStreetName());
+        System.out.println(busCount.getAdditionalInfo());
     }
-
 }
