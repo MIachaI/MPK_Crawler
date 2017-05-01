@@ -24,6 +24,7 @@
 		}
 		
 		public String toString(){
-			return this.hour+":"+this.minute;
+			if(minute < 10) return this.hour+":0"+this.minute;
+			else return this.hour+":"+this.minute;
 		}
 	}

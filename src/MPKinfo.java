@@ -8,47 +8,21 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-
 /**
- * @author umat
  *	Class to store information about bus schedule presented on MPK Karków website
  */
-public class MPKinfo {
-	private String html;
-	private String streetName;
-	private String rawResult;
-	private String additionalInfo;
-	// storing hours and minutes
-	private ArrayList<HourMinute> weekdayList;
-	private ArrayList<HourMinute> saturdayList;
-	private ArrayList<HourMinute> sundayList;
-	
+public class MPKinfo extends BusInfo {
 	public MPKinfo(){
 		this.weekdayList = new ArrayList<HourMinute>();
 		this.saturdayList = new ArrayList<HourMinute>();
 		this.sundayList = new ArrayList<HourMinute>();
 	}
 	public MPKinfo(String html) throws IOException{
-		this.html = html;
 		this.weekdayList = new ArrayList<HourMinute>();
 		this.saturdayList = new ArrayList<HourMinute>();
 		this.sundayList = new ArrayList<HourMinute>();
-		
-		getRawResult(this.html);
-		this.count();
-		this.streetName = findStreetName();
-		this.additionalInfo = findAdditionalInfo();
-	}
-	
-	// add new course to suitable list
-	public void addWeekdayCourse(HourMinute time){
-		this.weekdayList.add(time);
-	}
-	public void addSaturdayCourse(HourMinute time){
-		this.saturdayList.add(time);
-	}
-	public void addSundayCourse(HourMinute time){
-		this.sundayList.add(time);
+
+		setHTML(html);
 	}
 
 	public void setHTML(String html) throws IOException {
@@ -56,48 +30,29 @@ public class MPKinfo {
 		getRawResult(this.html);
 		this.count();
 		this.streetName = findStreetName();
+		this.lineNumber = findLineNumber();
+		this.additionalInfo = findAdditionalInfo();
 	}
-	
-	// get desired list
-	public ArrayList<HourMinute> getWeekdayList(){
-		return this.weekdayList;
-	}
-	public ArrayList<HourMinute> getSaturdayList(){
-		return this.saturdayList;
-	}
-	public ArrayList<HourMinute> getSundayList(){
-		return this.sundayList;
-	}
-	
-	public String getStreetName(){
-		return this.streetName;
-	}
+
 	public String getAdditionalInfo(){
 		return this.additionalInfo;
-	}
-	
-	// methods that count elements in the lists.
-	public int getWeekdayCourseCount(){
-		return weekdayList.size();
-	}
-	public int getSaturdayCourseCount(){
-		return saturdayList.size();
-	}
-	public int getSundayCourseCount(){
-		return sundayList.size();
 	}
 
 	/**
 	 * Get information from table posted on MPK site as a string
-	 * @param html
+	 * @param html page adress from which to get info
 	 * @return info table formatted as string where columns are separated with tabulation and rows - with new lines
 	 * @throws IOException
 	 */
 	public String getRawResult(String html) throws IOException{
+		this.rawResult = "";
 		Document document = Jsoup.connect(html).get();
+		//get bus number
+		Elements number = document.select("p[style='font-size: 40px;']");
+		this.rawResult += number.text() + "\n";
+
         Elements rows = document.select("table[style=' width: 700px; '] table tbody tr");     
 
-		this.rawResult = "";
 		for (Element row : rows){
 			Elements columns = row.getElementsByTag("td");
 			for(Element column : columns){
@@ -116,7 +71,6 @@ public class MPKinfo {
 	 * * weekdayList
 	 * * saturdayList
 	 * * sundayList
-	 * @param html - url Link to MPK site containing desired schedule (eg. http://rozklady.mpk.krakow.pl/?lang=PL&rozklad=20170428&linia=4__2__41)
 	 * @throws IOException
 	 */
 	private void count() throws IOException{
@@ -126,9 +80,9 @@ public class MPKinfo {
 		this.sundayList.clear();
 		
         //store information in MPKinfo class
-		
-		// cut first three and last 2 rows - they contain other informations
-        String[] lines = Arrays.copyOfRange(this.rawResult.split("\n"), 3, this.rawResult.split("\n").length-2);
+
+		// cut first 4 and last 2 rows - they contain other informations
+        String[] lines = Arrays.copyOfRange(this.rawResult.split("\n"), 4, this.rawResult.split("\n").length-2);
         for(String line : lines){
         	int rowHour=0;
         	line = line.replaceAll("[^\\d^\\s]", "");
@@ -138,7 +92,7 @@ public class MPKinfo {
         	for(String column : columns){
         		String[] minutes = column.split(" ");
         		      		
-        		/**
+        		/*
                  * Column 0: Hour
                  * Column 1: Minute (weekday)
                  * Column 2: Minute (Saturday)
@@ -182,22 +136,13 @@ public class MPKinfo {
         }
 	}
 	private String findStreetName(){
-		return this.rawResult.split("\n")[0].replaceAll("\t", "");
+		return this.rawResult.split("\n")[1].replaceAll("\t", "");
+	}
+	private int findLineNumber(){
+		return Integer.parseInt(this.rawResult.split("\n")[0]);
 	}
 	private String findAdditionalInfo(){
 		String[] lines = this.rawResult.split("\n");
 		return lines[lines.length - 1];
 	}
-	
-	public String toString(){
-		String result = "";
-		result += "Week\tSoboty\tNiedziele\n";
-		result += 
-				getWeekdayCourseCount() + "\t" +
-				getSaturdayCourseCount() + "\t" +
-				getSundayCourseCount();
-		
-		return result;
-	}
-	
 }
