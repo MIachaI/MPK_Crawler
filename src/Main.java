@@ -7,7 +7,7 @@ public class Main {
     	Scanner scanner = new Scanner(System.in);
     	String html = scanner.nextLine();
     	scanner.close();
-    	// String html = "http://rozklady.mpk.krakow.pl/?lang=PL&rozklad=20170429&linia=151";
+    	//String html = "http://rozklady.mpk.krakow.pl/?lang=PL&rozklad=20170429&linia=151";
         MPKinfo busCount = new MPKinfo(html);        
         
         System.out.println(busCount);

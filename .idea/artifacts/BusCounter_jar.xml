@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="BusCounter:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/BusCounter_jar</output-path>
+    <root id="archive" name="BusCounter.jar">
+      <element id="module-output" name="BusCounter" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Attach Jar Directories/common-lang3.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Attach Jar Directories/jsoup-1.10.3.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
