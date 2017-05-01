@@ -153,7 +153,7 @@ public class BusCount {
         		case 1:
         			for(String minute : minutes){
         				if(StringUtils.isNotBlank(minute))
-        				busCount.addWeekdayCourse(new BusCount.HourMinute(
+        				busCount.addWeekdayCourse(new HourMinute(
         						rowHour, 
         						Integer.parseInt(minute)
         						));
@@ -162,7 +162,7 @@ public class BusCount {
         		case 2:
         			for(String minute : minutes){
         				if(StringUtils.isNotBlank(minute))
-        				busCount.addSaturdayCourse(new BusCount.HourMinute(
+        				busCount.addSaturdayCourse(new HourMinute(
         						rowHour, 
         						Integer.parseInt(minute)
         						));
@@ -171,7 +171,7 @@ public class BusCount {
         		case 3:
         			for(String minute : minutes){
         				if(StringUtils.isNotBlank(minute))
-        				busCount.addSundayCourse(new BusCount.HourMinute(
+        				busCount.addSundayCourse(new HourMinute(
         						rowHour, 
         						Integer.parseInt(minute)
         						));
