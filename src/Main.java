@@ -3,12 +3,12 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws IOException{
-    	System.out.println("Podaj odpowiedni link: ");
+    //	System.out.println("Podaj odpowiedni link: ");
         WindowInterface ShowWindow = new WindowInterface();
-        ShowWindow.MainWindow();
-    	Scanner scanner = new Scanner(System.in);
-    	String html = scanner.nextLine();
-    	scanner.close();
+        ShowWindow.OpenWindow();
+    //	Scanner scanner = new Scanner(System.in);
+    //	String html = scanner.nextLine();
+    //	scanner.close();
 
     	//String html = "http://rozklady.mpk.krakow.pl/?lang=PL&rozklad=20170429&linia=151";
 //        MPKinfo busCount = new MPKinfo(html);
@@ -20,8 +20,8 @@ public class Main {
 //        System.out.println("Lista Saturday:\n"+busCount.getSaturdayList());
 //        System.out.println("Lista Sunday:\n"+busCount.getSundayList());
 //        System.out.println(busCount.getRawResult(html));
-        MPKList mpkList = new MPKList(html);
-        System.out.print(mpkList);
+       // MPKList mpkList = new MPKList(html);
+       // System.out.print(mpkList);
 
     }
 }
