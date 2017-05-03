@@ -28,7 +28,7 @@ abstract class BusInfo {
 
     public void setHTML(String html) throws IOException {
         this.html = html;
-        getRawResult(this.html);
+        this.rawResult = getRawResult(this.html);
         this.count(this.rawResult);
         this.streetName = findStreetName();
         this.lineNumber = findLineNumber();

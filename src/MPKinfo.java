@@ -39,11 +39,11 @@ public class MPKinfo extends BusInfo {
 		lines.remove(lines.size() - 2);
 
 		// now save all lines to rawResult
-		this.rawResult = "";
+		String rawResult = "";
 		for(String line : lines){
-			this.rawResult += line + "\n"; // separate each line with newline sign
+			rawResult += line + "\n"; // separate each line with newline sign
 		}
 
-		return this.rawResult;
+		return rawResult;
 	}
 }
