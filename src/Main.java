@@ -4,8 +4,8 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) throws IOException{
     	System.out.println("Podaj odpowiedni link: ");
-        WindowInterface okno = new WindowInterface();
-        new WindowInterface();
+        WindowInterface ShowWindow = new WindowInterface();
+        ShowWindow.MainWindow();
     	Scanner scanner = new Scanner(System.in);
     	String html = scanner.nextLine();
     	scanner.close();
