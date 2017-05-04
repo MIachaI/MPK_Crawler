@@ -19,8 +19,9 @@ public class Main {
 //        System.out.println("Lista Saturday:\n"+busCount.getSaturdayList());
 //        System.out.println("Lista Sunday:\n"+busCount.getSundayList());
 //        System.out.println(busCount.getRawResult(html));
-        MPKList mpkList = new MPKList(html);
-        System.out.print(mpkList);
+       // MPKList mpkList = new MPKList(html);
+        MPKinfo mpkInfo = new MPKinfo(html);
+        System.out.print(mpkInfo.getRawResult(html));
 
     }
 }
