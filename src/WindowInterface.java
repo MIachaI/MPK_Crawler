@@ -77,7 +77,6 @@ public class WindowInterface extends Application implements EventHandler<ActionE
                 MPKList mpkList = null;
                 try {
                     mpkList = new MPKList(html);
-                    System.out.println(mpkList);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
