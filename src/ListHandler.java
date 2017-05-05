@@ -1,6 +1,8 @@
 import java.io.IOException;
 import java.util.ArrayList;
 
+import static com.sun.org.apache.xalan.internal.xsltc.compiler.util.Type.Int;
+
 /**
  * Created by umat on 02.05.17.
  */
@@ -35,18 +37,38 @@ public abstract class ListHandler {
 
     public String excelFormattedText(){
         String result = "";
-        for(BusInfo busInfo : this.busInfos){
-            result += busInfo.getLineNumber() +
-                    "\t" + busInfo.getStreetName() +
-                    "\t" + busInfo.getVehicleType() +
-                    "\t" +                                      // empty cell for distance from building
-                    "\t" + busInfo.getWeekdayCourseCount() +
-                    "\t" + busInfo.getSaturdayCourseCount() +
-                    "\t" + busInfo.getSundayCourseCount() +
-                    "\t" + (busInfo.getSaturdayCourseCount() + busInfo.getSundayCourseCount())/2 + "\n"; // weekend average
+        int WeekdayCount =0;
+        int WeekendCount =0;
+        int Carry=0;
+        int TramWeekdayCount=0;
+        int BusWeekdayCount=0;
+        int TramWeekendCount=0;
+        int BusWeekendcount=0;
+        int BusNumberComparition=0;
+        for(BusInfo busInfo : this.busInfos) {
+            if (!(busInfo.getLineNumber() == BusNumberComparition)) {
+                if (busInfo.getLineNumber() > 100 && Carry < 1) {
+                    result += "\n\n\t\t\t\t\t" + WeekdayCount + "\t" + WeekendCount + "\n";
+                    TramWeekdayCount = WeekdayCount;
+                    WeekdayCount = 0;
+                    TramWeekendCount = WeekendCount;
+                    WeekendCount = 0;
+                    Carry += 1;
 
+                }
+                result += busInfo.getLineNumber() +
+                        "\t" + busInfo.getStreetName() +
+                        "\t" + busInfo.getVehicleType() +
+                        "\t" +                                      // empty cell for distance from building
+                        "\t" + busInfo.getWeekdayCourseCount() +
+                        "\t" + busInfo.getSaturdayCourseCount() +
+                        "\t" + busInfo.getSundayCourseCount() +
+                        "\t" + (busInfo.getSaturdayCourseCount() + busInfo.getSundayCourseCount()) / 2 + "\n"; // weekend average
+                WeekdayCount += busInfo.getWeekdayCourseCount();
+                WeekendCount += (busInfo.getSaturdayCourseCount() + busInfo.getSundayCourseCount()) / 2;
+            }
         }
-        return result;
+        return result +="\n\n\t\t\t\t\t" +WeekdayCount +"\t"+ WeekendCount;
     }
 
     public String toString(){
