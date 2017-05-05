@@ -12,7 +12,6 @@ public abstract class ListHandler {
     public ListHandler(){
         this.busInfos = new ArrayList<>();
         this.linkList = new ArrayList<>();
-        //this.busInfosPurified = purifyList(BusInfo this.busInfos);
     }
 
     protected abstract ArrayList<String> getLinks(String html) throws IOException;
@@ -28,14 +27,30 @@ public abstract class ListHandler {
      * @return sanitized BusInfo list
      */
     protected ArrayList<BusInfo> purifyList(ArrayList<BusInfo> allBusInfos){
-        ArrayList<BusInfo> result = new ArrayList<>();
+        // @TODO implement purify list
+        ArrayList<BusInfo> purifiedInfos = new ArrayList<>();
+        for(BusInfo busInfo : busInfos){
+            if(purifiedInfos.isEmpty()) purifiedInfos.add(busInfo);
 
-        return result;
+        }
+        return allBusInfos;
     }
 
     public String excelFormattedText(){
         String result = "";
         for(BusInfo busInfo : this.busInfos){
+            result += busInfo.getLineNumber() +
+                    "\t" + busInfo.getStreetName() +
+                    "\t" + busInfo.getVehicleType() +
+                    "\t" +                                      // empty cell for distance from building
+                    "\t" + busInfo.getWeekdayCourseCount() +
+                    "\t" + busInfo.getSaturdayCourseCount() +
+                    "\t" + busInfo.getSundayCourseCount() +
+                    "\t" + (busInfo.getSaturdayCourseCount() + busInfo.getSundayCourseCount())/2 + "\n"; // weekend average
+
+        }
+        result+="------------------\nPurified\n------------------";
+        for(BusInfo busInfo : this.busInfosPurified){
             result += busInfo.getLineNumber() +
                     "\t" + busInfo.getStreetName() +
                     "\t" + busInfo.getVehicleType() +
