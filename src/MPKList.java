@@ -25,8 +25,9 @@ public class MPKList extends ListHandler {
           Document document = Jsoup.connect(html).get();
           Elements links = document.select("table[style=' margin-bottom: 20px; '] tbody tr a[href]");
           for(Element link : links) {
-              result.add(link.attr("href"));
-          }
+                  result.add(link.attr("href"));
+              }
+
           return result;
       }
 }

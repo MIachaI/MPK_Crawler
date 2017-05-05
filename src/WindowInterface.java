@@ -22,7 +22,6 @@ public class WindowInterface extends Application implements EventHandler<ActionE
 
     public static void OpenWindow() {
         launch();
-
     }
 
     @Override
@@ -54,13 +53,18 @@ public class WindowInterface extends Application implements EventHandler<ActionE
         Label Link_Label = new Label("Wprowadź link:");
         GridPane.setConstraints(Link_Label, 0, 0);
 
-        //Link_TextField
-        TextField Link_TextField = new TextField("");
-        GridPane.setConstraints(Link_TextField, 1, 0);
-
         //Path_Label
         Label Path_Label = new Label("Podaj ścieżkę zapisu:");
         GridPane.setConstraints(Path_Label, 0, 1);
+
+        //Status_Label
+        Label Status_Label = new Label("Status: w gotowości");
+        GridPane.setConstraints(Status_Label, 0, 2);
+
+
+        //Link_TextField
+        TextField Link_TextField = new TextField("");
+        GridPane.setConstraints(Link_TextField, 1, 0);
 
         //Path_TextField
         TextField Path_TextField = new TextField("");
@@ -73,25 +77,34 @@ public class WindowInterface extends Application implements EventHandler<ActionE
         Execute_Button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                String html = Link_TextField.getText();
-                MPKList mpkList = null;
-                try {
-                    mpkList = new MPKList(html);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                String zmienna = Path_TextField.getText();
-                //
-                try {
-                    File file = new File(zmienna+"/output.txt");
-                    FileWriter fileWriter = new FileWriter(file);
-                    fileWriter.write(mpkList.excelFormattedText());
-                    fileWriter.flush();
-                    fileWriter.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                if (Cracow_Box.isSelected()) {
+                    String html = Link_TextField.getText();
+                    MPKList mpkList = null;
+                    try {
+                        mpkList = new MPKList(html);
+                    } catch (IOException e) {
+                        Status_Label.setText("Status: błąd!");
+                    }
+                    String zmienna = Path_TextField.getText();
+                    //
+                    try {
+                        File file = new File(zmienna + "/output.xls");
+                        FileWriter fileWriter = new FileWriter(file);
+                        fileWriter.write(mpkList.excelFormattedText());
+                        fileWriter.flush();
+                        fileWriter.close();
+                    } catch (IOException e) {
+                        Status_Label.setText("Status: błąd!");
+                    }
 
+                }
+                else if(Warsaw_Box.isSelected()){
+                    /**
+                    This section is prepared for implement Warsaw public comunication counter. Meanwhile, action with this radio button
+                     selected will print error in Status_Label;
+                    **/
+                    Status_Label.setText("Funkcja niedostępna");
+                }
             }
         });
 
@@ -116,7 +129,7 @@ public class WindowInterface extends Application implements EventHandler<ActionE
 
 
         //Add everything to grid
-        grid.getChildren().addAll(Link_Label, Link_TextField, Path_Label, Path_TextField, Execute_Button, Browse_Button, Cracow_Box, Warsaw_Box);
+        grid.getChildren().addAll(Link_Label, Link_TextField, Path_Label, Path_TextField, Execute_Button, Browse_Button, Cracow_Box, Warsaw_Box,Status_Label);
 
 
 
