@@ -34,8 +34,14 @@ public class MPKinfo extends BusInfo {
 			}
 			lines.add(colText);
 		}
-		// this gives lines array where 3rd line is empty and 2 last lines are duplicated - now delete them
-		lines.remove(2);
+		// this gives lines array where 3rd line is empty and 2 last lines are duplicated
+
+		lines.set(2,lines.get(1).replaceAll("\t", "")); // save street name to third line (copy second line to third)
+		if(Integer.parseInt(lines.get(0)) > 100) {
+			lines.set(1, "bus");
+		} else {
+			lines.set(1,"tram");
+		}
 		lines.remove(lines.size() - 2);
 
 		// now save all lines to rawResult

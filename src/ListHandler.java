@@ -7,16 +7,46 @@ import java.util.ArrayList;
 public abstract class ListHandler {
     protected ArrayList<BusInfo> busInfos;
     protected ArrayList<String> linkList;
+    protected ArrayList<BusInfo> busInfosPurified;
 
     public ListHandler(){
         this.busInfos = new ArrayList<>();
         this.linkList = new ArrayList<>();
+        //this.busInfosPurified = purifyList(BusInfo this.busInfos);
     }
 
     protected abstract ArrayList<String> getLinks(String html) throws IOException;
 
     public ArrayList<String> getLinkList(){
         return this.linkList;
+    }
+
+    /**
+     * Clear busInfo from redundant BusInfos objects.
+     * Choose the most pesimistic case (by weekday).
+     * @param allBusInfos list to clear
+     * @return sanitized BusInfo list
+     */
+    protected ArrayList<BusInfo> purifyList(ArrayList<BusInfo> allBusInfos){
+        ArrayList<BusInfo> result = new ArrayList<>();
+
+        return result;
+    }
+
+    public String excelFormattedText(){
+        String result = "";
+        for(BusInfo busInfo : this.busInfos){
+            result += busInfo.getLineNumber() +
+                    "\t" + busInfo.getStreetName() +
+                    "\t" + busInfo.getVehicleType() +
+                    "\t" +                                      // empty cell for distance from building
+                    "\t" + busInfo.getWeekdayCourseCount() +
+                    "\t" + busInfo.getSaturdayCourseCount() +
+                    "\t" + busInfo.getSundayCourseCount() +
+                    "\t" + (busInfo.getSaturdayCourseCount() + busInfo.getSundayCourseCount())/2 + "\n"; // weekend average
+
+        }
+        return result;
     }
 
     public String toString(){
