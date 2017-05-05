@@ -159,6 +159,17 @@ abstract class BusInfo {
         return lines[lines.length - 1];
     }
 
+    // SETTERS
+    public void setWeekdayList(ArrayList<HourMinute> list){
+        this.weekdayList = list;
+    }
+    public void setSaturdayList(ArrayList<HourMinute> list){
+        this.saturdayList = list;
+    }
+    public void setSundayList(ArrayList<HourMinute> list){
+        this.sundayList = list;
+    }
+
     // GETTERS
     public ArrayList<HourMinute> getWeekdayList(){
         return this.weekdayList;
