@@ -5,8 +5,9 @@ import java.io.IOException;
 import java.util.Arrays;
 
 abstract class BusInfo {
-    String html;
+    private String html;
     protected int lineNumber;
+    protected String vehicleType;
     protected String streetName;
     protected String rawResult;
     protected String additionalInfo;
@@ -30,18 +31,20 @@ abstract class BusInfo {
         this.html = html;
         this.rawResult = getRawResult(this.html);
         this.count(this.rawResult);
-        this.streetName = findStreetName();
         this.lineNumber = findLineNumber();
+        this.vehicleType = findVehicleType();
+        this.streetName = findStreetName();
         this.additionalInfo = findAdditionalInfo();
     }
     /**
      * Get information from table posted on MPK site as a string.
-     * Information has to be ordered in new lines as follows:
-     *  * Line number (first line)
-     *  * Bus-stop name (second line)
-     *  * Column titles (third line)
-     *  * Following lines - timetable (columns separated with tabulation, rows separated with newlines)
-     *  * Last line contains additional info
+     * Information has to be ordered in new lines as follows:<br/>
+     *  * Line number (first line)<br/>
+     *  * Vehicle type: bus/tram (second line)<br/>
+     *  * Bus-stop name (third line)<br/>
+     *  * Column titles (fourth line)<br/>
+     *  * Following lines - timetable (columns separated with tabulation, rows separated with newlines)<br/>
+     *  * Last line contains additional info<br/>
      * @param html page adress from which to get info
      * @return info table formatted as string where columns are separated with tabulation and rows - with new lines
      * @throws IOException
@@ -64,7 +67,7 @@ abstract class BusInfo {
         //store information in MPKinfo class
 
         // cut first 4 and last 2 rows - they contain other informations
-        String[] lines = Arrays.copyOfRange(rawResult.split("\n"), 3, rawResult.split("\n").length-1);
+        String[] lines = Arrays.copyOfRange(rawResult.split("\n"), 4, rawResult.split("\n").length-1);
         for(String line : lines){
             int rowHour=0;
             line = line.replaceAll("[^\\d^\\s]", "");
@@ -141,7 +144,22 @@ abstract class BusInfo {
         this.sundayList.add(time);
     }
 
-    // get desired list
+
+    protected int findLineNumber(){
+        return Integer.parseInt(this.rawResult.split("\n")[0]);
+    }
+    protected String findVehicleType(){
+        return this.rawResult.split("\n")[1];
+    }
+    protected String findStreetName(){
+        return this.rawResult.split("\n")[2];
+    }
+    protected String findAdditionalInfo(){
+        String[] lines = this.rawResult.split("\n");
+        return lines[lines.length - 1];
+    }
+
+    // GETTERS
     public ArrayList<HourMinute> getWeekdayList(){
         return this.weekdayList;
     }
@@ -151,19 +169,6 @@ abstract class BusInfo {
     public ArrayList<HourMinute> getSundayList(){
         return this.sundayList;
     }
-
-    protected String findStreetName(){
-        return this.rawResult.split("\n")[1].replaceAll("\t", "");
-    }
-    protected int findLineNumber(){
-        return Integer.parseInt(this.rawResult.split("\n")[0]);
-    }
-    protected String findAdditionalInfo(){
-        String[] lines = this.rawResult.split("\n");
-        return lines[lines.length - 1];
-    }
-
-    // methods that count elements in the lists.
 
     /**
      * @return number of bus courses during a weekday
@@ -191,6 +196,12 @@ abstract class BusInfo {
         return this.lineNumber;
     }
     /**
+     * @return vehicle type as a string. Can be either bus or tram
+     */
+    public String getVehicleType(){
+        return this.vehicleType;
+    }
+    /**
      * @return name of the bus stop or name of the street
      */
     public String getStreetName(){
@@ -202,7 +213,7 @@ abstract class BusInfo {
 
     public String toString(){
         String result = "";
-        result += "Linia: " + getLineNumber() + "\tPrzystanek: " + getStreetName();
+        result += "Linia: " + getLineNumber() + " (" + getVehicleType() + ")\tPrzystanek: " + getStreetName();
         result += "\n----------------------------";
         result += "\nIlości kursów: ";
         result +=
