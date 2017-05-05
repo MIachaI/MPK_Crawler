@@ -46,7 +46,7 @@ public class WindowInterface extends JFrame implements ActionListener{
                     try {
                         File file = new File(zmienna+"/output.txt");
                         FileWriter fileWriter = new FileWriter(file);
-                        fileWriter.write(String.valueOf(mpkList));
+                        fileWriter.write(mpkList.excelFormattedText());
                         fileWriter.flush();
                         fileWriter.close();
                     } catch (IOException e) {

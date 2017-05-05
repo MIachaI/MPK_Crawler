@@ -33,6 +33,22 @@ public abstract class ListHandler {
         return result;
     }
 
+    public String excelFormattedText(){
+        String result = "";
+        for(BusInfo busInfo : this.busInfos){
+            result += busInfo.getLineNumber() +
+                    "\t" + busInfo.getStreetName() +
+                    "\t" + busInfo.getVehicleType() +
+                    "\t" +                                      // empty cell for distance from building
+                    "\t" + busInfo.getWeekdayCourseCount() +
+                    "\t" + busInfo.getSaturdayCourseCount() +
+                    "\t" + busInfo.getSundayCourseCount() +
+                    "\t" + (busInfo.getSaturdayCourseCount() + busInfo.getSundayCourseCount())/2 + "\n"; // weekend average
+
+        }
+        return result;
+    }
+
     public String toString(){
         String result = "";
         for(BusInfo info : this.busInfos){
