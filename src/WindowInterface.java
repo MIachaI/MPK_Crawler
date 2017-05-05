@@ -77,6 +77,7 @@ public class WindowInterface extends Application implements EventHandler<ActionE
                 MPKList mpkList = null;
                 try {
                     mpkList = new MPKList(html);
+                    System.out.println(mpkList);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -108,7 +109,7 @@ public class WindowInterface extends Application implements EventHandler<ActionE
                                 directoryChooser.showDialog(window);
                         if (selectedDirectory != null) {
                             selectedDirectory.getAbsolutePath();
-                            Path_TextField.setPromptText(selectedDirectory.getAbsolutePath());
+                            Path_TextField.setText(selectedDirectory.getAbsolutePath());
                         }
                     }
                 }
