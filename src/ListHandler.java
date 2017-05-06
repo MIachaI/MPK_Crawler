@@ -64,19 +64,21 @@ public abstract class ListHandler {
     }
 
     public String excelFormattedText(){
-        String result = "";
+        StringBuilder result = new StringBuilder();
         for(BusInfo busInfo : this.busInfosPurified){
-            result += busInfo.getLineNumber() +
-                    "\t" + busInfo.getStreetName() +
-                    "\t" + busInfo.getVehicleType() +
-                    "\t" +                                      // empty cell for distance from building
-                    "\t" + busInfo.getWeekdayCourseCount() +
-                    "\t" + busInfo.getSaturdayCourseCount() +
-                    "\t" + busInfo.getSundayCourseCount() +
-                    "\t" + (busInfo.getSaturdayCourseCount() + busInfo.getSundayCourseCount())/2 + "\n"; // weekend average
+            result
+                    .append(busInfo.getLineNumber()).append("\t")
+                    .append(busInfo.getStreetName()).append("\t")
+                    .append(busInfo.getVehicleType()).append("\t")
+                    .append("\t") // empty cell for distance from building
+                    .append(busInfo.getWeekdayCourseCount()).append("\t")
+                    .append(busInfo.getSaturdayCourseCount()).append("\t")
+                    .append(busInfo.getSundayCourseCount()).append("\t")
+                    .append((busInfo.getSaturdayCourseCount() + busInfo.getSundayCourseCount()) / 2) // weekend average
+                    .append("\n");
 
         }
-        return result;
+        return result.toString();
     }
 
     public String toString(){
