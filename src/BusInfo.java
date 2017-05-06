@@ -224,15 +224,14 @@ abstract class BusInfo {
 
     public String toString(){
         String result = "";
-        result += "Linia: " + getLineNumber() + " (" + getVehicleType() + ")\tPrzystanek: " + getStreetName();
-        result += "\n----------------------------";
-        result += "\nIlości kursów: ";
-        result +=
-                "\nDni robocze:\t\t" + getWeekdayCourseCount() +
-                        "\nSoboty:\t\t\t\t" + getSaturdayCourseCount() +
-                        "\nNiedziele:\t\t\t" + getSundayCourseCount() +
-                        "\nWeekend (średnia):\t" + (getSaturdayCourseCount() + getSundayCourseCount())/2;
-        result += "\n----------------------------\n";
+        result += this.getLineNumber() +
+                "\t" + this.getStreetName() +
+                "\t" + this.getVehicleType() +
+                "\t" +                                      // empty cell for distance from building
+                "\t" + this.getWeekdayCourseCount() +
+                "\t" + this.getSaturdayCourseCount() +
+                "\t" + this.getSundayCourseCount() +
+                "\t" + (this.getSaturdayCourseCount() + this.getSundayCourseCount())/2 + "\n"; // weekend average
 
         return result;
     }

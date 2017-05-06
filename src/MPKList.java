@@ -15,19 +15,19 @@ public class MPKList extends ListHandler {
     }
     public MPKList(String html) throws IOException {
         super();
-        this.linkList = getLinks(html);
+        this.linkList = findLinks(html);
         for(String link : this.linkList){
             busInfos.add(new MPKinfo(link));
         }
+        this.busInfosPurified = purifyList(this.busInfos);
     }
-    protected ArrayList<String> getLinks(String html) throws IOException{
+    protected ArrayList<String> findLinks(String html) throws IOException{
           ArrayList<String> result = new ArrayList<>();
           Document document = Jsoup.connect(html).get();
           Elements links = document.select("table[style=' margin-bottom: 20px; '] tbody tr a[href]");
           for(Element link : links) {
-                  result.add(link.attr("href"));
-              }
-
+              result.add(link.attr("href"));
+          }
           return result;
       }
 }

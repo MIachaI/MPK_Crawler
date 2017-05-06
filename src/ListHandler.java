@@ -1,7 +1,8 @@
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.TreeMap;
 
-import static com.sun.org.apache.xalan.internal.xsltc.compiler.util.Type.Int;
 
 /**
  * Created by umat on 02.05.17.
@@ -14,13 +15,21 @@ public abstract class ListHandler {
     public ListHandler(){
         this.busInfos = new ArrayList<>();
         this.linkList = new ArrayList<>();
-        //this.busInfosPurified = purifyList(BusInfo this.busInfos);
+        this.busInfosPurified = new ArrayList<>();
     }
 
-    protected abstract ArrayList<String> getLinks(String html) throws IOException;
+    protected abstract ArrayList<String> findLinks(String html) throws IOException;
 
+
+    //GETTERS
     public ArrayList<String> getLinkList(){
         return this.linkList;
+    }
+    public ArrayList<BusInfo> getBusInfos(){
+        return this.busInfos;
+    }
+    public ArrayList<BusInfo> getBusInfosPurified(){
+        return this.busInfosPurified;
     }
 
     /**
@@ -30,52 +39,53 @@ public abstract class ListHandler {
      * @return sanitized BusInfo list
      */
     protected ArrayList<BusInfo> purifyList(ArrayList<BusInfo> allBusInfos){
-        ArrayList<BusInfo> result = new ArrayList<>();
-
-        return result;
+        ArrayList<BusInfo> purifiedInfos = new ArrayList<>();
+        Map<Integer,BusInfo> map = new TreeMap<>();
+        for(BusInfo busInfo : allBusInfos){
+            if(!map.containsKey(busInfo.getLineNumber())){  // if line number is not yet in the map:
+                map.put(busInfo.getLineNumber(), busInfo);  // store it in the map
+            } else {                                        // else
+                int key = busInfo.getLineNumber();          // check amounts of courses and always save the smallest amount
+                if(map.get(key).getWeekdayCourseCount() > busInfo.getWeekdayCourseCount()){
+                    BusInfo buffer = map.get(key);
+                    buffer.setWeekdayList(busInfo.getWeekdayList());
+                    map.put(key,buffer);
+                }
+                if(map.get(key).getSaturdayCourseCount() + map.get(key).getSundayCourseCount() > busInfo.getSaturdayCourseCount() + busInfo.getSundayCourseCount()){
+                    BusInfo buffer = map.get(key);
+                    buffer.setSaturdayList(busInfo.getSaturdayList());
+                    buffer.setSundayList(busInfo.getSundayList());
+                    map.put(key,buffer);
+                }
+            }
+        }
+        purifiedInfos.addAll(map.values()); // copy results to ArrayList
+        return purifiedInfos;               // and return it
     }
 
     public String excelFormattedText(){
         String result = "";
-        int WeekdayCount =0;
-        int WeekendCount =0;
-        int Carry=0;
-        int TramWeekdayCount=0;
-        int BusWeekdayCount=0;
-        int TramWeekendCount=0;
-        int BusWeekendcount=0;
-        int BusNumberComparition=0;
-        for(BusInfo busInfo : this.busInfos) {
-            if (!(busInfo.getLineNumber() == BusNumberComparition)) {
-                if (busInfo.getLineNumber() > 100 && Carry < 1) {
-                    result += "\n\n\t\t\t\t\t" + WeekdayCount + "\t" + WeekendCount + "\n";
-                    TramWeekdayCount = WeekdayCount;
-                    WeekdayCount = 0;
-                    TramWeekendCount = WeekendCount;
-                    WeekendCount = 0;
-                    Carry += 1;
+        for(BusInfo busInfo : this.busInfosPurified){
+            result += busInfo.getLineNumber() +
+                    "\t" + busInfo.getStreetName() +
+                    "\t" + busInfo.getVehicleType() +
+                    "\t" +                                      // empty cell for distance from building
+                    "\t" + busInfo.getWeekdayCourseCount() +
+                    "\t" + busInfo.getSaturdayCourseCount() +
+                    "\t" + busInfo.getSundayCourseCount() +
+                    "\t" + (busInfo.getSaturdayCourseCount() + busInfo.getSundayCourseCount())/2 + "\n"; // weekend average
 
-                }
-                result += busInfo.getLineNumber() +
-                        "\t" + busInfo.getStreetName() +
-                        "\t" + busInfo.getVehicleType() +
-                        "\t" +                                      // empty cell for distance from building
-                        "\t" + busInfo.getWeekdayCourseCount() +
-                        "\t" + busInfo.getSaturdayCourseCount() +
-                        "\t" + busInfo.getSundayCourseCount() +
-                        "\t" + (busInfo.getSaturdayCourseCount() + busInfo.getSundayCourseCount()) / 2 + "\n"; // weekend average
-                WeekdayCount += busInfo.getWeekdayCourseCount();
-                WeekendCount += (busInfo.getSaturdayCourseCount() + busInfo.getSundayCourseCount()) / 2;
-            }
         }
-        return result +="\n\n\t\t\t\t\t" +WeekdayCount +"\t"+ WeekendCount;
+        return result;
     }
 
     public String toString(){
-        String result = "";
+        StringBuilder result = new StringBuilder();
         for(BusInfo info : this.busInfos){
-            result += info;
+            result.append(info);
         }
-        return result;
+        result.append("\n====Purified====\n");
+        for (BusInfo info : this.busInfosPurified) result.append(info);
+        return result.toString();
     }
 }
