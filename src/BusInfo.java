@@ -5,12 +5,14 @@ import java.io.IOException;
 import java.util.Arrays;
 
 abstract class BusInfo {
-    private String html;
+    protected String html;
     protected int lineNumber;
     protected String vehicleType;
     protected String streetName;
+    protected ArrayList<String> columnNames;
     protected String rawResult;
     protected String additionalInfo;
+    protected ArrayList<String> warnings;
     // storing hours and minutes
     protected ArrayList<HourMinute> weekdayList;
     protected ArrayList<HourMinute> saturdayList;
@@ -20,6 +22,8 @@ abstract class BusInfo {
         this.weekdayList = new ArrayList<HourMinute>();
         this.saturdayList = new ArrayList<HourMinute>();
         this.sundayList = new ArrayList<HourMinute>();
+        this.columnNames = new ArrayList<>();
+        this.warnings = new ArrayList<>();
     }
 
     BusInfo(String html) throws IOException {
@@ -34,6 +38,7 @@ abstract class BusInfo {
         this.lineNumber = findLineNumber();
         this.vehicleType = findVehicleType();
         this.streetName = findStreetName();
+        this.columnNames = findColumnNames();
         this.additionalInfo = findAdditionalInfo();
     }
     /**
@@ -154,6 +159,11 @@ abstract class BusInfo {
     protected String findStreetName(){
         return this.rawResult.split("\n")[2];
     }
+    protected ArrayList<String> findColumnNames(){
+        ArrayList<String> columnNames = new ArrayList<>();
+        columnNames.addAll(Arrays.asList(this.rawResult.split("\n")[3].split("\t"))); // add all detected column names to the list
+        return columnNames;
+    }
     protected String findAdditionalInfo(){
         String[] lines = this.rawResult.split("\n");
         return lines[lines.length - 1];
@@ -218,9 +228,18 @@ abstract class BusInfo {
     public String getStreetName(){
         return this.streetName;
     }
+    public ArrayList<String> getColumnNames(){
+        return this.columnNames;
+    }
     public String getAdditionalInfo(){
         return this.additionalInfo;
     }
+    public ArrayList<String> getWarnings(){
+        return this.warnings;
+    }
+    public boolean checkColumnNames(ArrayList<String> columnNames){
+        return false;
+    };
 
     public String toString(){
         String result = "";

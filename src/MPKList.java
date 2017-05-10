@@ -6,9 +6,6 @@ import org.jsoup.select.Elements;
 import java.io.IOException;
 import java.util.ArrayList;
 
-/**
- * Created by umat on 02.05.17.
- */
 public class MPKList extends ListHandler {
     public MPKList(){
         super();

@@ -7,7 +7,7 @@ import java.util.TreeMap;
 /**
  * Created by umat on 02.05.17.
  */
-public abstract class ListHandler {
+abstract class ListHandler {
     protected ArrayList<BusInfo> busInfos;
     protected ArrayList<String> linkList;
     protected ArrayList<BusInfo> busInfosPurified;
@@ -19,7 +19,6 @@ public abstract class ListHandler {
     }
 
     protected abstract ArrayList<String> findLinks(String html) throws IOException;
-
 
     //GETTERS
     public ArrayList<String> getLinkList(){
@@ -65,7 +64,7 @@ public abstract class ListHandler {
 
     public String excelFormattedText(){
         StringBuilder result = new StringBuilder();
-        for(BusInfo busInfo : this.busInfosPurified){
+        for(BusInfo busInfo : this.busInfosPurified) {
             result
                     .append(busInfo.getLineNumber()).append("\t")
                     .append(busInfo.getStreetName()).append("\t")
@@ -74,9 +73,13 @@ public abstract class ListHandler {
                     .append(busInfo.getWeekdayCourseCount()).append("\t")
                     .append(busInfo.getSaturdayCourseCount()).append("\t")
                     .append(busInfo.getSundayCourseCount()).append("\t")
-                    .append((busInfo.getSaturdayCourseCount() + busInfo.getSundayCourseCount()) / 2) // weekend average
-                    .append("\n");
-
+                    .append((busInfo.getSaturdayCourseCount() + busInfo.getSundayCourseCount()) / 2); // weekend average
+            if (!busInfo.checkColumnNames(busInfo.getColumnNames())) {
+                for (String warning : busInfo.getWarnings()) {
+                    result.append("\t").append(warning);
+                }
+            }
+            result.append("\n");
         }
         return result.toString();
     }

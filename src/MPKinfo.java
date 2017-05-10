@@ -5,6 +5,7 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  *	Class to store information about bus schedule presented on MPK Karków website
@@ -51,5 +52,29 @@ public class MPKinfo extends BusInfo {
 		}
 
 		return rawResult;
+	}
+
+	/**
+	 * Check if column names are standard.
+	 * Add unusual column names to warnings field
+	 * <b>WARNING</b> - may change lists responsible for storing information about courses in different days
+	 * @return true if column names are as usual, otherwise return false
+	 */
+	public boolean checkColumnNames(ArrayList<String> columnNames){
+		if(
+				Objects.equals(columnNames.get(0), "Godzina")
+				&& Objects.equals(columnNames.get(1), "Dzień powszedni")
+				&& Objects.equals(columnNames.get(2), "Soboty")
+				&& Objects.equals(columnNames.get(3), "Święta")
+				){
+			return true;
+		}
+		else{
+			this.warnings.add("Niestandardowe nazwy kolumn. Sprawdź przystanek " + this.html);
+		}
+		if(columnNames.size() != 4){
+			this.warnings.add("Niestandardowa ilość kolumn");
+		}
+		return false;
 	}
 }
