@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 abstract class BusInfo {
-    private String html;
+    protected String html;
     protected int lineNumber;
     protected String vehicleType;
     protected String streetName;
@@ -23,6 +23,7 @@ abstract class BusInfo {
         this.saturdayList = new ArrayList<HourMinute>();
         this.sundayList = new ArrayList<HourMinute>();
         this.columnNames = new ArrayList<>();
+        this.warnings = new ArrayList<>();
     }
 
     BusInfo(String html) throws IOException {
@@ -233,6 +234,12 @@ abstract class BusInfo {
     public String getAdditionalInfo(){
         return this.additionalInfo;
     }
+    public ArrayList<String> getWarnings(){
+        return this.warnings;
+    }
+    public boolean checkColumnNames(ArrayList<String> columnNames){
+        return false;
+    };
 
     public String toString(){
         String result = "";

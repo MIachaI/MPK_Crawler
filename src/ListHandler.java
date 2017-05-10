@@ -72,8 +72,15 @@ abstract class ListHandler {
                     "\t" + busInfo.getWeekdayCourseCount() +
                     "\t" + busInfo.getSaturdayCourseCount() +
                     "\t" + busInfo.getSundayCourseCount() +
-                    "\t" + (busInfo.getSaturdayCourseCount() + busInfo.getSundayCourseCount())/2 + "\n"; // weekend average
+                    "\t" + (busInfo.getSaturdayCourseCount() + busInfo.getSundayCourseCount())/2 // weekend average
+                    ;
+            if(!busInfo.checkColumnNames(busInfo.getColumnNames())){
+                for(String warning : busInfo.getWarnings()){
+                    result += "\t" + warning;
+                }
+            }
 
+            result += "\n";
         }
         return result;
     }
