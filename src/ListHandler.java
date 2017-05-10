@@ -7,7 +7,7 @@ import java.util.TreeMap;
 /**
  * Created by umat on 02.05.17.
  */
-public abstract class ListHandler {
+abstract class ListHandler {
     protected ArrayList<BusInfo> busInfos;
     protected ArrayList<String> linkList;
     protected ArrayList<BusInfo> busInfosPurified;
@@ -19,7 +19,6 @@ public abstract class ListHandler {
     }
 
     protected abstract ArrayList<String> findLinks(String html) throws IOException;
-
 
     //GETTERS
     public ArrayList<String> getLinkList(){

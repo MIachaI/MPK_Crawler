@@ -7,10 +7,14 @@ public class Main {
 //    	Scanner scanner = new Scanner(System.in);
 //    	String html = scanner.nextLine();
 //    	scanner.close();
-        String html = "http://rozklady.mpk.krakow.pl/?lang=PL&akcja=przystanek&rozklad=20170502&przystanek=QUdI";
+        String html = "http://rozklady.mpk.krakow.pl/?lang=PL&rozklad=20170510&linia=132__2__32";
 
-        MPKList mpkInfo = new MPKList(html);
-        System.out.print(mpkInfo);
+        //MPKList mpkInfo = new MPKList(html);
+        MPKinfo mpkInfo = new MPKinfo(html);
 
+        System.out.println(mpkInfo.getRawResult(html));
+        for(String columnName : mpkInfo.getColumnNames()){
+            System.out.println(columnName);
+        }
     }
 }
