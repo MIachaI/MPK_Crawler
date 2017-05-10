@@ -29,11 +29,11 @@ public class MPKinfo extends BusInfo {
 
 		for (Element row : rows){
 			Elements columns = row.getElementsByTag("td");
-			String colText = "";
+			StringBuilder colText = new StringBuilder();
 			for(Element column : columns){
-				colText += column.text() + "\t"; // separate each column with tabulation
+				colText.append(column.text()).append("\t"); // separate each column with tabulation
 			}
-			lines.add(colText);
+			lines.add(colText.toString());
 		}
 		// this gives lines array where 3rd line is empty and 2 last lines are duplicated
 
@@ -46,12 +46,11 @@ public class MPKinfo extends BusInfo {
 		lines.remove(lines.size() - 2);
 
 		// now save all lines to rawResult
-		String rawResult = "";
+		StringBuilder rawResult = new StringBuilder();
 		for(String line : lines){
-			rawResult += line + "\n"; // separate each line with newline sign
+			rawResult.append(line).append("\n"); // separate each line with newline sign
 		}
-
-		return rawResult;
+		return rawResult.toString();
 	}
 
 	/**
