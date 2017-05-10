@@ -39,9 +39,9 @@ public class MPKinfo extends BusInfo {
 
 		lines.set(2,lines.get(1).replaceAll("\t", "")); // save street name to third line (copy second line to third)
 		if(Integer.parseInt(lines.get(0)) > 100) {
-			lines.set(1, "bus");
+			lines.set(1, "Bus");
 		} else {
-			lines.set(1,"tram");
+			lines.set(1,"Light train");
 		}
 		lines.remove(lines.size() - 2);
 
