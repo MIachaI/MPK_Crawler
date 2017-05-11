@@ -152,6 +152,9 @@ public abstract class BusInfo {
         this.sundayList.add(time);
     }
 
+    public void addWarning(String warning){
+        this.warnings.add(warning);
+    }
 
     protected int findLineNumber(){
         return Integer.parseInt(this.rawResult.split("\n")[0]);
