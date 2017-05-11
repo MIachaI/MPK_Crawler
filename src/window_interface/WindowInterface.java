@@ -97,6 +97,7 @@ public class WindowInterface extends Application implements EventHandler<ActionE
                         Alert alert = new Alert(Alert.AlertType.INFORMATION);
                         alert.setTitle("Sukces");
                         alert.setHeaderText("Gotowe!");
+                        alert.showAndWait();
                     } catch (IOException e) {
                         Status_Label.setText("Status: błąd!");
                     }
