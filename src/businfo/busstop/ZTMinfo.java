@@ -67,17 +67,30 @@ public class ZTMinfo extends BusInfo {
         scheduleTables.add(document.select("td[class='rtc last']").first());
 
         Map<Integer, String> hourMinutes = new TreeMap<>(); // stores hour as a key, next minutes - divided by spaces (inside one column) and with tabulations when column ends
+        for(int i = 0 ; i < 24; i++){
+            hourMinutes.put(i, "");
+        }
+        // TODO probably one unnecessary for loop
         for (Element table : scheduleTables){
             Elements subTables = table.select("table");
             for(Element subTable : subTables) {
                 Elements subTableRows = subTable.select("tr");
                 subTableRows.remove(0); // remove first row (it only says "Minutes")
+                Map<Integer,String> prevTableHourMinute = new HashMap<>(hourMinutes);
                 for(Element subTableRow : subTableRows){
                     int hour = Integer.parseInt(subTableRow.getElementsByClass("gd").first().text());
                     String minutes = subTableRow.getElementsByClass("nr").text();
 
                     String existing = hourMinutes.get(hour);
-                    hourMinutes.put(hour, existing == null ? minutes + "\t" : existing + minutes + "\t");
+                    //hourMinutes.put(hour, existing == null ? minutes + "\t" : existing + minutes + "\t");
+                    hourMinutes.put(hour, existing + minutes + "\t");
+                }
+
+                for(Integer hour : hourMinutes.keySet()){
+                    if (Objects.equals(hourMinutes.get(hour), prevTableHourMinute.get(hour))) { // if column was empty - add tab
+                        String value = hourMinutes.get(hour);
+                        hourMinutes.put(hour, value + "\t");
+                    }
                 }
             }
         }
