@@ -1,3 +1,5 @@
+package businfo;
+
 /**
 	 * @author umat
 	 * Class stores hour and minute

@@ -1,10 +1,13 @@
+package businfo.busstop;
+
+import businfo.HourMinute;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.io.IOException;
 import java.util.Arrays;
 
-abstract class BusInfo {
+public abstract class BusInfo {
     protected String html;
     protected int lineNumber;
     protected String vehicleType;
@@ -69,7 +72,7 @@ abstract class BusInfo {
         this.saturdayList.clear();
         this.sundayList.clear();
 
-        //store information in MPKinfo class
+        //store information in businfo.busstop.MPKinfo class
 
         // cut first 4 and last 2 rows - they contain other informations
         String[] lines = Arrays.copyOfRange(rawResult.split("\n"), 4, rawResult.split("\n").length-1);

@@ -7,3 +7,4 @@
 out/production/*
 out/artifacts/*
 /output.*
+.idea/*

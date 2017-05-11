@@ -1,10 +1,11 @@
+package window_interface;
 
+import businfo.lists.*;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
@@ -13,14 +14,13 @@ import javafx.geometry.Insets;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.reflect.Executable;
 
 
 public class WindowInterface extends Application implements EventHandler<ActionEvent> {
     Button Execute_Button;
     Stage window;
 
-    public static void OpenWindow() {
+    public static void openWindow() {
         launch();
     }
 

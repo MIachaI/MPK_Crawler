@@ -1,7 +1,10 @@
+package businfo.lists;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
+import businfo.busstop.*;
 
 
 /**
@@ -39,7 +42,7 @@ abstract class ListHandler {
      */
     protected ArrayList<BusInfo> purifyList(ArrayList<BusInfo> allBusInfos){
         ArrayList<BusInfo> purifiedInfos = new ArrayList<>();
-        Map<Integer,BusInfo> map = new TreeMap<>();
+        Map<Integer, BusInfo> map = new TreeMap<>();
         for(BusInfo busInfo : allBusInfos){
             if(!map.containsKey(busInfo.getLineNumber())){  // if line number is not yet in the map:
                 map.put(busInfo.getLineNumber(), busInfo);  // store it in the map
