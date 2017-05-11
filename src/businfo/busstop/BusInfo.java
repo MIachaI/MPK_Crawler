@@ -243,6 +243,12 @@ public abstract class BusInfo {
     public ArrayList<String> getWarnings(){
         return this.warnings;
     }
+    /**
+     * Check if column names are standard.
+     * Add unusual column names to warnings field
+     * <b>WARNING</b> - may change lists responsible for storing information about courses in different days
+     * @return true if column names are as usual, otherwise return false
+     */
     public boolean checkColumnNames(ArrayList<String> columnNames){
         return false;
     };

@@ -55,12 +55,6 @@ public class MPKinfo extends BusInfo {
 		return rawResult.toString();
 	}
 
-	/**
-	 * Check if column names are standard.
-	 * Add unusual column names to warnings field
-	 * <b>WARNING</b> - may change lists responsible for storing information about courses in different days
-	 * @return true if column names are as usual, otherwise return false
-	 */
 	public boolean checkColumnNames(ArrayList<String> columnNames){
 		if(
 				Objects.equals(columnNames.get(0), "Godzina")

@@ -17,6 +17,7 @@ public class ZTMinfo extends BusInfo {
     }
     public ZTMinfo(String html) throws IOException {
         super(html);
+        checkColumnNames(this.columnNames);
     }
 
     @Override
@@ -92,5 +93,29 @@ public class ZTMinfo extends BusInfo {
         result.append("undefined");
 
         return result.toString();
+    }
+
+    public boolean checkColumnNames(ArrayList<String> columnNames){
+        if(columnNames.get(0).equals("Dzień Powszedni")
+                && columnNames.get(1).equals("Święto")){ // copy saturdayCourses to sundayCourses
+            this.setSundayList(this.getSaturdayList());
+            warnings.add("Dwie kolumny: \"Dzień Powszedni\" i \"Święto\". Rozkład z kolumny \"Święto\" przepisano dla sobót i niedziel");
+            return true;
+        }
+        else if (columnNames.get(0).equals("Dzień Powszedni")
+                && columnNames.get(1).equals("Sobota")
+                && columnNames.get(2).equals("Święto")){
+                    return true;
+        }
+        else if (columnNames.size() == 1 && columnNames.get(0).equals("Dzień powszedni")){
+            return true;
+        }
+        else if (columnNames.size() != 3 ){
+            warnings.add("Niestandardowe nazwy kolumn. Sprawdź przystanek " + this.html);
+            return false;
+        } else {
+            warnings.add("Niestandardowe rozłożenie kolumn. Sprawdź przystanek " + this.html);
+            return false;
+        }
     }
 }
