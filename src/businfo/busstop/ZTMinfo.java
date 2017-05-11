@@ -12,6 +12,7 @@ import org.jsoup.select.Elements;
  * Created by umat on 11.05.17.
  */
 public class ZTMinfo extends BusInfo {
+    private String innerHtml;
     public ZTMinfo(){
         super();
     }
@@ -32,6 +33,7 @@ public class ZTMinfo extends BusInfo {
         for(Element link : additionalLinks){
             if (link.text().equals("Drukuj rozkład na wszystkie dni") || link.text().equals("Print timetable for all days")){
                 scheduleLink = "http://www.ztm.waw.pl/" + link.attr("href");
+                this.innerHtml = scheduleLink;
                 additionalLinks = null; // free memory (hopefully)
                 break;
             }
@@ -80,9 +82,7 @@ public class ZTMinfo extends BusInfo {
                 for(Element subTableRow : subTableRows){
                     int hour = Integer.parseInt(subTableRow.getElementsByClass("gd").first().text());
                     String minutes = subTableRow.getElementsByClass("nr").text();
-
                     String existing = hourMinutes.get(hour);
-                    //hourMinutes.put(hour, existing == null ? minutes + "\t" : existing + minutes + "\t");
                     hourMinutes.put(hour, existing + minutes + "\t");
                 }
 
@@ -124,10 +124,10 @@ public class ZTMinfo extends BusInfo {
             return true;
         }
         else if (columnNames.size() != 3 ){
-            warnings.add("Niestandardowe nazwy kolumn. Sprawdź przystanek " + this.html);
+            warnings.add("Niestandardowe nazwy kolumn. Sprawdź przystanek " + this.innerHtml);
             return false;
         } else {
-            warnings.add("Niestandardowe rozłożenie kolumn. Sprawdź przystanek " + this.html);
+            warnings.add("Niestandardowe rozłożenie kolumn. Sprawdź przystanek " + this.innerHtml);
             return false;
         }
     }

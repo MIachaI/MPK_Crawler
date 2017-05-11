@@ -77,7 +77,7 @@ abstract class ListHandler {
                     .append(busInfo.getSaturdayCourseCount()).append("\t")
                     .append(busInfo.getSundayCourseCount()).append("\t")
                     .append((busInfo.getSaturdayCourseCount() + busInfo.getSundayCourseCount()) / 2); // weekend average
-            if (!busInfo.checkColumnNames(busInfo.getColumnNames()) || !busInfo.getWarnings().isEmpty()) {
+            if (!busInfo.checkColumnNames(busInfo.getColumnNames()) || busInfo.getWarnings().isEmpty()) {
                 for (String warning : busInfo.getWarnings()) {
                     result.append("\t\t").append(warning);
                 }
