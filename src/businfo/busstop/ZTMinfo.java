@@ -48,10 +48,15 @@ public class ZTMinfo extends BusInfo {
         result.append(lineNumber.text()).append("\n");
 
         // vehicle type
-        String vehicleType = document.select("img[class='busico']").first().attr("src");
-        if(vehicleType.contains("ico_tram")) vehicleType = "Light train";
-        else if(vehicleType.contains("ico_bus")) vehicleType = "Bus";
-        else vehicleType = "undefined";
+        String vehicleType;
+        try{
+            vehicleType = document.select("img[class='busico']").first().attr("src");
+            if(vehicleType.contains("ico_tram")) vehicleType = "Light train";
+            else if(vehicleType.contains("ico_bus")) vehicleType = "Bus";
+            else vehicleType = "undefined";
+        } catch (NullPointerException e){
+            vehicleType = "undefined";
+        }
         result.append(vehicleType).append("\n");
 
         // stop name
