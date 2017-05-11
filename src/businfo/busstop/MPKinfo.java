@@ -57,7 +57,8 @@ public class MPKinfo extends BusInfo {
 
 	public boolean checkColumnNames(ArrayList<String> columnNames){
 		if(
-				Objects.equals(columnNames.get(0), "Godzina")
+				columnNames.size() == 4
+				&& Objects.equals(columnNames.get(0), "Godzina")
 				&& Objects.equals(columnNames.get(1), "Dzień powszedni")
 				&& Objects.equals(columnNames.get(2), "Soboty")
 				&& Objects.equals(columnNames.get(3), "Święta")
