@@ -93,17 +93,39 @@ public class WindowInterface extends Application implements EventHandler<ActionE
                         fileWriter.write(mpkList.excelFormattedText());
                         fileWriter.flush();
                         fileWriter.close();
+
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Sukces");
+                        alert.setHeaderText("Gotowe!");
                     } catch (IOException e) {
                         Status_Label.setText("Status: błąd!");
                     }
 
                 }
                 else if(Warsaw_Box.isSelected()){
-                    /**
-                    This section is prepared for implement Warsaw public comunication counter. Meanwhile, action with this radio button
-                     selected will print error in Status_Label;
-                    **/
-                    Status_Label.setText("Funkcja niedostępna");
+                    String html = Link_TextField.getText();
+                    ZTMList ztmList = null;
+                    try {
+                        ztmList = new ZTMList(html);
+                    } catch (IOException e) {
+                        Status_Label.setText("Status: błąd!");
+                    }
+                    String zmienna = Path_TextField.getText();
+                    try {
+                        File file = new File(zmienna + "/output.xls");
+                        FileWriter fileWriter = new FileWriter(file);
+                        fileWriter.write(ztmList.excelFormattedText());
+                        fileWriter.flush();
+                        fileWriter.close();
+
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Sukces");
+                        alert.setHeaderText("Gotowe!");
+
+                        alert.showAndWait();
+                    } catch (IOException e) {
+                        Status_Label.setText("Status: błąd!");
+                    }
                 }
             }
         });
