@@ -59,7 +59,13 @@ public class WindowInterface extends Application implements EventHandler<ActionE
 
         //Status_Label
         Label Status_Label = new Label("Status: w gotowości");
-        GridPane.setConstraints(Status_Label, 0, 2);
+        GridPane.setConstraints(Status_Label, 0, 3);
+
+        //OutputName_Label
+        Label OutputName_Label = new Label("Wprowadź nazwę:");
+        GridPane.setConstraints(OutputName_Label, 0, 2);
+
+
 
 
         //Link_TextField
@@ -71,9 +77,14 @@ public class WindowInterface extends Application implements EventHandler<ActionE
         GridPane.setConstraints(Path_TextField, 1, 1);
         final String[] html = new String[1];
 
+        //OutputName_TextField
+        TextField OutputName_TextField = new TextField("");
+        GridPane.setConstraints(OutputName_TextField, 1, 2);
+        OutputName_TextField.setText("Output");
+
         //Execute_Button
         Button Execute_Button = new Button("Wykonaj");
-        GridPane.setConstraints(Execute_Button, 1, 2);
+        GridPane.setConstraints(Execute_Button, 1, 3);
         Execute_Button.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -88,7 +99,8 @@ public class WindowInterface extends Application implements EventHandler<ActionE
                     String zmienna = Path_TextField.getText();
                     //
                     try {
-                        File file = new File(zmienna + "/output.xls");
+                        String output = OutputName_TextField.getText();
+                        File file = new File(zmienna + "/"+ output +".xls");
                         FileWriter fileWriter = new FileWriter(file);
                         fileWriter.write(mpkList.excelFormattedText());
                         fileWriter.flush();
@@ -152,7 +164,7 @@ public class WindowInterface extends Application implements EventHandler<ActionE
 
 
         //Add everything to grid
-        grid.getChildren().addAll(Link_Label, Link_TextField, Path_Label, Path_TextField, Execute_Button, Browse_Button, Cracow_Box, Warsaw_Box,Status_Label);
+        grid.getChildren().addAll(OutputName_TextField, OutputName_Label, Link_Label, Link_TextField, Path_Label, Path_TextField, Execute_Button, Browse_Button, Cracow_Box, Warsaw_Box,Status_Label);
 
 
 

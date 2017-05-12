@@ -66,9 +66,58 @@ abstract class ListHandler {
     }
 
     public String excelFormattedText(){
+        int counter=0;
+        int WeekdayCount=0;
+        int WeekendCount=0;
         StringBuilder result = new StringBuilder();
+
+        result
+                .append("\t")
+                .append("Line no.").append("\t")
+                .append("Stop Name").append("\t")
+                .append("Light train / Bus").append("\t")
+                .append("Distance from building").append("\t") // empty cell for distance from building
+                .append("Number of rides").append("\t")
+                .append("\n")
+                .append("\t\t\t\t\t")
+                .append("Weekday").append("\t")
+                .append("Weekday").append("\t")
+                .append("Weekend").append("\t")
+                .append("Average");
+
+
         for(BusInfo busInfo : this.busInfosPurified) {
+            if(counter==0 && busInfo.getLineNumber()>99 ){
+                result.append("\n\n")
+                        .append("\t\t\t\t\t\t\t")
+                        .append("Total")
+                        .append("\n\t\t\t\t\t\t\t")
+                        .append("Weekday").append("\t")
+                        .append("Weekend").append("\t")
+                        .append("\n\t\t\t\t\t\t\t")
+                        .append(WeekdayCount).append("\t")
+                        .append(WeekendCount).append("\n");
+                        WeekdayCount=0;
+                        WeekendCount=0;
+                result.append("\n\n")
+                        .append("\t")
+                        .append("Line no.").append("\t")
+                        .append("Stop Name").append("\t")
+                        .append("Light train / Bus").append("\t")
+                        .append("Distance from building").append("\t") // empty cell for distance from building
+                        .append("Number of rides").append("\t")
+                        .append("\n")
+                        .append("\t\t\t\t\t")
+                        .append("Weekday").append("\t")
+                        .append("Weekday").append("\t")
+                        .append("Weekend").append("\t")
+                        .append("Average");
+            counter++;
+            }
+
             result
+                    .append("\n")
+                    .append("\t")
                     .append(busInfo.getLineNumber()).append("\t")
                     .append(busInfo.getStreetName()).append("\t")
                     .append(busInfo.getVehicleType()).append("\t")
@@ -77,14 +126,29 @@ abstract class ListHandler {
                     .append(busInfo.getSaturdayCourseCount()).append("\t")
                     .append(busInfo.getSundayCourseCount()).append("\t")
                     .append((busInfo.getSaturdayCourseCount() + busInfo.getSundayCourseCount()) / 2); // weekend average
+
+                    WeekdayCount+=busInfo.getWeekdayCourseCount();
+                    WeekendCount+=((busInfo.getSaturdayCourseCount() + busInfo.getSundayCourseCount()) / 2);
+
             if (!busInfo.checkColumnNames(busInfo.getColumnNames()) || busInfo.getWarnings().isEmpty()) {
                 result.append("\t");
                 for (String warning : busInfo.getWarnings()) {
                     result.append("\t").append(warning);
+                    break;
                 }
             }
-            result.append("\n");
+
         }
+        result.append("\n\n")
+                .append("\t\t\t\t\t\t\t")
+                .append("Total")
+                .append("\n\t\t\t\t\t\t\t")
+                .append("Weekday").append("\t")
+                .append("Weekend").append("\t")
+                .append("\n\t\t\t\t\t\t\t")
+                .append(WeekdayCount).append("\t")
+                .append(WeekendCount).append("\n");
+
         return result.toString();
     }
 

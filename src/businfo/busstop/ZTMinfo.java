@@ -115,7 +115,7 @@ public class ZTMinfo extends BusInfo {
 
     public boolean checkColumnNames(ArrayList<String> columnNames){
         if(columnNames.size()<3 && columnNames.size()>=1) {
-            warnings.add("Niestandardowe nazwy kolumn. Sprawdź przystanek " + this.innerHtml);
+            warnings.add("Niestandardowe nazwy kolumn. Sprawdź przystanek " +"\t"+ this.innerHtml);
         }
         else if(columnNames.size() == 2 &&  columnNames.get(0).equals("Dzień Powszedni")
                 && columnNames.get(1).equals("Święto")){ // copy saturdayCourses to sundayCourses
@@ -132,10 +132,10 @@ public class ZTMinfo extends BusInfo {
             return true;
         }
         else if (columnNames.size() != 3 ){
-            warnings.add("Niestandardowe nazwy kolumn. Sprawdź przystanek " + this.innerHtml);
+            warnings.add("Niestandardowe nazwy kolumn. Sprawdź przystanek " +"\t"+ this.innerHtml);
             return false;
         } else {
-            warnings.add("Niestandardowe rozłożenie kolumn. Sprawdź przystanek " + this.innerHtml);
+            warnings.add("Niestandardowe rozłożenie kolumn. Sprawdź przystanek " +"\t"+ this.innerHtml);
             return false;
         }
         return false;
