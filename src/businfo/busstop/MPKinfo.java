@@ -18,6 +18,7 @@ public class MPKinfo extends BusInfo {
 	}
 	public MPKinfo(String html) throws IOException {
 		super(html);
+		checkColumnNames(this.columnNames);
 	}
 
 	public String getRawResult(String html) throws IOException{
