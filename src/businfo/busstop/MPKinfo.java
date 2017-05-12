@@ -66,11 +66,16 @@ public class MPKinfo extends BusInfo {
 				){
 			return true;
 		}
-		else{
-			this.warnings.add("Niestandardowe nazwy kolumn. Sprawdź przystanek " + this.html);
+		else if (columnNames.size() == 1
+				&& columnNames.get(0).equals("Godzina")
+				&& columnNames.get(1).equals("Wszystkie dni tygodnia")){
+			setSaturdayList(this.getWeekdayList());
+			setSundayList(this.getWeekdayList());
+			this.warnings.add("Ten sam rozkład dla wszystkich dni tygodnia\t" + this.html);
+			return true;
 		}
-		if(columnNames.size() != 4){
-			this.warnings.add("Niestandardowa ilość kolumn");
+		else{
+			this.warnings.add("Niestandardowe nazwy kolumn. Sprawdź przystanek \t" + this.html);
 		}
 		return false;
 	}

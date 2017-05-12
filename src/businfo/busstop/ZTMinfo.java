@@ -123,7 +123,7 @@ public class ZTMinfo extends BusInfo {
         else if(columnNames.size() == 2 &&  columnNames.get(0).equals("Dzień Powszedni")
                 && columnNames.get(1).equals("Święto")){ // copy saturdayCourses to sundayCourses
             this.setSundayList(this.getSaturdayList());
-            warnings.add("Dwie kolumny: \"Dzień Powszedni\" i \"Święto\". Rozkład z kolumny \"Święto\" przepisano dla sobót i niedziel");
+            warnings.add("Dwie kolumny: \"Dzień Powszedni\" i \"Święto\". Rozkład z kolumny \"Święto\" przepisano dla sobót i niedziel\t" + this.innerHtml);
             return true;
         }
         else if (columnNames.size() == 1 && columnNames.get(0).equals("Dzień powszedni")){
