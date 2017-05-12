@@ -126,18 +126,10 @@ public class ZTMinfo extends BusInfo {
             warnings.add("Dwie kolumny: \"Dzień Powszedni\" i \"Święto\". Rozkład z kolumny \"Święto\" przepisano dla sobót i niedziel");
             return true;
         }
-        else if(columnNames.size()<3 && columnNames.size()>=1) {
-            warnings.add("Niestandardowe nazwy kolumn. Sprawdź przystanek " +"\t"+ this.innerHtml);
-        }
         else if (columnNames.size() == 1 && columnNames.get(0).equals("Dzień powszedni")){
             return true;
-        }
-        else if (columnNames.size() != 3 ){
-            warnings.add("Niestandardowe nazwy kolumn. Sprawdź przystanek " +"\t"+ this.innerHtml);
-            return false;
         } else {
             warnings.add("Niestandardowe rozłożenie kolumn. Sprawdź przystanek " +"\t"+ this.innerHtml);
-            return false;
         }
         return false;
     }
