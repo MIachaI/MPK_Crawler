@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.TreeMap;
 import businfo.busstop.*;
 
-
 /**
  * Created by umat on 02.05.17.
  */
@@ -103,7 +102,6 @@ abstract class ListHandler {
                     }
                 }
 
-
                 return result.toString();
             }
 
@@ -130,7 +128,7 @@ abstract class ListHandler {
         StringBuilder result = new StringBuilder();
 
         // save busInfos into corresponding lists and count courses sums
-        for(BusInfo busInfo : this.busInfosPurified){
+        for(BusInfo busInfo : this.getBusInfosPurified()){
             if(busInfo.getVehicleType().equals("Light train")) {
                 trams.add(busInfo);
                 tramWeekdaySum += busInfo.getWeekdayCourseCount();
