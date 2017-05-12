@@ -2,6 +2,7 @@ package businfo.lists;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.TreeMap;
 import businfo.busstop.*;
@@ -42,12 +43,12 @@ abstract class ListHandler {
      */
     protected ArrayList<BusInfo> purifyList(ArrayList<BusInfo> allBusInfos){
         ArrayList<BusInfo> purifiedInfos = new ArrayList<>();
-        Map<Integer, BusInfo> map = new TreeMap<>();
+        Map<String, BusInfo> map = new TreeMap<>();
         for(BusInfo busInfo : allBusInfos){
-            if(!map.containsKey(busInfo.getLineNumber())){  // if line number is not yet in the map:
-                map.put(busInfo.getLineNumber(), busInfo);  // store it in the map
+            if(!map.containsKey(busInfo.getLineNumberString())){  // if line number is not yet in the map:
+                map.put(busInfo.getLineNumberString(), busInfo);  // store it in the map
             } else {                                        // else
-                int key = busInfo.getLineNumber();          // check amounts of courses and always save the smallest amount
+                String key = busInfo.getLineNumberString();          // check amounts of courses and always save the smallest amount
                 if(map.get(key).getWeekdayCourseCount() > busInfo.getWeekdayCourseCount()){
                     BusInfo buffer = map.get(key);
                     buffer.setWeekdayList(busInfo.getWeekdayList());
@@ -62,6 +63,7 @@ abstract class ListHandler {
             }
         }
         purifiedInfos.addAll(map.values()); // copy results to ArrayList
+        purifiedInfos.sort(Comparator.comparingInt(BusInfo::getLineNumber));
         return purifiedInfos;               // and return it
     }
 
@@ -118,7 +120,7 @@ abstract class ListHandler {
             result
                     .append("\n")
                     .append("\t")
-                    .append(busInfo.getLineNumber()).append("\t")
+                    .append(busInfo.getLineNumberString()).append("\t")
                     .append(busInfo.getStreetName()).append("\t")
                     .append(busInfo.getVehicleType()).append("\t")
                     .append("\t") // empty cell for distance from building
@@ -134,7 +136,6 @@ abstract class ListHandler {
                 result.append("\t");
                 for (String warning : busInfo.getWarnings()) {
                     result.append("\t").append(warning);
-                    break;
                 }
             }
 

@@ -10,6 +10,7 @@ import java.util.Arrays;
 public abstract class BusInfo {
     protected String html;
     protected int lineNumber;
+    protected String lineNumberString;
     protected String vehicleType;
     protected String streetName;
     protected ArrayList<String> columnNames;
@@ -34,11 +35,18 @@ public abstract class BusInfo {
         setHTML(html);
     }
 
+    /**
+     * Set html from where to get info.
+     * Class fields get automatically updated after execution
+     * @param html page adress
+     * @throws IOException
+     */
     public void setHTML(String html) throws IOException {
         this.html = html;
         this.rawResult = getRawResult(this.html);
         this.count(this.rawResult);
         this.lineNumber = findLineNumber();
+        this.lineNumberString = findLineNumberString();
         this.vehicleType = findVehicleType();
         this.streetName = findStreetName();
         this.columnNames = findColumnNames();
@@ -159,6 +167,9 @@ public abstract class BusInfo {
     protected int findLineNumber(){
         return Integer.parseInt(this.rawResult.split("\n")[0].replaceAll("[^\\d]",""));
     }
+    protected String findLineNumberString(){
+        return this.rawResult.split("\n")[0];
+    }
     protected String findVehicleType(){
         return this.rawResult.split("\n")[1];
     }
@@ -221,6 +232,9 @@ public abstract class BusInfo {
      */
     public int getLineNumber(){
         return this.lineNumber;
+    }
+    public String getLineNumberString(){
+        return this.lineNumberString;
     }
     /**
      * @return vehicle type as a string. Can be either bus or tram
