@@ -63,92 +63,103 @@ abstract class ListHandler {
             }
         }
         purifiedInfos.addAll(map.values()); // copy results to ArrayList
-        purifiedInfos.sort(Comparator.comparingInt(BusInfo::getLineNumber));
-        return purifiedInfos;               // and return it
+        purifiedInfos.sort(Comparator.comparingInt(BusInfo::getLineNumber)); // sort'em
+        return purifiedInfos;               // and return
     }
 
     public String excelFormattedText(){
-        int counter=0;
-        int WeekdayCount=0;
-        int WeekendCount=0;
+        // just to handle single row (title, busInfo and summary)
+        class Row{
+            private String title(){
+                return
+                        "Line no." + "\t"
+                        + "Stop Name" + "\t"
+                        + "Light train / Bus" + "\t"
+                        + "Distance from building" + "\t"
+                        + "Number of rides" + "\t" + "\n" + "\t\t\t\t"
+                        + "Weekday" + "\t"
+                        + "Weekend" + "\t"
+                        + "Weekend" + "\t"
+                        + "Average";
+            }
+
+            private String busInfo(BusInfo busInfo){
+                StringBuilder result = new StringBuilder();
+                result
+                        .append("\n")
+                        .append(busInfo.getLineNumberString()).append("\t")
+                        .append(busInfo.getStreetName()).append("\t")
+                        .append(busInfo.getVehicleType()).append("\t")
+                        .append("\t") // empty cell for distance from building
+                        .append(busInfo.getWeekdayCourseCount()).append("\t")
+                        .append(busInfo.getSaturdayCourseCount()).append("\t")
+                        .append(busInfo.getSundayCourseCount()).append("\t")
+                        .append((busInfo.getSaturdayCourseCount() + busInfo.getSundayCourseCount()) / 2); // weekend average
+
+                if (!busInfo.checkColumnNames(busInfo.getColumnNames()) || busInfo.getWarnings().isEmpty()) {
+                    result.append("\t");
+                    for (String warning : busInfo.getWarnings()) {
+                        result.append("\t").append(warning);
+                    }
+                }
+
+
+                return result.toString();
+            }
+
+            private String summary(int weekdaySum, int weekendSum){
+                return
+                        "\n\n"
+                        + "\t\t\t\t\t\t"
+                        + "Total" + "\n\t\t\t\t\t\t"
+                        + "Weekday" + "\t"
+                        + "Weekend" + "\t"
+                        + "\n\t\t\t\t\t\t"
+                        + weekdaySum + "\t"
+                        + weekendSum + "\n";
+            }
+        }
+        Row row = new Row();
+
+        // create separate lists for lighttrain and bus
+        ArrayList<BusInfo> trams = new ArrayList<>();
+        ArrayList<BusInfo> buses = new ArrayList<>();
+        int tramWeekdaySum = 0, tramWeekendAvgSum = 0;
+        int busWeekdaySum = 0, busWeekendAvgSum = 0;
+
         StringBuilder result = new StringBuilder();
 
-        result
-                .append("\t")
-                .append("Line no.").append("\t")
-                .append("Stop Name").append("\t")
-                .append("Light train / Bus").append("\t")
-                .append("Distance from building").append("\t") // empty cell for distance from building
-                .append("Number of rides").append("\t")
-                .append("\n")
-                .append("\t\t\t\t\t")
-                .append("Weekday").append("\t")
-                .append("Weekday").append("\t")
-                .append("Weekend").append("\t")
-                .append("Average");
-
-
-        for(BusInfo busInfo : this.busInfosPurified) {
-            if(counter==0 && busInfo.getLineNumber()>99 ){
-                result.append("\n\n")
-                        .append("\t\t\t\t\t\t\t")
-                        .append("Total")
-                        .append("\n\t\t\t\t\t\t\t")
-                        .append("Weekday").append("\t")
-                        .append("Weekend").append("\t")
-                        .append("\n\t\t\t\t\t\t\t")
-                        .append(WeekdayCount).append("\t")
-                        .append(WeekendCount).append("\n");
-                        WeekdayCount=0;
-                        WeekendCount=0;
-                result.append("\n\n")
-                        .append("\t")
-                        .append("Line no.").append("\t")
-                        .append("Stop Name").append("\t")
-                        .append("Light train / Bus").append("\t")
-                        .append("Distance from building").append("\t") // empty cell for distance from building
-                        .append("Number of rides").append("\t")
-                        .append("\n")
-                        .append("\t\t\t\t\t")
-                        .append("Weekday").append("\t")
-                        .append("Weekday").append("\t")
-                        .append("Weekend").append("\t")
-                        .append("Average");
-            counter++;
+        // save busInfos into corresponding lists and count courses sums
+        for(BusInfo busInfo : this.busInfosPurified){
+            if(busInfo.getVehicleType().equals("Light train")) {
+                trams.add(busInfo);
+                tramWeekdaySum += busInfo.getWeekdayCourseCount();
+                tramWeekendAvgSum += (busInfo.getSaturdayCourseCount() + busInfo.getSundayCourseCount())/2;
             }
-
-            result
-                    .append("\n")
-                    .append("\t")
-                    .append(busInfo.getLineNumberString()).append("\t")
-                    .append(busInfo.getStreetName()).append("\t")
-                    .append(busInfo.getVehicleType()).append("\t")
-                    .append("\t") // empty cell for distance from building
-                    .append(busInfo.getWeekdayCourseCount()).append("\t")
-                    .append(busInfo.getSaturdayCourseCount()).append("\t")
-                    .append(busInfo.getSundayCourseCount()).append("\t")
-                    .append((busInfo.getSaturdayCourseCount() + busInfo.getSundayCourseCount()) / 2); // weekend average
-
-                    WeekdayCount+=busInfo.getWeekdayCourseCount();
-                    WeekendCount+=((busInfo.getSaturdayCourseCount() + busInfo.getSundayCourseCount()) / 2);
-
-            if (!busInfo.checkColumnNames(busInfo.getColumnNames()) || busInfo.getWarnings().isEmpty()) {
-                result.append("\t");
-                for (String warning : busInfo.getWarnings()) {
-                    result.append("\t").append(warning);
-                }
+            else if (busInfo.getVehicleType().equals("Bus") || busInfo.getVehicleType().equals("undefined")){
+                buses.add(busInfo);
+                busWeekdaySum += busInfo.getWeekdayCourseCount();
+                busWeekendAvgSum += (busInfo.getSaturdayCourseCount() + busInfo.getSundayCourseCount())/2;
             }
-
         }
-        result.append("\n\n")
-                .append("\t\t\t\t\t\t\t")
-                .append("Total")
-                .append("\n\t\t\t\t\t\t\t")
-                .append("Weekday").append("\t")
-                .append("Weekend").append("\t")
-                .append("\n\t\t\t\t\t\t\t")
-                .append(WeekdayCount).append("\t")
-                .append(WeekendCount).append("\n");
+
+        // display trams (if list not empty)
+        if (!trams.isEmpty()) {
+            result.append(row.title());
+            for(BusInfo tramInfo : trams) {
+                result.append(row.busInfo(tramInfo));
+            }
+            result.append(row.summary(tramWeekdaySum,tramWeekendAvgSum));
+        }
+
+        // display buses (if list not empty)
+        if(!buses.isEmpty()){
+            result.append(row.title());
+            for(BusInfo busInf : buses) {
+                result.append(row.busInfo(busInf));
+            }
+            result.append(row.summary(busWeekdaySum,busWeekendAvgSum));
+        }
 
         return result.toString();
     }
