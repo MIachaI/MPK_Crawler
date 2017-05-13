@@ -125,7 +125,8 @@ public class WindowInterface extends Application implements EventHandler<ActionE
                     }
                     String zmienna = Path_TextField.getText();
                     try {
-                        File file = new File(zmienna + "/output.xls");
+                        String output = OutputName_TextField.getText();
+                        File file = new File(zmienna + "/"+ output +".xls");
                         FileWriter fileWriter = new FileWriter(file);
                         fileWriter.write(ztmList.excelFormattedText());
                         fileWriter.flush();
