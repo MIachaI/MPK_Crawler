@@ -10,7 +10,7 @@ import businfo.busstop.*;
 /**
  * Created by umat on 02.05.17.
  */
-abstract class ListHandler {
+public abstract class ListHandler {
     protected ArrayList<BusInfo> busInfos;
     protected ArrayList<String> linkList;
     protected ArrayList<BusInfo> busInfosPurified;
