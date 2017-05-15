@@ -26,6 +26,21 @@ public class ZTMinfo extends BusInfo {
         StringBuilder result = new StringBuilder();
         Document document = Jsoup.connect(html).get();
 
+        // condition when schedule for weekend is empty - jump to weekday
+        String emptyWarning;
+        emptyWarning = document.select("div[id='PrzystanekRozklad']").text();
+        if(emptyWarning.equals("Niestety, w tym dniu linia nie kursuje. Aby przejrzeć rozkłady jazdy tej linii, przejdź do rozkładów na inne dni.")){
+            // find next day on schedule
+            Elements links = document.select("div[id='RozkladyJazdyTopDays'] a[class='textmore']");
+            String link = links.first().attr("href");
+            // recursive search next stops
+            return getRawResult("http://www.ztm.waw.pl/" + link);
+        }
+        else if(emptyWarning.equals("Niestety, zadana data jest zbyt odległa.")){
+            this.addWarning("Brak rozkładu jazdy dla tego przystanku");
+            return "0"+"\nundefined"+"\nbłąd"+"\nbrak"+"\nundefined";
+        }
+
         // first, find "Print timetable for all days" link
         Elements additionalLinks = document.select("div[class='LinkiDodatkowe'] a");
 
