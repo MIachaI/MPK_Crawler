@@ -26,6 +26,21 @@ public class ZTMinfo extends BusInfo {
         StringBuilder result = new StringBuilder();
         Document document = Jsoup.connect(html).get();
 
+        // condition when schedule for weekend is empty - jump to weekday
+        String emptyWarning;
+        emptyWarning = document.select("div[id='PrzystanekRozklad']").text();
+        if(emptyWarning.equals("Niestety, w tym dniu linia nie kursuje. Aby przejrzeć rozkłady jazdy tej linii, przejdź do rozkładów na inne dni.")){
+            // find next day on schedule
+            Elements links = document.select("div[id='RozkladyJazdyTopDays'] a[class='textmore']");
+            String link = links.first().attr("href");
+            // recursive search next stops
+            return getRawResult("http://www.ztm.waw.pl/" + link);
+        }
+        else if(emptyWarning.equals("Niestety, zadana data jest zbyt odległa.")){
+            this.addWarning("Brak rozkładu jazdy dla tego przystanku");
+            return "0"+"\nundefined"+"\nbłąd"+"\nbrak"+"\nundefined";
+        }
+
         // first, find "Print timetable for all days" link
         Elements additionalLinks = document.select("div[class='LinkiDodatkowe'] a");
 
@@ -48,10 +63,15 @@ public class ZTMinfo extends BusInfo {
         result.append(lineNumber.text()).append("\n");
 
         // vehicle type
-        String vehicleType = document.select("img[class='busico']").first().attr("src");
-        if(vehicleType.contains("ico_tram")) vehicleType = "Light train";
-        else if(vehicleType.contains("ico_bus")) vehicleType = "Bus";
-        else vehicleType = "undefined";
+        String vehicleType;
+        try{
+            vehicleType = document.select("img[class='busico']").first().attr("src");
+            if(vehicleType.contains("ico_tram")) vehicleType = "Light train";
+            else if(vehicleType.contains("ico_bus")) vehicleType = "Bus";
+            else vehicleType = "undefined";
+        } catch (NullPointerException e){
+            vehicleType = "undefined";
+        }
         result.append(vehicleType).append("\n");
 
         // stop name
@@ -109,26 +129,23 @@ public class ZTMinfo extends BusInfo {
     }
 
     public boolean checkColumnNames(ArrayList<String> columnNames){
-        if(columnNames.get(0).equals("Dzień Powszedni")
-                && columnNames.get(1).equals("Święto")){ // copy saturdayCourses to sundayCourses
-            this.setSundayList(this.getSaturdayList());
-            warnings.add("Dwie kolumny: \"Dzień Powszedni\" i \"Święto\". Rozkład z kolumny \"Święto\" przepisano dla sobót i niedziel");
-            return true;
-        }
-        else if (columnNames.get(0).equals("Dzień Powszedni")
+
+        if (columnNames.size() ==  3 && columnNames.get(0).equals("Dzień Powszedni")
                 && columnNames.get(1).equals("Sobota")
                 && columnNames.get(2).equals("Święto")){
-                    return true;
+            return true;
+        }
+        else if(columnNames.size() == 2 &&  columnNames.get(0).equals("Dzień Powszedni")
+                && columnNames.get(1).equals("Święto")){ // copy saturdayCourses to sundayCourses
+            this.setSundayList(this.getSaturdayList());
+            warnings.add("Dwie kolumny: \"Dzień Powszedni\" i \"Święto\". Rozkład z kolumny \"Święto\" przepisano dla sobót i niedziel\t" + this.innerHtml);
+            return true;
         }
         else if (columnNames.size() == 1 && columnNames.get(0).equals("Dzień powszedni")){
             return true;
-        }
-        else if (columnNames.size() != 3 ){
-            warnings.add("Niestandardowe nazwy kolumn. Sprawdź przystanek " + this.innerHtml);
-            return false;
         } else {
-            warnings.add("Niestandardowe rozłożenie kolumn. Sprawdź przystanek " + this.innerHtml);
-            return false;
+            warnings.add("Niestandardowe rozłożenie kolumn. Sprawdź przystanek " +"\t"+ this.innerHtml);
         }
+        return false;
     }
 }
