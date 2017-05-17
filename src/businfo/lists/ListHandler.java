@@ -35,6 +35,33 @@ public abstract class ListHandler {
     }
 
     /**
+     * Get only information about light trains from purified list
+     * @return list of found light train courses
+     */
+    public ArrayList<BusInfo> getOnlyTrams(){
+        ArrayList<BusInfo> result = new ArrayList<>();
+        for(BusInfo tramInfo : this.busInfosPurified){
+            if(tramInfo.getVehicleType().equals("Light train")){
+                result.add(tramInfo);
+            }
+        }
+        return result;
+    }
+    /**
+     * Get only information about buses from purified list
+     * @return list of found bus courses
+     */
+    public ArrayList<BusInfo> getOnlyBuses(){
+        ArrayList<BusInfo> result = new ArrayList<>();
+        for(BusInfo busInfo : this.busInfosPurified){
+            if(busInfo.getVehicleType().equals("Bus") || busInfo.getVehicleType().equals("undefined")){
+                result.add(busInfo);
+            }
+        }
+        return result;
+    }
+
+    /**
      * Clear busInfo from redundant BusInfos objects.
      * Choose the most pesimistic case (by weekday).
      * @param allBusInfos list to clear
