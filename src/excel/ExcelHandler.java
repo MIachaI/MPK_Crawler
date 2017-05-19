@@ -2,6 +2,7 @@ package excel;
 
 import businfo.busstop.BusInfo;
 import businfo.lists.ListContainer;
+import businfo.lists.MPKList;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
@@ -20,7 +21,9 @@ public class ExcelHandler {
     // TODO reduce code
 
     public static void saveExcel(ListContainer listContainer, String path) throws IOException {
+        System.out.println("rozpoczeto dzialanie metody saveExcel");
         FileOutputStream fileOut;
+
         try (Workbook output = new HSSFWorkbook()) {
             Sheet result = output.createSheet("wynik");
 
@@ -163,10 +166,9 @@ public class ExcelHandler {
                 result.getRow(row).getCell(8).setCellValue(busWeekendAvgSum);
             }
 
-            fileOut = new FileOutputStream(path + ".xls");
+            fileOut = new FileOutputStream(path + "out.xls");
             output.write(fileOut);
         }
-        System.out.println(path);
         fileOut.close();
     }
 }
