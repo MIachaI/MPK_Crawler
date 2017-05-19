@@ -13,6 +13,7 @@ public class ListContainer {
 
     public ListContainer(){
         this.listHandlers = new ArrayList<>();
+        this.busInfos = new ArrayList<>();
     }
     public ListContainer(ArrayList<ListHandler> lists){
         this.listHandlers = lists;
@@ -60,5 +61,4 @@ public class ListContainer {
         }
         return result;
     }
-
 }

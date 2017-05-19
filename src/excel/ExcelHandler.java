@@ -21,7 +21,6 @@ public class ExcelHandler {
     // TODO reduce code
 
     public static void saveExcel(ListContainer listContainer, String path) throws IOException {
-        System.out.println("rozpoczeto dzialanie metody saveExcel");
         FileOutputStream fileOut;
 
         try (Workbook output = new HSSFWorkbook()) {
@@ -166,7 +165,7 @@ public class ExcelHandler {
                 result.getRow(row).getCell(8).setCellValue(busWeekendAvgSum);
             }
 
-            fileOut = new FileOutputStream(path + "out.xls");
+            fileOut = new FileOutputStream(path + ".xls");
             output.write(fileOut);
         }
         fileOut.close();

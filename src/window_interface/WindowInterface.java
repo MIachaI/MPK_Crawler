@@ -18,6 +18,8 @@ import javax.xml.soap.Text;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 
 public class WindowInterface extends Application implements EventHandler<ActionEvent> {
@@ -52,7 +54,7 @@ public class WindowInterface extends Application implements EventHandler<ActionE
 
 
         //linkLabel - constrains use (child, column, row)
-        Label linkLabel = new Label("Wprowadź link:");
+        Label linkLabel = new Label("Wprowadź linki:\n(jeden na linię)");
         GridPane.setConstraints(linkLabel, 0, 1);
 
         //pathLabel
@@ -129,14 +131,11 @@ public class WindowInterface extends Application implements EventHandler<ActionE
         });
         fileMenu.getItems().add(Authors);
 
-
-
-
         menuBar.getMenus().addAll(fileMenu);
 
-
         //Link_TextField
-        TextField linkTextField = new TextField("");
+        TextArea linkTextField = new TextArea();
+        linkTextField.setMaxWidth(250.0);
         GridPane.setConstraints(linkTextField, 1, 1);
 
         //Path_TextField
@@ -147,67 +146,49 @@ public class WindowInterface extends Application implements EventHandler<ActionE
         //Execute_Button
         Button executeButton = new Button("Wykonaj");
         GridPane.setConstraints(executeButton, 1, 3);
-        executeButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                if (cracowBox.isSelected()) {
-                    String html = linkTextField.getText();
-                    MPKList mpkList = null;
-                    try {
-                        mpkList = new MPKList(html);
-                    } catch (IOException e) {
-                        statusLabel.setText("Status: błąd!");
+        executeButton.setOnAction(event -> {
+            // store all links provided by user in linkList
+            ArrayList<String> linkList = new ArrayList<>(Arrays.asList(linkTextField.getText().split("\n")));
+            if (cracowBox.isSelected()) {
+                ListContainer mpkContainer = new ListContainer(); // create ListContainer for MPKList objects
+                try {
+                    for(String link : linkList){
+                        mpkContainer.addListHandler(new MPKList(link)); // add MPKList object for each link on the list
                     }
-                    try {
-                        String output = pathTextField.getText();
+                } catch (IOException e) {
+                    statusLabel.setText("Status: błąd!");
+                }
+                try {
+                    String path = pathTextField.getText();
 
-                        File file = new File(output);
-                        FileWriter fileWriter = new FileWriter(file);
-                        fileWriter.write(mpkList.excelFormattedText());
-                        fileWriter.flush();
-                        fileWriter.close();
+                    ExcelHandler.saveExcel(mpkContainer, path);
+                    displaySuccessSaveAlert(path);
+                } catch (IOException e) {
+                    statusLabel.setText("Status: błąd!");
+                }
 
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.setTitle("Sukces");
-                        alert.setHeaderText("Gotowe!");
-                        alert.showAndWait();
-                    } catch (IOException e) {
-                        statusLabel.setText("Status: błąd!");
+            } else if (warsawBox.isSelected()) {
+                ListContainer ztmContainer = new ListContainer();
+                try {
+                    for(String link : linkList){
+                        ztmContainer.addListHandler(new ZTMList(link));
                     }
-
-                } else if (warsawBox.isSelected()) {
-                    String html = linkTextField.getText();
-                    ZTMList ztmList = null;
-                    try {
-                        ztmList = new ZTMList(html);
-                    } catch (IOException e) {
-                        statusLabel.setText("Status: błąd!");
-                    }
-                    try {
-                        String output = pathTextField.getText();
-                        File file = new File(output);
-                        FileWriter fileWriter = new FileWriter(file);
-                        fileWriter.write(ztmList.excelFormattedText());
-                        fileWriter.flush();
-                        fileWriter.close();
-
-                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                        alert.setTitle("Sukces");
-                        alert.setHeaderText("Gotowe!");
-
-                        alert.showAndWait();
-                    } catch (IOException e) {
-                        statusLabel.setText("Status: błąd!");
-                    }
+                } catch (IOException e) {
+                    statusLabel.setText("Status: błąd!");
+                }
+                try {
+                    String path = pathTextField.getText();
+                    ExcelHandler.saveExcel(ztmContainer, path);
+                    displaySuccessSaveAlert(path);
+                } catch (IOException e) {
+                    statusLabel.setText("Status: błąd!");
                 }
             }
         });
 
-
         final Button browseButton = new Button("...");
         GridPane.setConstraints(browseButton, 2, 2);
-        browseButton.setOnAction(
-                e -> {
+        browseButton.setOnAction(e -> {
                     FileChooser fileChooser = new FileChooser();
 
                     //Set extension filter
@@ -221,22 +202,26 @@ public class WindowInterface extends Application implements EventHandler<ActionE
                     else {
                         // TODO handle cancel button pressed
                     }
-                }
-        );
-
+                });
 
         //Add everything to grid
         grid.getChildren().addAll(menuBar, linkLabel, linkTextField, pathLabel, pathTextField, executeButton, browseButton, cracowBox, warsawBox, statusLabel);
 
-
         Scene scene = new Scene(grid, 600, 200);
         window.setScene(scene);
         window.show();
-
     }
 
     @Override
     public void handle(ActionEvent event) {
     }
 
+    private void displaySuccessSaveAlert(String path){
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Sukces");
+        alert.setHeaderText("Gotowe!");
+        alert.setContentText("Zapisano do pliku:\n" + path);
+
+        alert.showAndWait();
+    }
 }
