@@ -6,6 +6,9 @@ import java.util.ArrayList;
 
 /**
  * Class to hold multiple ListHandlers (multiple lines for one bus stop)
+ *
+ * ok to trzeba tak: lista lnikow -> stworzenie ArrayListy ZTMList
+ * lub MPKList -> wrzucenie tej listy do ListContainer -> ExcelHandler.saveExcel(container, sciezka)
  */
 public class ListContainer {
     private ArrayList<ListHandler> listHandlers;

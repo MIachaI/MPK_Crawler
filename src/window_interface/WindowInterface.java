@@ -1,16 +1,19 @@
 package window_interface;
 
 import businfo.lists.*;
+import excel.ExcelHandler;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import javafx.geometry.Insets;
 
+import javax.xml.soap.Text;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -37,35 +40,36 @@ public class WindowInterface extends Application implements EventHandler<ActionE
 
         ToggleGroup Location_Group_RadioButtons = new ToggleGroup();
 
-        RadioButton Cracow_Box = new RadioButton("Kraków");
-        GridPane.setConstraints(Cracow_Box, 2, 1);
-        Cracow_Box.setToggleGroup(Location_Group_RadioButtons);
-        Cracow_Box.setSelected(true);
+        RadioButton cracowBox = new RadioButton("Kraków");
+        GridPane.setConstraints(cracowBox, 2, 1);
+        cracowBox.setToggleGroup(Location_Group_RadioButtons);
+        cracowBox.setSelected(true);
 
-        RadioButton Warsaw_Box = new RadioButton("Warszawa");
-        GridPane.setConstraints(Warsaw_Box, 3, 1);
-        Warsaw_Box.setToggleGroup(Location_Group_RadioButtons);
+        RadioButton warsawBox = new RadioButton("Warszawa");
+        GridPane.setConstraints(warsawBox, 3, 1);
+        warsawBox.setToggleGroup(Location_Group_RadioButtons);
 
 
-        //Link_Label - constrains use (child, column, row)
-        Label Link_Label = new Label("Wprowadź link:");
-        GridPane.setConstraints(Link_Label, 0, 1);
+        //linkLabel - constrains use (child, column, row)
+        Label linkLabel = new Label("Wprowadź link:");
+        GridPane.setConstraints(linkLabel, 0, 1);
 
-        //Path_Label
-        Label Path_Label = new Label("Podaj ścieżkę zapisu:");
-        GridPane.setConstraints(Path_Label, 0, 2);
+        //pathLabel
+        Label pathLabel = new Label("Podaj ścieżkę zapisu:");
+        GridPane.setConstraints(pathLabel, 0, 2);
 
-        //Status_Label
-        Label Status_Label = new Label("Status: w gotowości");
-        GridPane.setConstraints(Status_Label, 0, 4);
+        //statusLabel
+        Label statusLabel = new Label("Status: w gotowości");
+        GridPane.setConstraints(statusLabel, 0, 4);
 
-        //OutputName_Label
-        Label OutputName_Label = new Label("Wprowadź nazwę:");
-        GridPane.setConstraints(OutputName_Label, 0, 3);
+        //outputNameLabel
+        Label outputNameLabel = new Label("Wprowadź nazwę:");
+        GridPane.setConstraints(outputNameLabel, 0, 3);
 
         //Menu
         MenuBar menuBar = new MenuBar();
         Menu fileMenu = new Menu("Opcje robota");
+
 /**
  * Crawler description to rewrite, following lines are just to check if it`s showing messages correctly.
  *
@@ -73,31 +77,62 @@ public class WindowInterface extends Application implements EventHandler<ActionE
         //Menu items
         MenuItem About = new MenuItem("O programie");
         About.setOnAction(event -> {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("O programie");
-            alert.setHeaderText("Public Transport Crawler");
-            alert.setContentText("Program ten powstał przede wszystkim po to, aby ułatwić pracę audytorom z firmy JW_A. \nPoliczenie siły komunikacji dla budynku nigdy nie było tak proste!");
-            alert.showAndWait();
+            Label secondLabel = new Label("about");
+            secondLabel.setWrapText(true);
+
+            StackPane secondaryLayout = new StackPane();
+            secondaryLayout.getChildren().add(secondLabel);
+            Scene secondScene = new Scene(secondaryLayout, 400, 300);
+            Stage secondStage = new Stage();
+            secondStage.setTitle("O programie");
+            secondStage.setScene(secondScene);
+            secondStage.setX(primaryStage.getX() + 250);
+            secondStage.setY(primaryStage.getY() + 100);
+
+            secondStage.show();
         });
         fileMenu.getItems().add(About);
 
+
         MenuItem Tutorial = new MenuItem("Tutorial");
         Tutorial.setOnAction(event -> {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Tutorial");
-            alert.setHeaderText("Jak używać?");
-            alert.setContentText("Na początek należy zrozumieć w jaki sposób cały program jest skonstruowany. Potrzeny jest tylko jeden zewnętrzny link do przystanku w danym mieście, czy to Krakowie czy Warszawie. Format tego linku powinien być następujący: \nhttp://rozklady.mpk.krakow.pl/?lang=PL&akcja=przystanek&rozklad=20170429&przystanek=S3Jvd29kcnphIEfDs3JrYQeEeeEe\nProgram jest wówczas w stanie znaleźć linie przejężdżające przy tym przystanku w dane dni, zliczyć ich częstość, a następnie jako plik zwrotny otrzymujecie Państwo arkusz xls.");
-            alert.showAndWait();
+            Label secondLabel = new Label("\tNa początek należy zrozumieć w jaki sposób cały program jest skonstruowany. Potrzeny jest tylko jeden zewnętrzny link do przystanku w danym mieście, czy to Krakowie czy Warszawie.\n\tFormat tego linku powinien być następujący: \nhttp://rozklady.mpk.krakow.pl/?lang=PL&akcja=przystanek&rozklad=20170429&przystanek=S3Jvd29kcnphIEfDs3JrYQeEeeEe\n\tProgram jest wówczas w stanie znaleźć linie przejężdżające przy tym przystanku w dane dni, zliczyć ich częstość, a następnie jako plik zwrotny otrzymujecie Państwo arkusz xls.");
+            secondLabel.setWrapText(true);
+
+            StackPane secondaryLayout = new StackPane();
+            secondaryLayout.getChildren().add(secondLabel);
+
+            Scene secondScene = new Scene(secondaryLayout, 400, 300);
+
+            Stage secondStage = new Stage();
+            secondStage.setTitle("Tutorial");
+            secondStage.setScene(secondScene);
+            secondStage.setX(primaryStage.getX() + 250);
+            secondStage.setY(primaryStage.getY() + 100);
+
+            secondStage.show();
+
         });
         fileMenu.getItems().add(Tutorial);
 
         MenuItem Authors = new MenuItem("Autorzy");
         Authors.setOnAction(event -> {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Autorzy");
-            alert.setHeaderText("Umat & MIachaI");
-            alert.setContentText("Kontakt możliwy za pomocą emaili \nMIachaI: mprawda@wp.pl \nUmat: Urbańczyk@wp.pl");
-            alert.showAndWait();
+            Label secondLabel = new Label("\t");
+            secondLabel.setWrapText(true);
+
+            StackPane secondaryLayout = new StackPane();
+            secondaryLayout.getChildren().add(secondLabel);
+
+            Scene secondScene = new Scene(secondaryLayout, 400, 300);
+
+            Stage secondStage = new Stage();
+            secondStage.setTitle("Autorzy");
+            secondStage.setScene(secondScene);
+            secondStage.setX(primaryStage.getX() + 250);
+            secondStage.setY(primaryStage.getY() + 100);
+
+            secondStage.show();
+
         });
         fileMenu.getItems().add(Authors);
 
@@ -108,37 +143,38 @@ public class WindowInterface extends Application implements EventHandler<ActionE
 
 
         //Link_TextField
-        TextField Link_TextField = new TextField("");
-        GridPane.setConstraints(Link_TextField, 1, 1);
+        TextField linkTextField = new TextField("");
+        GridPane.setConstraints(linkTextField, 1, 1);
 
         //Path_TextField
-        TextField Path_TextField = new TextField("");
-        GridPane.setConstraints(Path_TextField, 1, 2);
+        TextField pathTextField = new TextField("");
+        GridPane.setConstraints(pathTextField, 1, 2);
         final String[] html = new String[1];
 
-        //OutputName_TextField
-        TextField OutputName_TextField = new TextField("");
-        GridPane.setConstraints(OutputName_TextField, 1, 3);
-        OutputName_TextField.setText("Output");
+        //outputNameTextField
+        TextField outputNameTextField = new TextField("");
+        GridPane.setConstraints(outputNameTextField, 1, 3);
+        outputNameTextField.setText("Output");
 
         //Execute_Button
-        Button Execute_Button = new Button("Wykonaj");
-        GridPane.setConstraints(Execute_Button, 1, 4);
-        Execute_Button.setOnAction(new EventHandler<ActionEvent>() {
+        Button executeButton = new Button("Wykonaj");
+        GridPane.setConstraints(executeButton, 1, 4);
+        executeButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                if (Cracow_Box.isSelected()) {
-                    String html = Link_TextField.getText();
+                if (cracowBox.isSelected()) {
+                    String html = linkTextField.getText();
                     MPKList mpkList = null;
                     try {
                         mpkList = new MPKList(html);
                     } catch (IOException e) {
-                        Status_Label.setText("Status: błąd!");
+                        statusLabel.setText("Status: błąd!");
                     }
-                    String zmienna = Path_TextField.getText();
+                    String zmienna = pathTextField.getText();
                     //
                     try {
-                        String output = OutputName_TextField.getText();
+                        String output = outputNameTextField.getText();
+
                         File file = new File(zmienna + "/" + output + ".xls");
                         FileWriter fileWriter = new FileWriter(file);
                         fileWriter.write(mpkList.excelFormattedText());
@@ -150,20 +186,20 @@ public class WindowInterface extends Application implements EventHandler<ActionE
                         alert.setHeaderText("Gotowe!");
                         alert.showAndWait();
                     } catch (IOException e) {
-                        Status_Label.setText("Status: błąd!");
+                        statusLabel.setText("Status: błąd!");
                     }
 
-                } else if (Warsaw_Box.isSelected()) {
-                    String html = Link_TextField.getText();
+                } else if (warsawBox.isSelected()) {
+                    String html = linkTextField.getText();
                     ZTMList ztmList = null;
                     try {
                         ztmList = new ZTMList(html);
                     } catch (IOException e) {
-                        Status_Label.setText("Status: błąd!");
+                        statusLabel.setText("Status: błąd!");
                     }
-                    String zmienna = Path_TextField.getText();
+                    String zmienna = pathTextField.getText();
                     try {
-                        String output = OutputName_TextField.getText();
+                        String output = outputNameTextField.getText();
                         File file = new File(zmienna + "/" + output + ".xls");
                         FileWriter fileWriter = new FileWriter(file);
                         fileWriter.write(ztmList.excelFormattedText());
@@ -176,16 +212,16 @@ public class WindowInterface extends Application implements EventHandler<ActionE
 
                         alert.showAndWait();
                     } catch (IOException e) {
-                        Status_Label.setText("Status: błąd!");
+                        statusLabel.setText("Status: błąd!");
                     }
                 }
             }
         });
 
 
-        final Button Browse_Button = new Button("...");
-        GridPane.setConstraints(Browse_Button, 2, 2);
-        Browse_Button.setOnAction(
+        final Button browseButton = new Button("...");
+        GridPane.setConstraints(browseButton, 2, 2);
+        browseButton.setOnAction(
                 new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(final ActionEvent e) {
@@ -195,7 +231,7 @@ public class WindowInterface extends Application implements EventHandler<ActionE
                                 directoryChooser.showDialog(window);
                         if (selectedDirectory != null) {
                             selectedDirectory.getAbsolutePath();
-                            Path_TextField.setText(selectedDirectory.getAbsolutePath());
+                            pathTextField.setText(selectedDirectory.getAbsolutePath());
                         }
                     }
                 }
@@ -203,7 +239,7 @@ public class WindowInterface extends Application implements EventHandler<ActionE
 
 
         //Add everything to grid
-        grid.getChildren().addAll(menuBar, OutputName_TextField, OutputName_Label, Link_Label, Link_TextField, Path_Label, Path_TextField, Execute_Button, Browse_Button, Cracow_Box, Warsaw_Box, Status_Label);
+        grid.getChildren().addAll(menuBar, outputNameTextField, outputNameLabel, linkLabel, linkTextField, pathLabel, pathTextField, executeButton, browseButton, cracowBox, warsawBox, statusLabel);
 
 
         Scene scene = new Scene(grid, 600, 250);
