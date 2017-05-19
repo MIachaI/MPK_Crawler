@@ -207,20 +207,21 @@ public class WindowInterface extends Application implements EventHandler<ActionE
         final Button browseButton = new Button("...");
         GridPane.setConstraints(browseButton, 2, 2);
         browseButton.setOnAction(
-                new EventHandler<ActionEvent>() {
-                    @Override
-                    public void handle(final ActionEvent e) {
-                        FileChooser fileChooser = new FileChooser();
+                e -> {
+                    FileChooser fileChooser = new FileChooser();
 
-                        //Set extension filter
-                        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("XLS File (*.xls)", "*.xls");
-                        fileChooser.getExtensionFilters().add(extFilter);
+                    //Set extension filter
+                    FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("XLS File (*.xls)", "*.xls");
+                    fileChooser.getExtensionFilters().add(extFilter);
 
-                        //Show save file dialog
-                        File file = fileChooser.showSaveDialog(primaryStage);
+                    //Show save file dialog
+                    File file = fileChooser.showSaveDialog(primaryStage);
+                    if(file != null)
                         pathTextField.setText(file.getAbsolutePath());
-                        }
+                    else {
+                        // TODO handle cancel button pressed
                     }
+                }
         );
 
 
