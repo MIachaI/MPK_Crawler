@@ -10,9 +10,10 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.geometry.Insets;
-
+import javafx.scene.text.*;
 import javax.xml.soap.Text;
 import java.io.File;
 import java.io.FileWriter;
@@ -60,11 +61,7 @@ public class WindowInterface extends Application implements EventHandler<ActionE
 
         //statusLabel
         Label statusLabel = new Label("Status: w gotowości");
-        GridPane.setConstraints(statusLabel, 0, 4);
-
-        //outputNameLabel
-        Label outputNameLabel = new Label("Wprowadź nazwę:");
-        GridPane.setConstraints(outputNameLabel, 0, 3);
+        GridPane.setConstraints(statusLabel, 0, 3);
 
         //Menu
         MenuBar menuBar = new MenuBar();
@@ -103,13 +100,11 @@ public class WindowInterface extends Application implements EventHandler<ActionE
             secondaryLayout.getChildren().add(secondLabel);
 
             Scene secondScene = new Scene(secondaryLayout, 400, 300);
-
             Stage secondStage = new Stage();
             secondStage.setTitle("Tutorial");
             secondStage.setScene(secondScene);
             secondStage.setX(primaryStage.getX() + 250);
             secondStage.setY(primaryStage.getY() + 100);
-
             secondStage.show();
 
         });
@@ -122,9 +117,7 @@ public class WindowInterface extends Application implements EventHandler<ActionE
 
             StackPane secondaryLayout = new StackPane();
             secondaryLayout.getChildren().add(secondLabel);
-
-            Scene secondScene = new Scene(secondaryLayout, 400, 300);
-
+            Scene secondScene = new Scene(secondaryLayout, 400, 250);
             Stage secondStage = new Stage();
             secondStage.setTitle("Autorzy");
             secondStage.setScene(secondScene);
@@ -151,14 +144,9 @@ public class WindowInterface extends Application implements EventHandler<ActionE
         GridPane.setConstraints(pathTextField, 1, 2);
         final String[] html = new String[1];
 
-        //outputNameTextField
-        TextField outputNameTextField = new TextField("");
-        GridPane.setConstraints(outputNameTextField, 1, 3);
-        outputNameTextField.setText("Output");
-
         //Execute_Button
         Button executeButton = new Button("Wykonaj");
-        GridPane.setConstraints(executeButton, 1, 4);
+        GridPane.setConstraints(executeButton, 1, 3);
         executeButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -170,12 +158,10 @@ public class WindowInterface extends Application implements EventHandler<ActionE
                     } catch (IOException e) {
                         statusLabel.setText("Status: błąd!");
                     }
-                    String zmienna = pathTextField.getText();
-                    //
                     try {
-                        String output = outputNameTextField.getText();
+                        String output = pathTextField.getText();
 
-                        File file = new File(zmienna + "/" + output + ".xls");
+                        File file = new File(output);
                         FileWriter fileWriter = new FileWriter(file);
                         fileWriter.write(mpkList.excelFormattedText());
                         fileWriter.flush();
@@ -197,10 +183,9 @@ public class WindowInterface extends Application implements EventHandler<ActionE
                     } catch (IOException e) {
                         statusLabel.setText("Status: błąd!");
                     }
-                    String zmienna = pathTextField.getText();
                     try {
-                        String output = outputNameTextField.getText();
-                        File file = new File(zmienna + "/" + output + ".xls");
+                        String output = pathTextField.getText();
+                        File file = new File(output);
                         FileWriter fileWriter = new FileWriter(file);
                         fileWriter.write(ztmList.excelFormattedText());
                         fileWriter.flush();
@@ -225,24 +210,25 @@ public class WindowInterface extends Application implements EventHandler<ActionE
                 new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(final ActionEvent e) {
-                        final DirectoryChooser directoryChooser =
-                                new DirectoryChooser();
-                        final File selectedDirectory =
-                                directoryChooser.showDialog(window);
-                        if (selectedDirectory != null) {
-                            selectedDirectory.getAbsolutePath();
-                            pathTextField.setText(selectedDirectory.getAbsolutePath());
+                        FileChooser fileChooser = new FileChooser();
+
+                        //Set extension filter
+                        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("XLS File (*.xls)", "*.xls");
+                        fileChooser.getExtensionFilters().add(extFilter);
+
+                        //Show save file dialog
+                        File file = fileChooser.showSaveDialog(primaryStage);
+                        pathTextField.setText(file.getAbsolutePath());
                         }
                     }
-                }
         );
 
 
         //Add everything to grid
-        grid.getChildren().addAll(menuBar, outputNameTextField, outputNameLabel, linkLabel, linkTextField, pathLabel, pathTextField, executeButton, browseButton, cracowBox, warsawBox, statusLabel);
+        grid.getChildren().addAll(menuBar, linkLabel, linkTextField, pathLabel, pathTextField, executeButton, browseButton, cracowBox, warsawBox, statusLabel);
 
 
-        Scene scene = new Scene(grid, 600, 250);
+        Scene scene = new Scene(grid, 600, 200);
         window.setScene(scene);
         window.show();
 
