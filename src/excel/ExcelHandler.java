@@ -22,13 +22,13 @@ public class ExcelHandler {
 
     public static void saveExcel(ListContainer listContainer, String path) throws IOException {
         FileOutputStream fileOut;
-
+        int tramWeekdaySum = 0, tramWeekendAvgSum = 0;
         try (Workbook output = new HSSFWorkbook()) {
             Sheet result = output.createSheet("wynik");
 
-            for (int row = 0; row < 100; row++) {
+            for (int row = 0; row < 150; row++) {
                 result.createRow(row);
-                for (int column = 0; column < 100; column++) {
+                for (int column = 0; column < 20; column++) {
                     result.getRow(row).createCell(column);
                 }
             }
@@ -36,7 +36,7 @@ public class ExcelHandler {
             ArrayList<BusInfo> tramList = listContainer.getOnlyTrams();
             ArrayList<BusInfo> busList = listContainer.getOnlyBuses();
 
-            int row = 0;
+            int row = 1;
 
             // set style for title row
             CellStyle titleRowStyle = output.createCellStyle();
@@ -45,11 +45,18 @@ public class ExcelHandler {
             font.setBold(true);
             font.setFontName("Calibri");
             font.setFontHeightInPoints((short) 11);
+
+            result.setColumnWidth(2, 11*500);
+            result.setColumnWidth(3, 11*300);
+            result.setColumnWidth(4, 11*300);
+            result.setColumnWidth(9, 11*450);
+
             titleRowStyle.setFont(font);
             titleRowStyle.setFillForegroundColor(IndexedColors.BLACK.getIndex());
             titleRowStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-            titleRowStyle.setAlignment(HorizontalAlignment.CENTER);
             titleRowStyle.setVerticalAlignment(CENTER);
+            titleRowStyle.setAlignment(HorizontalAlignment.CENTER);
+            
             titleRowStyle.setWrapText(true);
             titleRowStyle.setBorderLeft(CellStyle.BORDER_MEDIUM);
 
@@ -80,7 +87,7 @@ public class ExcelHandler {
                 result.getRow(row).getCell(7).setCellValue("Weekend");
                 result.getRow(row).getCell(8).setCellValue("Average");
 
-                int tramWeekdaySum = 0, tramWeekendAvgSum = 0;
+               // int tramWeekdaySum = 0, tramWeekendAvgSum = 0;
                 for(BusInfo tramInfo : tramList){
                     row++;
                     result.getRow(row).getCell(1).setCellValue(tramInfo.getLineNumberString());
@@ -156,13 +163,36 @@ public class ExcelHandler {
                     }
                 }
                 // write summary (sum of courses for weekday and weekend avgs)
-                row++;
+                row+=2;
                 result.addMergedRegion(new CellRangeAddress(row, row, 7, 8));
                 result.getRow(row).getCell(7).setCellValue("Total");
-                result.getRow(++row).getCell(7).setCellValue("Weekday");
-                result.getRow(row).getCell(8).setCellValue("Weekend");
-                result.getRow(++row).getCell(7).setCellValue(busWeekdaySum);
-                result.getRow(row).getCell(8).setCellValue(busWeekendAvgSum);
+                result.getRow(row+1).getCell(7).setCellValue("Weekday");
+                result.getRow(row+1).getCell(8).setCellValue("Weekend");
+                result.getRow(row+2).getCell(7).setCellValue(busWeekdaySum);
+                result.getRow(row+2).getCell(8).setCellValue(busWeekendAvgSum);
+                row+=4;
+                result.addMergedRegion(new CellRangeAddress(row+1,row+1,4,7));
+                result.addMergedRegion(new CellRangeAddress(row+2,row+2,4,7));
+                result.addMergedRegion(new CellRangeAddress(row+3,row+3,4,7));
+
+                result.getRow(row).getCell(8).setCellValue("Weekdays");
+                result.getRow(row).getCell(9).setCellValue("Weekend (average)");
+                row++;
+
+                result.getRow(row).getCell(4).setCellValue("Daily number of rides by light trains");
+                result.getRow(row).getCell(8).setCellValue(tramWeekdaySum);
+                result.getRow(row).getCell(9).setCellValue(tramWeekendAvgSum);
+                row++;
+
+                result.getRow(row).getCell(4).setCellValue("Daily number of rides by buses");
+                result.getRow(row).getCell(8).setCellValue(busWeekdaySum);
+                result.getRow(row).getCell(9).setCellValue(busWeekendAvgSum);
+                row++;
+
+                result.getRow(row).getCell(4).setCellValue("Daily number of rides - summary");
+                result.getRow(row).getCell(8).setCellValue(tramWeekdaySum+busWeekdaySum);
+                result.getRow(row).getCell(9).setCellValue(tramWeekendAvgSum+busWeekendAvgSum);
+
             }
 
             fileOut = new FileOutputStream(path + ".xls");

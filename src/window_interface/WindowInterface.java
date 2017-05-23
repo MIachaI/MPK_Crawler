@@ -207,7 +207,7 @@ public class WindowInterface extends Application implements EventHandler<ActionE
         //Add everything to grid
         grid.getChildren().addAll(menuBar, linkLabel, linkTextField, pathLabel, pathTextField, executeButton, browseButton, cracowBox, warsawBox, statusLabel);
 
-        Scene scene = new Scene(grid, 600, 200);
+        Scene scene = new Scene(grid, 650, 220);
         window.setScene(scene);
         window.show();
     }
