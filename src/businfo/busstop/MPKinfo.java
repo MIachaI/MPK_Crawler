@@ -30,13 +30,16 @@ public class MPKinfo extends BusInfo {
 		//get bus number
 		Elements number = document.select("p[style='font-size: 40px;']");
 		lines.add(number.text());
-
         Elements rows = document.select("table[style=' width: 700px; '] table tbody tr");
-		//String lineNumber = number.toString();
 		Elements htmlInput = document.select("table[style=' width: 700px; ']");
-		String htmlString = htmlInput.toString();
+		Element htmlString = htmlInput.select("a").first();
+		String printHtml = htmlString.attr("abs:href");
+
 		String lineNumber = number.text();
-		HtmlToImage.ImageGenerator(htmlString, lineNumber);
+		Document printedHtml = Jsoup.connect(printHtml).get();
+		Elements convertableHtml = printedHtml.select("table[style=' width: 700px; ']");
+		String htmlInString = convertableHtml.toString();
+		HtmlToImage.ImageGenerator(htmlInString, lineNumber);
 
 
 		for (Element row : rows){
