@@ -2,14 +2,11 @@ package excel;
 
 import businfo.busstop.BusInfo;
 import businfo.lists.ListContainer;
-import businfo.lists.MPKList;
-import gui.ava.html.image.generator.HtmlImageGenerator;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.jsoup.select.Elements;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -26,8 +23,6 @@ public class ExcelHandler {
     public static void saveExcel(ListContainer listContainer, String path) throws IOException {
         FileOutputStream fileOut;
         int tramWeekdaySum = 0, tramWeekendAvgSum = 0;
-
-
 
         try (Workbook output = new HSSFWorkbook()) {
             Sheet result = output.createSheet("wynik");
@@ -73,8 +68,6 @@ public class ExcelHandler {
             CellStyle lineCellStyle = output.createCellStyle();
             lineCellStyle.setAlignment(HorizontalAlignment.CENTER);
             //lineCellStyle.setFont(font);
-
-
 
             if(!tramList.isEmpty()){ // if there are trams on the list
                 result.addMergedRegion(new CellRangeAddress(row, row+1, 1, 1));
@@ -222,7 +215,6 @@ public class ExcelHandler {
                 result.getRow(row).getCell(9).setCellValue(tramWeekendAvgSum+busWeekendAvgSum);
 
             }
-
             fileOut = new FileOutputStream(path + ".xls");
             output.write(fileOut);
         }

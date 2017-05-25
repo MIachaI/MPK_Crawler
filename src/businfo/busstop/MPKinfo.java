@@ -6,7 +6,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import window_interface.WindowInterface;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -39,7 +38,7 @@ public class MPKinfo extends BusInfo {
 		Document printedHtml = Jsoup.connect(printHtml).get();
 		Elements convertableHtml = printedHtml.select("table[style=' width: 700px; ']");
 		String htmlInString = convertableHtml.toString();
-		HtmlToImage.ImageGenerator(htmlInString, lineNumber);
+		HtmlToImage.imageGenerator(htmlInString, lineNumber);
 
 
 		for (Element row : rows){
