@@ -9,14 +9,11 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.geometry.Insets;
-import javafx.scene.text.*;
-import javax.xml.soap.Text;
+
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,6 +29,7 @@ public class WindowInterface extends Application implements EventHandler<ActionE
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        final String[] pathToFile = new String[1];
         window = primaryStage;
         window.setTitle("MPK Crawler");
 
@@ -197,8 +195,10 @@ public class WindowInterface extends Application implements EventHandler<ActionE
 
                     //Show save file dialog
                     File file = fileChooser.showSaveDialog(primaryStage);
-                    if(file != null)
+                    if(file != null) {
                         pathTextField.setText(file.getAbsolutePath());
+                        pathToFile[0] = file.getAbsolutePath();
+                    }
                     else {
                         // TODO handle cancel button pressed
                     }
@@ -210,6 +210,7 @@ public class WindowInterface extends Application implements EventHandler<ActionE
         Scene scene = new Scene(grid, 650, 220);
         window.setScene(scene);
         window.show();
+
     }
 
     @Override

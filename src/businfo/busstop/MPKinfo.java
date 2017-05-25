@@ -1,16 +1,19 @@
 package businfo.busstop;
 
+
+import businfo.lists.HtmlToImage;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import window_interface.WindowInterface;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 
 /**
- *	Class to store information about bus schedule presented on MPK Karków website
+ *	Class to store information about bus schedule presented on MPK Cracow website
  */
 public class MPKinfo extends BusInfo {
 	public MPKinfo(){
@@ -28,7 +31,13 @@ public class MPKinfo extends BusInfo {
 		Elements number = document.select("p[style='font-size: 40px;']");
 		lines.add(number.text());
 
-        Elements rows = document.select("table[style=' width: 700px; '] table tbody tr");     
+        Elements rows = document.select("table[style=' width: 700px; '] table tbody tr");
+		//String lineNumber = number.toString();
+		Elements htmlInput = document.select("table[style=' width: 700px; ']");
+		String htmlString = htmlInput.toString();
+		String lineNumber = number.text();
+		HtmlToImage.ImageGenerator(htmlString, lineNumber);
+
 
 		for (Element row : rows){
 			Elements columns = row.getElementsByTag("td");
