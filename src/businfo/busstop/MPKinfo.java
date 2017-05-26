@@ -1,7 +1,6 @@
 package businfo.busstop;
 
-
-import businfo.lists.HtmlToImage;
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -30,16 +29,6 @@ public class MPKinfo extends BusInfo {
 		Elements number = document.select("p[style='font-size: 40px;']");
 		lines.add(number.text());
         Elements rows = document.select("table[style=' width: 700px; '] table tbody tr");
-		Elements htmlInput = document.select("table[style=' width: 700px; ']");
-		Element htmlString = htmlInput.select("a").first();
-		String printHtml = htmlString.attr("abs:href");
-
-		String lineNumber = number.text();
-		Document printedHtml = Jsoup.connect(printHtml).get();
-		Elements convertableHtml = printedHtml.select("table[style=' width: 700px; ']");
-		String htmlInString = convertableHtml.toString();
-		HtmlToImage.imageGenerator(htmlInString, lineNumber);
-
 
 		for (Element row : rows){
 			Elements columns = row.getElementsByTag("td");
@@ -65,6 +54,28 @@ public class MPKinfo extends BusInfo {
 			rawResult.append(line).append("\n"); // separate each line with newline sign
 		}
 		return rawResult.toString();
+	}
+
+	public String getRawHtml() throws IOException {
+		StringBuilder result = new StringBuilder();
+		// find print view page (looks nicer)
+		Element printLink = Jsoup.connect(this.html).get().select("td[style=' width: 100px; '] a[target='_blank']").first();
+		String link = printLink.attr("href");
+		// go to print view page
+		Connection connection2 = Jsoup.connect(link);
+		Document document2 = connection2.get();
+		Element table = document2.select("table[style=' width: 700px; ']").first();
+		Element head = document2.select("head").first();
+		// add style absolute path
+		head.append("<link rel='stylesheet' href='http://rozklady.mpk.krakow.pl/widok/GP/CSS/style.css' type='text/css' />");
+
+		// add html tags at the beginning and the end
+		result.append("<!DOCTYPE HTML>\n<html>");
+		result.append(head.outerHtml()); 		// append body section
+		result.append(table.outerHtml());		// append table section
+		result.append("</html>");
+
+		return result.toString();
 	}
 
 	public boolean checkColumnNames(ArrayList<String> columnNames){
