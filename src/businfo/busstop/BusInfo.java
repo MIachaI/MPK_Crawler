@@ -65,11 +65,15 @@ public abstract class BusInfo {
      *  * Column titles (fourth line)<br/>
      *  * Following lines - timetable (columns separated with tabulation, rows separated with newlines)<br/>
      *  * Last line contains additional info<br/>
-     * @param html page adress from which to get info
+     * @param connection Json connection object. You can connect one like <br/> Connection connection = Jsoup.connect(html) <br/> where html is string containing html
      * @return info table formatted as string where columns are separated with tabulation and rows - with new lines
      * @throws IOException
      */
     abstract String getRawResult(Connection connection) throws IOException;
+    public String getRawHtml() throws IOException{
+        // TODO either make abstract or smth?
+        return "";
+    }
 
     /**
      * Saves found information to suitable class fields based on rawResult provided as a parameter

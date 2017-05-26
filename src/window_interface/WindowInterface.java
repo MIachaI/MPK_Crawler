@@ -1,6 +1,7 @@
 package window_interface;
 
 import businfo.lists.*;
+import save.SaveHandler;
 import save.excel.ExcelHandler;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -159,7 +160,8 @@ public class WindowInterface extends Application implements EventHandler<ActionE
                 try {
                     String path = pathTextField.getText();
 
-                    ExcelHandler.saveExcel(mpkContainer, path);
+                    //ExcelHandler.saveExcel(mpkContainer, path);
+                    SaveHandler.saveAll(mpkContainer, path);
                     displaySuccessSaveAlert(path);
                 } catch (IOException e) {
                     statusLabel.setText("Status: błąd!");

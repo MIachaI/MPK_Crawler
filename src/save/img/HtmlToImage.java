@@ -37,10 +37,10 @@ public class  HtmlToImage extends HtmlImageGenerator {
             }
         }
 
-        public static void imageGenerator(String html, String lineNumber)
+        public static void imageGenerator(String html, String path)
         {
             HtmlToImage imageGenerator = new HtmlToImage();
             imageGenerator.loadHtml(html);
-            imageGenerator.saveAsImage(lineNumber+".jpg");
+            imageGenerator.saveAsImage(path+".jpg");
         }
 }
