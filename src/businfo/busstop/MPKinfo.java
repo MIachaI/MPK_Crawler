@@ -22,9 +22,9 @@ public class MPKinfo extends BusInfo {
 		checkColumnNames(this.columnNames);
 	}
 
-	public String getRawResult(String html) throws IOException{
+	public String getRawResult(Connection connection) throws IOException{
 		ArrayList<String> lines = new ArrayList<>();
-		Document document = Jsoup.connect(html).get();
+		Document document = connection.get();
 		//get bus number
 		Elements number = document.select("p[style='font-size: 40px;']");
 		lines.add(number.text());
@@ -59,7 +59,7 @@ public class MPKinfo extends BusInfo {
 	public String getRawHtml() throws IOException {
 		StringBuilder result = new StringBuilder();
 		// find print view page (looks nicer)
-		Element printLink = Jsoup.connect(this.html).get().select("td[style=' width: 100px; '] a[target='_blank']").first();
+		Element printLink = this.jsoupConnection.get().select("td[style=' width: 100px; '] a[target='_blank']").first();
 		String link = printLink.attr("href");
 		// go to print view page
 		Connection connection2 = Jsoup.connect(link);

@@ -2,6 +2,8 @@ package businfo.busstop;
 
 import businfo.HourMinute;
 import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Connection;
+import org.jsoup.Jsoup;
 
 import java.util.ArrayList;
 import java.io.IOException;
@@ -9,6 +11,7 @@ import java.util.Arrays;
 
 public abstract class BusInfo {
     protected String html;
+    protected Connection jsoupConnection;
     protected int lineNumber;
     protected String lineNumberString;
     protected String vehicleType;
@@ -43,7 +46,8 @@ public abstract class BusInfo {
      */
     public void setHTML(String html) throws IOException {
         this.html = html;
-        this.rawResult = getRawResult(this.html);
+        this.jsoupConnection = Jsoup.connect(this.html);
+        this.rawResult = getRawResult(this.jsoupConnection);
         this.count(this.rawResult);
         this.lineNumber = findLineNumber();
         this.lineNumberString = findLineNumberString();
@@ -65,7 +69,7 @@ public abstract class BusInfo {
      * @return info table formatted as string where columns are separated with tabulation and rows - with new lines
      * @throws IOException
      */
-    abstract String getRawResult(String html) throws IOException;
+    abstract String getRawResult(Connection connection) throws IOException;
 
     /**
      * Saves found information to suitable class fields based on rawResult provided as a parameter

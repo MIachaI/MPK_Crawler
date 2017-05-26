@@ -3,6 +3,7 @@ package businfo.busstop;
 import java.io.IOException;
 import java.util.*;
 
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -22,9 +23,9 @@ public class ZTMinfo extends BusInfo {
     }
 
     @Override
-    public String getRawResult(String html) throws IOException {
+    public String getRawResult(Connection connection) throws IOException {
         StringBuilder result = new StringBuilder();
-        Document document = Jsoup.connect(html).get();
+        Document document = connection.get();
 
         // condition when schedule for weekend is empty - jump to weekday
         String emptyWarning;
@@ -34,7 +35,7 @@ public class ZTMinfo extends BusInfo {
             Elements links = document.select("div[id='RozkladyJazdyTopDays'] a[class='textmore']");
             String link = links.first().attr("href");
             // recursive search next stops
-            return getRawResult("http://www.ztm.waw.pl/" + link);
+            return getRawResult(Jsoup.connect("http://www.ztm.waw.pl/" + link));
         }
         else if(emptyWarning.equals("Niestety, zadana data jest zbyt odległa.")){
             this.addWarning("Brak rozkładu jazdy dla tego przystanku");
