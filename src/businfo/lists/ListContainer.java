@@ -20,7 +20,7 @@ public class ListContainer {
         this.busInfos = findBusInfos(this.listHandlers);
     }
 
-    // TODO implement function that will save results to excel
+    // TODO implement function that will save results to save.excel
 
     public void addListHandler(ListHandler listHandler){
         this.listHandlers.add(listHandler);

@@ -1,4 +1,4 @@
-package businfo.lists;
+package save.img;
 import gui.ava.html.image.generator.HtmlImageGenerator;
 import gui.ava.html.image.util.FormatNameUtil;
 import javax.imageio.ImageIO;
