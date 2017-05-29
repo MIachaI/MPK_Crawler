@@ -25,7 +25,7 @@ public abstract class BusInfo {
     protected ArrayList<HourMinute> saturdayList;
     protected ArrayList<HourMinute> sundayList;
 
-    BusInfo(){
+    protected BusInfo(){
         this.weekdayList = new ArrayList<HourMinute>();
         this.saturdayList = new ArrayList<HourMinute>();
         this.sundayList = new ArrayList<HourMinute>();

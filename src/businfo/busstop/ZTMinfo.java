@@ -129,6 +129,29 @@ public class ZTMinfo extends BusInfo {
         return result.toString();
     }
 
+    public String getRawHtml() throws IOException {
+        StringBuilder result = new StringBuilder();
+        if(this.innerHtml.isEmpty())
+            return "Błąd";
+
+        Connection connection = Jsoup.connect(this.innerHtml);
+        Document document = connection.get();
+        Elements scripts = document.select("script");
+        Element img = document.select("img[alt='Ikona'][class='busico']").first();
+        String imgLink = img.attr("src");
+        // imgLink now is in relative path - transform it into absolute path
+        imgLink = "http://www.ztm.waw.pl" + imgLink.substring(1);
+        // now paste in proper adress
+        img.attr("src", imgLink);
+        document.select("meta[http-equiv]").remove();
+        // "rtc last" class was causing table borders not to display - so just change it to "rtc"
+        document.select("td[class='rtc last']").attr("class","rtc");
+        scripts.remove();
+        result.append(document.outerHtml());
+        //result.append(imgLink);
+        return result.toString();
+    }
+
     public boolean checkColumnNames(ArrayList<String> columnNames){
 
         if (columnNames.size() ==  3 && columnNames.get(0).equals("Dzień Powszedni")
