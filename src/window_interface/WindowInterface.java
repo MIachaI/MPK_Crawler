@@ -178,7 +178,8 @@ public class WindowInterface extends Application implements EventHandler<ActionE
                 }
                 try {
                     String path = pathTextField.getText();
-                    ExcelHandler.saveExcel(ztmContainer, path);
+                    //ExcelHandler.saveExcel(ztmContainer, path);
+                    SaveHandler.saveAll(ztmContainer, path);
                     displaySuccessSaveAlert(path);
                 } catch (IOException e) {
                     statusLabel.setText("Status: błąd!");
