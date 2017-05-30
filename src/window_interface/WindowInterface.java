@@ -2,7 +2,6 @@ package window_interface;
 
 import businfo.lists.*;
 import save.SaveHandler;
-import save.excel.ExcelHandler;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -126,7 +125,6 @@ public class WindowInterface extends Application implements EventHandler<ActionE
             secondStage.setY(primaryStage.getY() + 100);
 
             secondStage.show();
-
         });
         fileMenu.getItems().add(Authors);
 
@@ -160,7 +158,6 @@ public class WindowInterface extends Application implements EventHandler<ActionE
                 try {
                     String path = pathTextField.getText();
 
-                    //ExcelHandler.saveExcel(mpkContainer, path);
                     SaveHandler.saveAll(mpkContainer, path);
                     displaySuccessSaveAlert(path);
                 } catch (IOException e) {
@@ -178,7 +175,6 @@ public class WindowInterface extends Application implements EventHandler<ActionE
                 }
                 try {
                     String path = pathTextField.getText();
-                    //ExcelHandler.saveExcel(ztmContainer, path);
                     SaveHandler.saveAll(ztmContainer, path);
                     displaySuccessSaveAlert(path);
                 } catch (IOException e) {

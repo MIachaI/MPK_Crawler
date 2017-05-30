@@ -6,8 +6,6 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.TreeMap;
 import businfo.busstop.*;
-import java.io.File;
-
 
 /**
  * Created by umat on 02.05.17.
@@ -34,6 +32,10 @@ public abstract class ListHandler {
     }
     public ArrayList<BusInfo> getBusInfosPurified(){
         return this.busInfosPurified;
+    }
+
+    public ArrayList<BusInfo> getBusInfosNonPurified(){
+        return this.busInfos;
     }
 
     /**

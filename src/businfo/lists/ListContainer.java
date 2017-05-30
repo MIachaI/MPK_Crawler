@@ -9,22 +9,28 @@ import java.util.ArrayList;
  */
 public class ListContainer {
     private ArrayList<ListHandler> listHandlers;
-    private ArrayList<BusInfo> busInfos;
+    private boolean isNonPurified;
 
     public ListContainer(){
-        this.listHandlers = new ArrayList<>();
-        this.busInfos = new ArrayList<>();
-    }
-    public ListContainer(ArrayList<ListHandler> lists){
-        this.listHandlers = lists;
-        this.busInfos = findBusInfos(this.listHandlers);
+        this(false);
     }
 
-    // TODO implement function that will save results to save.excel
+    public ListContainer(boolean isNonPurified){
+        this.listHandlers = new ArrayList<>();
+        this.isNonPurified = isNonPurified;
+    }
+
+    public ListContainer(ArrayList<ListHandler> lists){
+        this(lists, false);
+    }
+
+    public ListContainer(ArrayList<ListHandler> lists, boolean isNonPurified){
+        this.listHandlers = lists;
+        this.isNonPurified = isNonPurified;
+    }
 
     public void addListHandler(ListHandler listHandler){
         this.listHandlers.add(listHandler);
-        this.busInfos.addAll(listHandler.getBusInfosPurified());
     }
 
     public static ArrayList<BusInfo> getBusInfosFromLists(ArrayList<ListHandler> listHandlers){
@@ -35,45 +41,49 @@ public class ListContainer {
         return result;
     }
 
-    private ArrayList<BusInfo> findBusInfos(ArrayList<ListHandler> listHandlers){
-        ArrayList<BusInfo> purified = new ArrayList<>();
-        for(ListHandler list : listHandlers){
-            purified.addAll(list.getBusInfosPurified());
-        }
-        return purified;
+    public void setNonPurified(boolean setting){
+        this.isNonPurified = setting;
     }
 
     // GETTERS
     public ArrayList<BusInfo> getBusInfos(){
-        return this.busInfos;
+        ArrayList<BusInfo> result = new ArrayList<>();
+        if(this.isNonPurified){
+            for (ListHandler listHandler : this.listHandlers) {
+                result.addAll(listHandler.getBusInfosNonPurified());
+            }
+        } else {
+            for (ListHandler listHandler : this.listHandlers) {
+                result.addAll(listHandler.getBusInfosPurified());
+            }
+        }
+        return result;
     }
+
     public ArrayList<BusInfo> getOnlyTrams(){
         ArrayList<BusInfo> result = new ArrayList<>();
-        for(ListHandler list : this.listHandlers){
-            result.addAll(list.getOnlyTrams());
+        if(this.isNonPurified){
+            for(ListHandler list : this.listHandlers){
+                result.addAll(list.getOnlyTramsNonPurified());
+            }
+        } else {
+            for (ListHandler list : this.listHandlers) {
+                result.addAll(list.getOnlyTrams());
+            }
         }
         return result;
     }
+
     public ArrayList<BusInfo> getOnlyBuses(){
         ArrayList<BusInfo> result = new ArrayList<>();
-        for(ListHandler list : this.listHandlers){
-            result.addAll(list.getOnlyBuses());
-        }
-        return result;
-    }
-
-    public ArrayList<BusInfo> getOnlyTramsNonPurified(){
-        ArrayList<BusInfo> result = new ArrayList<>();
-        for(ListHandler list : this.listHandlers){
-            result.addAll(list.getOnlyTramsNonPurified());
-        }
-        return result;
-    }
-
-    public ArrayList<BusInfo> getOnlyBusesNonPurified(){
-        ArrayList<BusInfo> result = new ArrayList<>();
-        for(ListHandler list : this.listHandlers){
-            result.addAll(list.getOnlyBusesNonPurified());
+        if(this.isNonPurified){
+            for(ListHandler list : this.listHandlers){
+                result.addAll(list.getOnlyBusesNonPurified());
+            }
+        } else {
+            for(ListHandler list : this.listHandlers){
+                result.addAll(list.getOnlyBuses());
+            }
         }
         return result;
     }

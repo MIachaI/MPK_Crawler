@@ -10,11 +10,17 @@ import java.io.IOException;
  */
 public class ImageHandler {
     public static void saveAllImages(ListContainer listContainer, String path) throws IOException {
+        int iterator = 1;
         for(BusInfo tram : listContainer.getOnlyTrams()){
-            HtmlToImage.imageGenerator(tram.getRawHtml(), path +" linia "+ tram.getLineNumberString());
+            String fullPath = path + String.format("%03d", iterator) + "_linia_" + tram.getLineNumberString();
+            HtmlToImage.imageGenerator(tram.getRawHtml(), fullPath);
+            iterator++;
         }
+        iterator = 1;
         for(BusInfo bus : listContainer.getOnlyBuses()){
-            HtmlToImage.imageGenerator(bus.getRawHtml(), path +" linia "+ bus.getLineNumberString());
+            String fullPath = path + String.format("%03d", iterator) + "_linia_" + bus.getLineNumberString();
+            HtmlToImage.imageGenerator(bus.getRawHtml(), fullPath);
+            iterator++;
         }
     }
 }

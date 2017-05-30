@@ -1,7 +1,6 @@
 package businfo.lists;
 
 import businfo.busstop.MPKinfo;
-import businfo.lists.ListHandler;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -22,6 +21,7 @@ public class MPKList extends ListHandler {
         }
         this.busInfosPurified = purifyList(this.busInfos);
     }
+
     protected ArrayList<String> findLinks(String html) throws IOException{
           ArrayList<String> result = new ArrayList<>();
           Document document = Jsoup.connect(html).get();
