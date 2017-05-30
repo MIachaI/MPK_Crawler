@@ -209,7 +209,6 @@ public class WindowInterface extends Application implements EventHandler<ActionE
         Scene scene = new Scene(grid, 650, 220);
         window.setScene(scene);
         window.show();
-
     }
 
     @Override

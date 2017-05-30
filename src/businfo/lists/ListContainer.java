@@ -61,4 +61,20 @@ public class ListContainer {
         }
         return result;
     }
+
+    public ArrayList<BusInfo> getOnlyTramsNonPurified(){
+        ArrayList<BusInfo> result = new ArrayList<>();
+        for(ListHandler list : this.listHandlers){
+            result.addAll(list.getOnlyTramsNonPurified());
+        }
+        return result;
+    }
+
+    public ArrayList<BusInfo> getOnlyBusesNonPurified(){
+        ArrayList<BusInfo> result = new ArrayList<>();
+        for(ListHandler list : this.listHandlers){
+            result.addAll(list.getOnlyBusesNonPurified());
+        }
+        return result;
+    }
 }
