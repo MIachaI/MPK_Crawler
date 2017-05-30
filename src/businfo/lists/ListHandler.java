@@ -42,7 +42,7 @@ public abstract class ListHandler {
      */
     public ArrayList<BusInfo> getOnlyTrams(){
         ArrayList<BusInfo> result = new ArrayList<>();
-        for(BusInfo tramInfo : this.busInfosPurified){
+        for(BusInfo tramInfo : this.busInfos){
             if(tramInfo.getVehicleType().equals("Light train")){
                 result.add(tramInfo);
             }
@@ -55,7 +55,7 @@ public abstract class ListHandler {
      */
     public ArrayList<BusInfo> getOnlyBuses(){
         ArrayList<BusInfo> result = new ArrayList<>();
-        for(BusInfo busInfo : this.busInfosPurified){
+        for(BusInfo busInfo : this.busInfos){
             if(busInfo.getVehicleType().equals("Bus") || busInfo.getVehicleType().equals("undefined")){
                 result.add(busInfo);
             }
@@ -93,10 +93,10 @@ public abstract class ListHandler {
     /**
      * Clear busInfo from redundant BusInfos objects.
      * Choose the most pesimistic case (by weekday).
-     * @param allBusInfos list to clear
+     * @param //allBusInfos list to clear
      * @return sanitized BusInfo list
      */
-    protected ArrayList<BusInfo> purifyList(ArrayList<BusInfo> allBusInfos){
+  /*  protected ArrayList<BusInfo> purifyList(ArrayList<BusInfo> allBusInfos){
         ArrayList<BusInfo> purifiedInfos = new ArrayList<>();
         Map<String, BusInfo> map = new TreeMap<>();
         for(BusInfo busInfo : allBusInfos){
@@ -121,7 +121,7 @@ public abstract class ListHandler {
         purifiedInfos.sort(Comparator.comparingInt(BusInfo::getLineNumber)); // sort'em
         return purifiedInfos;               // and return
     }
-
+*/
     public String excelFormattedText(){
         // just to handle single row (title, busInfo and summary)
         class Row{

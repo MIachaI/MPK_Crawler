@@ -24,13 +24,13 @@ public class ListContainer {
 
     public void addListHandler(ListHandler listHandler){
         this.listHandlers.add(listHandler);
-        this.busInfos.addAll(listHandler.getBusInfosPurified());
+        this.busInfos.addAll(listHandler.getBusInfos());
     }
 
     public static ArrayList<BusInfo> getBusInfosFromLists(ArrayList<ListHandler> listHandlers){
         ArrayList<BusInfo> result = new ArrayList<>();
         for(ListHandler list : listHandlers){
-            result.addAll(list.getBusInfosPurified());
+            result.addAll(list.getBusInfos());
         }
         return result;
     }
@@ -38,7 +38,7 @@ public class ListContainer {
     private ArrayList<BusInfo> findBusInfos(ArrayList<ListHandler> listHandlers){
         ArrayList<BusInfo> purified = new ArrayList<>();
         for(ListHandler list : listHandlers){
-            purified.addAll(list.getBusInfosPurified());
+            purified.addAll(list.getBusInfos());
         }
         return purified;
     }

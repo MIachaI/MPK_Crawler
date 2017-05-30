@@ -22,7 +22,7 @@ public class ZTMList extends ListHandler {
         for(String link : this.linkList){
             busInfos.add(new ZTMinfo(link));
         }
-        this.busInfosPurified = purifyList(this.busInfos);
+       // this.busInfosPurified = purifyList(this.busInfos);
     }
 
     @Override

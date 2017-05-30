@@ -20,7 +20,7 @@ public class MPKList extends ListHandler {
         for(String link : this.linkList){
             busInfos.add(new MPKinfo(link));
         }
-        this.busInfosPurified = purifyList(this.busInfos);
+       // this.busInfosPurified = purifyList(this.busInfos);
     }
     protected ArrayList<String> findLinks(String html) throws IOException{
           ArrayList<String> result = new ArrayList<>();
