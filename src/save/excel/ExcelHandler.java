@@ -27,7 +27,7 @@ public class ExcelHandler {
         try (Workbook output = new HSSFWorkbook()) {
             Sheet result = output.createSheet("wynik");
 
-            for (int row = 0; row < 150; row++) {
+            for (int row = 0; row < 500; row++) {
                 result.createRow(row);
                 for (int column = 0; column < 20; column++) {
                     result.getRow(row).createCell(column);

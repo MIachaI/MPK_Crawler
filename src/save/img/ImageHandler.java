@@ -3,6 +3,7 @@ package save.img;
 import businfo.busstop.BusInfo;
 import businfo.lists.ListContainer;
 
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -10,11 +11,13 @@ import java.io.IOException;
  */
 public class ImageHandler {
     public static void saveAllImages(ListContainer listContainer, String path) throws IOException {
+        new File(path).mkdir();
+
         for(BusInfo tram : listContainer.getOnlyTrams()){
-            HtmlToImage.imageGenerator(tram.getRawHtml(), path +" linia "+ tram.getLineNumberString());
+            HtmlToImage.imageGenerator(tram.getRawHtml(), path +"\\"+tram.getStreetName()+"_"+tram.getLineNumberString());
         }
         for(BusInfo bus : listContainer.getOnlyBuses()){
-            HtmlToImage.imageGenerator(bus.getRawHtml(), path +" linia "+ bus.getLineNumberString());
+            HtmlToImage.imageGenerator(bus.getRawHtml(), path +"\\"+bus.getStreetName()+"_"+bus.getLineNumberString());
         }
     }
 }
