@@ -192,10 +192,6 @@ public class WindowInterface extends Application implements EventHandler<ActionE
         browseButton.setOnAction(e -> {
                     FileChooser fileChooser = new FileChooser();
 
-                    //Set extension filter
-                    FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("XLS File (*.xls)", "*.xls");
-                    fileChooser.getExtensionFilters().add(extFilter);
-
                     //Show save file dialog
                     File file = fileChooser.showSaveDialog(primaryStage);
                     if(file != null) {
