@@ -52,7 +52,7 @@ public class WindowInterface extends Application implements EventHandler<ActionE
 
 
         //linkLabel - constrains use (child, column, row)
-        Label linkLabel = new Label("Wprowadź linki:\n(jeden na linię)");
+        Label linkLabel = new Label("Wprowadź linki:\n(jeden pod drugim)");
         GridPane.setConstraints(linkLabel, 0, 1);
 
         //pathLabel
@@ -60,8 +60,8 @@ public class WindowInterface extends Application implements EventHandler<ActionE
         GridPane.setConstraints(pathLabel, 0, 2);
 
         //statusLabel
-        Label statusLabel = new Label("Status: w gotowości");
-        GridPane.setConstraints(statusLabel, 0, 3);
+       // Label statusLabel = new Label("Status: w gotowości");
+        //GridPane.setConstraints(statusLabel, 0, 3);
 
         //Menu
         MenuBar menuBar = new MenuBar();
@@ -153,7 +153,7 @@ public class WindowInterface extends Application implements EventHandler<ActionE
                         mpkContainer.addListHandler(new MPKList(link)); // add MPKList object for each link on the list
                     }
                 } catch (IOException e) {
-                    statusLabel.setText("Status: błąd!");
+                   // statusLabel.setText("Status: błąd!");
                 }
                 try {
                     String path = pathTextField.getText();
@@ -161,7 +161,7 @@ public class WindowInterface extends Application implements EventHandler<ActionE
                     SaveHandler.saveAll(mpkContainer, path);
                     displaySuccessSaveAlert(path);
                 } catch (IOException e) {
-                    statusLabel.setText("Status: błąd!");
+                   // statusLabel.setText("Status: błąd!");
                 }
 
             } else if (warsawBox.isSelected()) {
@@ -171,14 +171,14 @@ public class WindowInterface extends Application implements EventHandler<ActionE
                         ztmContainer.addListHandler(new ZTMList(link));
                     }
                 } catch (IOException e) {
-                    statusLabel.setText("Status: błąd!");
+                   // statusLabel.setText("Status: błąd!");
                 }
                 try {
                     String path = pathTextField.getText();
                     SaveHandler.saveAll(ztmContainer, path);
                     displaySuccessSaveAlert(path);
                 } catch (IOException e) {
-                    statusLabel.setText("Status: błąd!");
+                  //  statusLabel.setText("Status: błąd!");
                 }
             }
         });
@@ -200,7 +200,7 @@ public class WindowInterface extends Application implements EventHandler<ActionE
                 });
 
         //Add everything to grid
-        grid.getChildren().addAll(menuBar, linkLabel, linkTextField, pathLabel, pathTextField, executeButton, browseButton, cracowBox, warsawBox, statusLabel);
+        grid.getChildren().addAll(menuBar, linkLabel, linkTextField, pathLabel, pathTextField, executeButton, browseButton, cracowBox, warsawBox);
 
         Scene scene = new Scene(grid, 650, 220);
         window.setScene(scene);
