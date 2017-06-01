@@ -5,7 +5,8 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) throws IOException{
-        BusStopList.BusStopLinksGetter();
+        BusStopList.MPKBusStopLinksGetter();
+        BusStopList.ZTMBusStopLinksGetter();
         WindowInterface.openWindow();
     }
 }

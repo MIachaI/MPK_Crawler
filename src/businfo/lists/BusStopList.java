@@ -11,7 +11,7 @@ import java.util.ArrayList;
  * Created by MIachaI on 29.05.2017.
  */
 public class BusStopList {
-    public static ArrayList<busStop> BusStopLinksGetter ()throws IOException {
+    public static ArrayList<busStop> MPKBusStopLinksGetter ()throws IOException {
         //connect to main page of MPK Cracow
         Document initialConnect = Jsoup.connect("http://rozklady.mpk.krakow.pl").get();
         //choose polish language
@@ -24,15 +24,33 @@ public class BusStopList {
         String connection = connectionToSourcePage.attr("href");
         //connect to bus stops page
         Document document = Jsoup.connect(connection).get();
-        ArrayList<busStop> stops = new ArrayList<>();
-        //parse through elements to collect their links and names and save to ArrayList stop
+        ArrayList<busStop> MPKstops = new ArrayList<>();
+        //parse through elements to collect their links and names and save to ArrayList MPKstop
         Elements links = document.select("form[id='main'] tbody tr a[href]");
 
         for(Element link : links) {
             String linkToBusStop=link.attr("href");
             String busStopName=link.text();
-            stops.add(new busStop(linkToBusStop, busStopName));
+            MPKstops.add(new busStop(linkToBusStop, busStopName));
         }
-        return stops;
+        return MPKstops;
+    }
+    public static ArrayList<busStop> ZTMBusStopLinksGetter () throws IOException {
+
+        //connect to bus stops page of ZTM Warsaw
+        Document initialConnect = Jsoup.connect("http://www.ztm.waw.pl/rozklad_nowy.php?c=183&l=1").get();
+        //choose content
+        Elements links = initialConnect.select("div[id='RozkladContent'] a[href]");
+        ArrayList<busStop> ZTMstops = new ArrayList<>();
+        //parse through elements to collect their links and names and save to ArrayList ZTMstop
+        String mainLink = "http://www.ztm.waw.pl/";
+        for(Element link : links) {
+            String linkToBusStop=mainLink+link.attr("href");
+            String busStopName=link.text();
+            busStopName = busStopName.replaceAll("\\(.*\\)", "");
+            busStopName = busStopName.substring(0, busStopName.length()-1);
+            ZTMstops.add(new busStop(linkToBusStop, busStopName));
+        }
+        return ZTMstops;
     }
 }

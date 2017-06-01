@@ -140,63 +140,58 @@ public class WindowInterface extends Application implements EventHandler<ActionE
         GridPane.setConstraints(pathTextField, 1, 2);
         final String[] html = new String[1];
 
-        ListContainer mpkContainer = new ListContainer();
+        ListContainer linkContainer = new ListContainer();
         //Add_Button
         Button addButton = new Button("Dodaj");
         GridPane.setConstraints(addButton, 2,1);
         addButton.setOnAction((ActionEvent event) -> {
             String nazwaRobocza = linkTextField.getText();
             try {
-                for (busStop obiektRoboczy : BusStopList.BusStopLinksGetter()){
+                if(cracowBox.isSelected()){
+                for (busStop obiektRoboczy : BusStopList.MPKBusStopLinksGetter()){
+
                     if(nazwaRobocza.equals(obiektRoboczy.toName())){
-                        mpkContainer.addListHandler(new MPKList(obiektRoboczy.toLink()));
+                        linkContainer.addListHandler(new MPKList(obiektRoboczy.toLink()));
                         break;
                         // linkTextField.setText("");
                     }
-
                 }
-            } catch (IOException e) {
+            }
+            else if(warsawBox.isSelected()){
+                for (busStop obiektRoboczy : BusStopList.ZTMBusStopLinksGetter()){
+                    System.out.println(obiektRoboczy.toName());
+                    if(nazwaRobocza.equals(obiektRoboczy.toName())){
+                        linkContainer.addListHandler(new ZTMList(obiektRoboczy.toLink()));
+                        break;
+                        // linkTextField.setText("");
+                    }
+                }
+            }
+            }
+            catch (IOException e) {
                 e.printStackTrace();
             }
         });
-
 
         //Execute_Button
         Button executeButton = new Button("Wykonaj");
         GridPane.setConstraints(executeButton, 1, 3);
         executeButton.setOnAction(event -> {
             // store all links provided by user in linkList
-            ArrayList<String> linkList = new ArrayList<>(Arrays.asList(linkTextField.getText().split("\n")));
+          //  ArrayList<String> linkList = new ArrayList<>(Arrays.asList(linkTextField.getText().split("\n")));
             if (cracowBox.isSelected()) {
-               /* ListContainer mpkContainer = new ListContainer(); // create ListContainer for MPKList objects
-                try {
-                    for(String link : linkList){
-                        mpkContainer.addListHandler(new MPKList(link)); // add MPKList object for each link on the list
-                    }
-                } catch (IOException e) {
-                   // statusLabel.setText("Status: błąd!");
-                }*/
                 try {
                     String path = pathTextField.getText();
-
-                    SaveHandler.saveAll(mpkContainer, path);
+                    SaveHandler.saveAll(linkContainer, path);
                     displaySuccessSaveAlert(path);
                 } catch (IOException e) {
                    // statusLabel.setText("Status: błąd!");
                 }
 
             } else if (warsawBox.isSelected()) {
-                ListContainer ztmContainer = new ListContainer();
-                try {
-                    for(String link : linkList){
-                        ztmContainer.addListHandler(new ZTMList(link));
-                    }
-                } catch (IOException e) {
-                   // statusLabel.setText("Status: błąd!");
-                }
                 try {
                     String path = pathTextField.getText();
-                    SaveHandler.saveAll(ztmContainer, path);
+                    SaveHandler.saveAll(linkContainer, path);
                     displaySuccessSaveAlert(path);
                 } catch (IOException e) {
                   //  statusLabel.setText("Status: błąd!");
