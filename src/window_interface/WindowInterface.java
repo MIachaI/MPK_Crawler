@@ -14,6 +14,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.geometry.Insets;
 
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -43,12 +44,12 @@ public class WindowInterface extends Application implements EventHandler<ActionE
         ToggleGroup Location_Group_RadioButtons = new ToggleGroup();
 
         RadioButton cracowBox = new RadioButton("Kraków");
-        GridPane.setConstraints(cracowBox, 2, 1);
+        GridPane.setConstraints(cracowBox, 2, 0);
         cracowBox.setToggleGroup(Location_Group_RadioButtons);
         cracowBox.setSelected(true);
 
         RadioButton warsawBox = new RadioButton("Warszawa");
-        GridPane.setConstraints(warsawBox, 3, 1);
+        GridPane.setConstraints(warsawBox, 3, 0);
         warsawBox.setToggleGroup(Location_Group_RadioButtons);
 
 
@@ -142,6 +143,25 @@ public class WindowInterface extends Application implements EventHandler<ActionE
         GridPane.setConstraints(pathTextField, 1, 2);
         final String[] html = new String[1];
 
+        ListContainer mpkContain = new ListContainer();
+        //Add_Button
+        Button addButton = new Button("Dodaj");
+        GridPane.setConstraints(addButton, 2,1);
+        addButton.setOnAction(event -> {
+            String nazwaRobocza = linkTextField.getText();
+            try {
+                for (Object obiektRoboczy : BusStopList.BusStopLinksGetter()){
+                    if(nazwaRobocza.equals(busStop.toName())){
+                        mpkContain.addListHandler(new MPKList(this.link));
+                        break;
+                    }
+
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
         //Execute_Button
         Button executeButton = new Button("Wykonaj");
         GridPane.setConstraints(executeButton, 1, 3);
@@ -202,9 +222,13 @@ public class WindowInterface extends Application implements EventHandler<ActionE
                         // TODO handle cancel button pressed
                     }
                 });
-
+        BusStopList.BusStopLinksGetter();
         //Add everything to grid
+<<<<<<< Updated upstream
         grid.getChildren().addAll(menuBar, linkLabel, linkTextField, pathLabel, pathTextField, executeButton, browseButton, cracowBox, warsawBox, statusLabel);
+=======
+        grid.getChildren().addAll(addButton, menuBar, linkLabel, linkTextField, pathLabel, pathTextField, executeButton, browseButton, cracowBox, warsawBox);
+>>>>>>> Stashed changes
 
         Scene scene = new Scene(grid, 650, 220);
         window.setScene(scene);
