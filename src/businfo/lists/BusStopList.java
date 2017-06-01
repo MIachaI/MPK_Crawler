@@ -33,9 +33,9 @@ public class BusStopList {
             String busStopName=link.text();
             stops.add(new busStop(linkToBusStop, busStopName));
         }
-        for(busStop x : stops){
-            System.out.println(x);
-        }
+      //  for(busStop x : stops){
+      //      System.out.println(x);
+      //  }
         return stops;
     }
 }

@@ -143,17 +143,18 @@ public class WindowInterface extends Application implements EventHandler<ActionE
         GridPane.setConstraints(pathTextField, 1, 2);
         final String[] html = new String[1];
 
-        ListContainer mpkContain = new ListContainer();
+        ListContainer mpkContainer = new ListContainer();
         //Add_Button
         Button addButton = new Button("Dodaj");
         GridPane.setConstraints(addButton, 2,1);
-        addButton.setOnAction(event -> {
+        addButton.setOnAction((ActionEvent event) -> {
             String nazwaRobocza = linkTextField.getText();
             try {
-                for (Object obiektRoboczy : BusStopList.BusStopLinksGetter()){
-                    if(nazwaRobocza.equals(busStop.toName())){
-                        mpkContain.addListHandler(new MPKList(this.link));
+                for (busStop obiektRoboczy : BusStopList.BusStopLinksGetter()){
+                    if(nazwaRobocza.equals(obiektRoboczy.toName())){
+                        mpkContainer.addListHandler(new MPKList(obiektRoboczy.toLink()));
                         break;
+                       // linkTextField.setText("");
                     }
 
                 }
@@ -169,14 +170,14 @@ public class WindowInterface extends Application implements EventHandler<ActionE
             // store all links provided by user in linkList
             ArrayList<String> linkList = new ArrayList<>(Arrays.asList(linkTextField.getText().split("\n")));
             if (cracowBox.isSelected()) {
-                ListContainer mpkContainer = new ListContainer(); // create ListContainer for MPKList objects
-                try {
+              /*  ListContainer mpkContainer = new ListContainer(); // create ListContainer for MPKList objects
+               try {
                     for(String link : linkList){
                         mpkContainer.addListHandler(new MPKList(link)); // add MPKList object for each link on the list
                     }
                 } catch (IOException e) {
                     statusLabel.setText("Status: błąd!");
-                }
+                }*/
                 try {
                     String path = pathTextField.getText();
 
@@ -224,11 +225,9 @@ public class WindowInterface extends Application implements EventHandler<ActionE
                 });
         BusStopList.BusStopLinksGetter();
         //Add everything to grid
-<<<<<<< Updated upstream
-        grid.getChildren().addAll(menuBar, linkLabel, linkTextField, pathLabel, pathTextField, executeButton, browseButton, cracowBox, warsawBox, statusLabel);
-=======
+
         grid.getChildren().addAll(addButton, menuBar, linkLabel, linkTextField, pathLabel, pathTextField, executeButton, browseButton, cracowBox, warsawBox);
->>>>>>> Stashed changes
+
 
         Scene scene = new Scene(grid, 650, 220);
         window.setScene(scene);

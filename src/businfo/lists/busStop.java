@@ -4,9 +4,9 @@ public class busStop {
 public String link;
 public String name;
 
-public busStop(String a, String b){
-    this.link = b;
-    this.name = a;
+public busStop(String link, String name){
+    this.link = link;
+    this.name = name;
 }
 
     public String toString(){
