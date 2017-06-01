@@ -11,7 +11,7 @@ import java.util.ArrayList;
  * Created by MIachaI on 29.05.2017.
  */
 public class BusStopList {
-    public static void BusStopLinksGetter ()throws IOException {
+    public static ArrayList<busStop> BusStopLinksGetter ()throws IOException {
         //connect to main page of MPK Cracow
         Document initialConnect = Jsoup.connect("http://rozklady.mpk.krakow.pl").get();
         //choose polish language
@@ -36,18 +36,6 @@ public class BusStopList {
         for(busStop x : stops){
             System.out.println(x);
         }
-    }
-}
-class busStop {
-String link;
-String name;
-
-public busStop(String a, String b){
-    link = b;
-    name = a;
-}
-
-    public String toString(){
-        return this.name + " " + this.link;
+        return stops;
     }
 }

@@ -42,17 +42,17 @@ public class WindowInterface extends Application implements EventHandler<ActionE
         ToggleGroup Location_Group_RadioButtons = new ToggleGroup();
 
         RadioButton cracowBox = new RadioButton("Kraków");
-        GridPane.setConstraints(cracowBox, 2, 1);
+        GridPane.setConstraints(cracowBox, 2, 0);
         cracowBox.setToggleGroup(Location_Group_RadioButtons);
         cracowBox.setSelected(true);
 
         RadioButton warsawBox = new RadioButton("Warszawa");
-        GridPane.setConstraints(warsawBox, 3, 1);
+        GridPane.setConstraints(warsawBox, 3, 0);
         warsawBox.setToggleGroup(Location_Group_RadioButtons);
 
 
         //linkLabel - constrains use (child, column, row)
-        Label linkLabel = new Label("Wprowadź linki:\n(jeden pod drugim)");
+        Label linkLabel = new Label("Wprowadź nazwę:\nprzystanku");
         GridPane.setConstraints(linkLabel, 0, 1);
 
         //pathLabel
@@ -140,6 +140,27 @@ public class WindowInterface extends Application implements EventHandler<ActionE
         GridPane.setConstraints(pathTextField, 1, 2);
         final String[] html = new String[1];
 
+        ListContainer mpkContainer = new ListContainer();
+        //Add_Button
+        Button addButton = new Button("Dodaj");
+        GridPane.setConstraints(addButton, 2,1);
+        addButton.setOnAction((ActionEvent event) -> {
+            String nazwaRobocza = linkTextField.getText();
+            try {
+                for (busStop obiektRoboczy : BusStopList.BusStopLinksGetter()){
+                    if(nazwaRobocza.equals(obiektRoboczy.toName())){
+                        mpkContainer.addListHandler(new MPKList(obiektRoboczy.toLink()));
+                        break;
+                        // linkTextField.setText("");
+                    }
+
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+
         //Execute_Button
         Button executeButton = new Button("Wykonaj");
         GridPane.setConstraints(executeButton, 1, 3);
@@ -147,14 +168,14 @@ public class WindowInterface extends Application implements EventHandler<ActionE
             // store all links provided by user in linkList
             ArrayList<String> linkList = new ArrayList<>(Arrays.asList(linkTextField.getText().split("\n")));
             if (cracowBox.isSelected()) {
-                ListContainer mpkContainer = new ListContainer(); // create ListContainer for MPKList objects
+               /* ListContainer mpkContainer = new ListContainer(); // create ListContainer for MPKList objects
                 try {
                     for(String link : linkList){
                         mpkContainer.addListHandler(new MPKList(link)); // add MPKList object for each link on the list
                     }
                 } catch (IOException e) {
                    // statusLabel.setText("Status: błąd!");
-                }
+                }*/
                 try {
                     String path = pathTextField.getText();
 
@@ -200,7 +221,7 @@ public class WindowInterface extends Application implements EventHandler<ActionE
                 });
 
         //Add everything to grid
-        grid.getChildren().addAll(menuBar, linkLabel, linkTextField, pathLabel, pathTextField, executeButton, browseButton, cracowBox, warsawBox);
+        grid.getChildren().addAll(addButton, menuBar, linkLabel, linkTextField, pathLabel, pathTextField, executeButton, browseButton, cracowBox, warsawBox);
 
         Scene scene = new Scene(grid, 650, 220);
         window.setScene(scene);
