@@ -33,6 +33,10 @@ public class ListContainer {
         this.listHandlers.add(listHandler);
     }
 
+    public void deleteListHandler() {
+        this.listHandlers.clear();
+    }
+
     public static ArrayList<BusInfo> getBusInfosFromLists(ArrayList<ListHandler> listHandlers){
         ArrayList<BusInfo> result = new ArrayList<>();
         for(ListHandler list : listHandlers){

@@ -55,9 +55,13 @@ public class WindowInterface extends Application implements EventHandler<ActionE
         Label linkLabel = new Label("Wprowadź nazwę:\nprzystanku");
         GridPane.setConstraints(linkLabel, 0, 1);
 
+        //addedLinksLabel
+        Label addedLinksLabel = new Label("Dodane przystanki:");
+        GridPane.setConstraints(addedLinksLabel, 0, 2);
+
         //pathLabel
         Label pathLabel = new Label("Podaj ścieżkę zapisu:");
-        GridPane.setConstraints(pathLabel, 0, 2);
+        GridPane.setConstraints(pathLabel, 0, 3);
 
         //statusLabel
        // Label statusLabel = new Label("Status: w gotowości");
@@ -133,11 +137,19 @@ public class WindowInterface extends Application implements EventHandler<ActionE
         //Link_TextField
         TextArea linkTextField = new TextArea();
         linkTextField.setMaxWidth(250.0);
+        linkTextField.setMaxHeight(30.0);
         GridPane.setConstraints(linkTextField, 1, 1);
+
+        //loadedLinksTextField
+        TextArea loadedLinksTextField = new TextArea();
+        loadedLinksTextField.setMaxWidth(250.0);
+        loadedLinksTextField.setMaxHeight(70.0);
+        GridPane.setConstraints(loadedLinksTextField, 1, 2);
+        loadedLinksTextField.setWrapText(true);
 
         //Path_TextField
         TextField pathTextField = new TextField("");
-        GridPane.setConstraints(pathTextField, 1, 2);
+        GridPane.setConstraints(pathTextField, 1, 3);
         final String[] html = new String[1];
 
         ListContainer linkContainer = new ListContainer();
@@ -152,8 +164,10 @@ public class WindowInterface extends Application implements EventHandler<ActionE
 
                     if(nazwaRobocza.equals(obiektRoboczy.toName())){
                         linkContainer.addListHandler(new MPKList(obiektRoboczy.toLink()));
+                        String loadedLinks = loadedLinksTextField.getText();
+                        loadedLinksTextField.setText(loadedLinks + obiektRoboczy.toName()+", ");
+                        linkTextField.setText("");
                         break;
-                        // linkTextField.setText("");
                     }
                 }
             }
@@ -162,20 +176,33 @@ public class WindowInterface extends Application implements EventHandler<ActionE
                     System.out.println(obiektRoboczy.toName());
                     if(nazwaRobocza.equals(obiektRoboczy.toName())){
                         linkContainer.addListHandler(new ZTMList(obiektRoboczy.toLink()));
+                        String loadedLinks = loadedLinksTextField.getText();
+                        loadedLinksTextField.setText(loadedLinks + obiektRoboczy.toName()+", ");
+                        linkTextField.setText("");
                         break;
-                        // linkTextField.setText("");
+
                     }
                 }
             }
             }
             catch (IOException e) {
+                loadedLinksTextField.setText("");
+
                 e.printStackTrace();
             }
         });
 
+        //deleteButton
+        Button deleteButton = new Button("Usuń");
+        GridPane.setConstraints(deleteButton, 2,2);
+        deleteButton.setOnAction((ActionEvent event) -> {
+            loadedLinksTextField.setText("");
+            linkContainer.deleteListHandler();
+        });
+
         //Execute_Button
         Button executeButton = new Button("Wykonaj");
-        GridPane.setConstraints(executeButton, 1, 3);
+        GridPane.setConstraints(executeButton, 1, 4);
         executeButton.setOnAction(event -> {
             // store all links provided by user in linkList
           //  ArrayList<String> linkList = new ArrayList<>(Arrays.asList(linkTextField.getText().split("\n")));
@@ -200,7 +227,7 @@ public class WindowInterface extends Application implements EventHandler<ActionE
         });
 
         final Button browseButton = new Button("...");
-        GridPane.setConstraints(browseButton, 2, 2);
+        GridPane.setConstraints(browseButton, 2, 3);
         browseButton.setOnAction(e -> {
                     FileChooser fileChooser = new FileChooser();
 
@@ -216,9 +243,22 @@ public class WindowInterface extends Application implements EventHandler<ActionE
                 });
 
         //Add everything to grid
-        grid.getChildren().addAll(addButton, menuBar, linkLabel, linkTextField, pathLabel, pathTextField, executeButton, browseButton, cracowBox, warsawBox);
+        grid.getChildren().addAll(
+                loadedLinksTextField,
+                pathTextField,
+                linkTextField,
+                menuBar,
+                addedLinksLabel,
+                linkLabel,
+                pathLabel,
+                addButton,
+                executeButton,
+                deleteButton,
+                browseButton,
+                cracowBox,
+                warsawBox);
 
-        Scene scene = new Scene(grid, 650, 220);
+        Scene scene = new Scene(grid, 650, 250);
         window.setScene(scene);
         window.show();
     }
