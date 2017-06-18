@@ -18,6 +18,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import static jdk.nashorn.internal.objects.NativeString.substring;
+
 
 public class WindowInterface extends Application implements EventHandler<ActionEvent> {
     Button Execute_Button;
@@ -157,33 +159,38 @@ public class WindowInterface extends Application implements EventHandler<ActionE
         Button addButton = new Button("Dodaj");
         GridPane.setConstraints(addButton, 2,1);
         addButton.setOnAction((ActionEvent event) -> {
-            String nazwaRobocza = linkTextField.getText();
+            String busStopName = linkTextField.getText();
+            String firstLetterOfBusName = busStopName.substring(0,1);
             try {
                 if(cracowBox.isSelected()){
-                for (busStop obiektRoboczy : BusStopList.MPKBusStopLinksGetter()){
-
-                    if(nazwaRobocza.equals(obiektRoboczy.toName())){
-                        linkContainer.addListHandler(new MPKList(obiektRoboczy.toLink()));
-                        String loadedLinks = loadedLinksTextField.getText();
-                        loadedLinksTextField.setText(loadedLinks + obiektRoboczy.toName()+", ");
-                        linkTextField.setText("");
-                        break;
-                    }
-                }
-            }
-            else if(warsawBox.isSelected()){
-                for (busStop obiektRoboczy : BusStopList.ZTMBusStopLinksGetter()){
-                    System.out.println(obiektRoboczy.toName());
-                    if(nazwaRobocza.equals(obiektRoboczy.toName())){
-                        linkContainer.addListHandler(new ZTMList(obiektRoboczy.toLink()));
-                        String loadedLinks = loadedLinksTextField.getText();
-                        loadedLinksTextField.setText(loadedLinks + obiektRoboczy.toName()+", ");
-                        linkTextField.setText("");
-                        break;
+                for (busStop busStopNameFromList : BusStopList.MPKBusStopLinksGetter()){
+                    if(firstLetterOfBusName.equals(busStopNameFromList.toName().substring(0,1))){
+                            if(busStopName.equals(busStopNameFromList.toName())){
+                                linkContainer.addListHandler(new MPKList(busStopNameFromList.toLink()));
+                                String loadedLinks = loadedLinksTextField.getText();
+                                loadedLinksTextField.setText(loadedLinks + busStopNameFromList.toName()+", ");
+                                linkTextField.setText("");
+                                break;
+                            }
 
                     }
                 }
             }
+            else if(warsawBox.isSelected()) {
+                    for (busStop busStopNameFromList : BusStopList.ZTMBusStopLinksGetter()) {
+                        System.out.println(busStopNameFromList.toName());
+                        if (firstLetterOfBusName.equals(busStopNameFromList.toName().substring(0, 1))) {
+                            if (busStopName.equals(busStopNameFromList.toName())) {
+                                linkContainer.addListHandler(new ZTMList(busStopNameFromList.toLink()));
+                                String loadedLinks = loadedLinksTextField.getText();
+                                loadedLinksTextField.setText(loadedLinks + busStopNameFromList.toName() + ", ");
+                                linkTextField.setText("");
+                                break;
+
+                            }
+                        }
+                    }
+                }
             }
             catch (IOException e) {
                 loadedLinksTextField.setText("");
