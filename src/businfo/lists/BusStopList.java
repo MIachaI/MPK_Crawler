@@ -10,7 +10,7 @@ import java.util.ArrayList;
 /**
  * Created by MIachaI on 29.05.2017.
  */
-public class BusStopList {
+public class BusStopList extends Thread {
     public static ArrayList<busStop> MPKBusStopLinksGetter ()throws IOException {
         //connect to main page of MPK Cracow
         Document initialConnect = Jsoup.connect("http://rozklady.mpk.krakow.pl").get();
@@ -52,5 +52,16 @@ public class BusStopList {
             ZTMstops.add(new busStop(linkToBusStop, busStopName));
         }
         return ZTMstops;
+    }
+
+    @Override
+    public void run() {
+
+        try {
+            BusStopList.MPKBusStopLinksGetter();
+            BusStopList.ZTMBusStopLinksGetter();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

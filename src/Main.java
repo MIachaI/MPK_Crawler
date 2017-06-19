@@ -5,8 +5,12 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) throws IOException{
-        BusStopList.MPKBusStopLinksGetter();
-        BusStopList.ZTMBusStopLinksGetter();
+/**
+ * First attempt in multithreading in Java, there might be consequences...
+ */
+        BusStopList addBusListInThreads = new BusStopList();
+        addBusListInThreads.start();
+
         WindowInterface.openWindow();
     }
 }
