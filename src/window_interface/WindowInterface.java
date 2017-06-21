@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 
 import static jdk.nashorn.internal.objects.NativeString.substring;
 
@@ -163,30 +164,34 @@ public class WindowInterface extends Application implements EventHandler<ActionE
             String firstLetterOfBusName = busStopName.substring(0,1);
             try {
                 if(cracowBox.isSelected()){
+
                 for (busStop busStopNameFromList : BusStopList.MPKBusStopLinksGetter()){
                     if(firstLetterOfBusName.equals(busStopNameFromList.toName().substring(0,1))){
-                            if(busStopName.equals(busStopNameFromList.toName())){
-                                linkContainer.addListHandler(new MPKList(busStopNameFromList.toLink()));
+                        if(busStopName.equals(busStopNameFromList.toName())){
+                                String busStopNameToThreadUsage= busStopNameFromList.toLink();
+                                BusStopAddMPK secondThread = new BusStopAddMPK();
+                                secondThread.addLinkToListCointainer(linkContainer, busStopNameToThreadUsage);
+                                secondThread.start();
                                 String loadedLinks = loadedLinksTextField.getText();
                                 loadedLinksTextField.setText(loadedLinks + busStopNameFromList.toName()+", ");
                                 linkTextField.setText("");
                                 break;
-                            }
-
+                        }
                     }
                 }
             }
             else if(warsawBox.isSelected()) {
                     for (busStop busStopNameFromList : BusStopList.ZTMBusStopLinksGetter()) {
-                        System.out.println(busStopNameFromList.toName());
                         if (firstLetterOfBusName.equals(busStopNameFromList.toName().substring(0, 1))) {
                             if (busStopName.equals(busStopNameFromList.toName())) {
-                                linkContainer.addListHandler(new ZTMList(busStopNameFromList.toLink()));
+                                String busStopNameToThreadUsage= busStopNameFromList.toLink();
+                                BusStopAddZTM secondThread = new BusStopAddZTM();
+                                secondThread.addLinkToListCointainer(linkContainer, busStopNameToThreadUsage);
+                                secondThread.start();
                                 String loadedLinks = loadedLinksTextField.getText();
-                                loadedLinksTextField.setText(loadedLinks + busStopNameFromList.toName() + ", ");
+                                loadedLinksTextField.setText(loadedLinks + busStopNameFromList.toName()+", ");
                                 linkTextField.setText("");
                                 break;
-
                             }
                         }
                     }
