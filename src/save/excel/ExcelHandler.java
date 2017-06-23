@@ -7,6 +7,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
+import window_interface.WindowInterface;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -17,10 +18,15 @@ import static org.apache.poi.hssf.record.ExtendedFormatRecord.CENTER;
 /**
  * Created by umat on 17.05.17.
  */
+
+
 public class ExcelHandler {
     // TODO reduce code
+    public static int excelHandlerFlag=0;
 
     public static void saveExcel(ListContainer listContainer, String path) throws IOException {
+        ExcelHandler setFlag = new ExcelHandler();
+        setFlag.flagSetter();
         FileOutputStream fileOut;
         int tramWeekdaySum = 0, tramWeekendAvgSum = 0;
 
@@ -217,7 +223,13 @@ public class ExcelHandler {
             }
             fileOut = new FileOutputStream(path + ".xls");
             output.write(fileOut);
+
         }
         fileOut.close();
+
     }
+    public void flagSetter(){
+        excelHandlerFlag=1;
+    }
+
 }

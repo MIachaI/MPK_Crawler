@@ -15,6 +15,7 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.geometry.Insets;
+import save.excel.ExcelHandler;
 
 import java.io.File;
 import java.io.IOException;
@@ -85,9 +86,9 @@ public class WindowInterface extends Application implements EventHandler<ActionE
         GridPane.setConstraints(pathLabel, 0, 3);
 
         //statusLabel
-        Label statusLabel = new Label();
+        Label statusLabel = new Label("Status: w gotowości");
         //WindowInterface d = new WindowInterface();
-        statusLabel.textProperty().bind(labelText1);
+       // statusLabel.textProperty().bind(labelText1);
         GridPane.setConstraints(statusLabel, 0, 4);
 
         //Menu
@@ -195,6 +196,7 @@ public class WindowInterface extends Application implements EventHandler<ActionE
                                 String loadedLinks = loadedLinksTextField.getText();
                                 loadedLinksTextField.setText(loadedLinks + busStopNameFromList.toName()+", ");
                                 linkTextField.setText("");
+                                statusLabel.setText("Status: dodano");
                                 break;
                         }
                     }
@@ -211,6 +213,7 @@ public class WindowInterface extends Application implements EventHandler<ActionE
                                 String loadedLinks = loadedLinksTextField.getText();
                                 loadedLinksTextField.setText(loadedLinks + busStopNameFromList.toName()+", ");
                                 linkTextField.setText("");
+                                statusLabel.setText("Status: dodano");
                                 break;
                             }
                         }
@@ -237,11 +240,18 @@ public class WindowInterface extends Application implements EventHandler<ActionE
         GridPane.setConstraints(executeButton, 1, 4);
         executeButton.setOnAction(event -> {
             // store all links provided by user in linkList
+                statusLabel.setText("Status: pracuję...");
                 String path = pathTextField.getText();
                 SaveHandler executeThread = new SaveHandler();
                 executeThread.injectListAndPath(linkContainer, path);
                 executeThread.start();
-                displaySuccessSaveAlert(path);
+                while(true){
+                    if(ExcelHandler.excelHandlerFlag==1){
+                        displaySuccessSaveAlert(path);
+                        statusLabel.setText("Status: gotowe!");
+                        break;
+                    }
+                }
         });
 
         final Button browseButton = new Button("...");
@@ -286,7 +296,7 @@ public class WindowInterface extends Application implements EventHandler<ActionE
     public void handle(ActionEvent event) {
     }
 
-    private void displaySuccessSaveAlert(String path){
+    public void displaySuccessSaveAlert(String path){
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Sukces");
         alert.setHeaderText("Gotowe!");
