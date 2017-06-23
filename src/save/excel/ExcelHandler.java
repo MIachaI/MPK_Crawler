@@ -67,7 +67,7 @@ public class ExcelHandler {
 
             CellStyle lineCellStyle = output.createCellStyle();
             lineCellStyle.setAlignment(HorizontalAlignment.CENTER);
-            //lineCellStyle.setFont(font);
+
 
             if(!tramList.isEmpty()){ // if there are trams on the list
                 result.addMergedRegion(new CellRangeAddress(row, row+1, 1, 1));

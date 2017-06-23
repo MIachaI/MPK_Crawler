@@ -1,6 +1,9 @@
 package window_interface;
 
 import businfo.lists.*;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.fxml.FXML;
 import save.SaveHandler;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -25,6 +28,21 @@ import static jdk.nashorn.internal.objects.NativeString.substring;
 public class WindowInterface extends Application implements EventHandler<ActionEvent> {
     Button Execute_Button;
     Stage window;
+   public StringProperty labelText = new SimpleStringProperty("poczatek");
+    public StringProperty labelText1 = labelText;
+
+
+    /**
+     * This method was created to allow program modify label which shows status
+     * @param label input which will be shown to user
+     * @return label turnet into StringProperty
+     */
+    public StringProperty setLabelText(String label){
+
+        StringProperty labelText1 = new SimpleStringProperty(label);
+        labelText=labelText1;
+        return labelText1;
+    }
 
     public static void openWindow() {
         launch();
@@ -67,8 +85,10 @@ public class WindowInterface extends Application implements EventHandler<ActionE
         GridPane.setConstraints(pathLabel, 0, 3);
 
         //statusLabel
-       // Label statusLabel = new Label("Status: w gotowości");
-        //GridPane.setConstraints(statusLabel, 0, 3);
+        Label statusLabel = new Label();
+        //WindowInterface d = new WindowInterface();
+        statusLabel.textProperty().bind(labelText1);
+        GridPane.setConstraints(statusLabel, 0, 4);
 
         //Menu
         MenuBar menuBar = new MenuBar();
@@ -166,8 +186,8 @@ public class WindowInterface extends Application implements EventHandler<ActionE
                 if(cracowBox.isSelected()){
 
                 for (busStop busStopNameFromList : BusStopList.MPKBusStopLinksGetter()){
-                    if(firstLetterOfBusName.equals(busStopNameFromList.toName().substring(0,1))){
-                        if(busStopName.equals(busStopNameFromList.toName())){
+                    if(firstLetterOfBusName.equalsIgnoreCase(busStopNameFromList.toName().substring(0,1))){
+                        if(busStopName.equalsIgnoreCase(busStopNameFromList.toName())){
                                 String busStopNameToThreadUsage= busStopNameFromList.toLink();
                                 BusStopAddMPK secondThread = new BusStopAddMPK();
                                 secondThread.addLinkToListCointainer(linkContainer, busStopNameToThreadUsage);
@@ -182,8 +202,8 @@ public class WindowInterface extends Application implements EventHandler<ActionE
             }
             else if(warsawBox.isSelected()) {
                     for (busStop busStopNameFromList : BusStopList.ZTMBusStopLinksGetter()) {
-                        if (firstLetterOfBusName.equals(busStopNameFromList.toName().substring(0, 1))) {
-                            if (busStopName.equals(busStopNameFromList.toName())) {
+                        if (firstLetterOfBusName.equalsIgnoreCase(busStopNameFromList.toName().substring(0, 1))) {
+                            if (busStopName.equalsIgnoreCase(busStopNameFromList.toName())) {
                                 String busStopNameToThreadUsage= busStopNameFromList.toLink();
                                 BusStopAddZTM secondThread = new BusStopAddZTM();
                                 secondThread.addLinkToListCointainer(linkContainer, busStopNameToThreadUsage);
@@ -217,25 +237,11 @@ public class WindowInterface extends Application implements EventHandler<ActionE
         GridPane.setConstraints(executeButton, 1, 4);
         executeButton.setOnAction(event -> {
             // store all links provided by user in linkList
-          //  ArrayList<String> linkList = new ArrayList<>(Arrays.asList(linkTextField.getText().split("\n")));
-            if (cracowBox.isSelected()) {
-                try {
-                    String path = pathTextField.getText();
-                    SaveHandler.saveAll(linkContainer, path);
-                    displaySuccessSaveAlert(path);
-                } catch (IOException e) {
-                   // statusLabel.setText("Status: błąd!");
-                }
-
-            } else if (warsawBox.isSelected()) {
-                try {
-                    String path = pathTextField.getText();
-                    SaveHandler.saveAll(linkContainer, path);
-                    displaySuccessSaveAlert(path);
-                } catch (IOException e) {
-                  //  statusLabel.setText("Status: błąd!");
-                }
-            }
+                String path = pathTextField.getText();
+                SaveHandler executeThread = new SaveHandler();
+                executeThread.injectListAndPath(linkContainer, path);
+                executeThread.start();
+                displaySuccessSaveAlert(path);
         });
 
         final Button browseButton = new Button("...");
@@ -263,6 +269,7 @@ public class WindowInterface extends Application implements EventHandler<ActionE
                 addedLinksLabel,
                 linkLabel,
                 pathLabel,
+                statusLabel,
                 addButton,
                 executeButton,
                 deleteButton,
