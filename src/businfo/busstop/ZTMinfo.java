@@ -80,9 +80,9 @@ public class ZTMinfo extends BusInfo {
         result.append(stopName).append("\n");
 
         // column titles
-        Elements columnNames = document.select("table[id='maintable'] p[class='RozkladObowiazuje']");
-        for(Element columnName : columnNames){
-            result.append(columnName.text()).append("\t");
+        Elements columnTitles = document.select("table[id='maintable'] p[class='RozkladObowiazuje']");
+        for(Element columnTitle : columnTitles){
+            result.append(columnTitle.text()).append("\t");
         }
         result.append("\n");
 
