@@ -8,3 +8,5 @@ out/production/*
 out/artifacts/*
 /output.*
 *.xls
+src/Main2.java
+.idea/*
