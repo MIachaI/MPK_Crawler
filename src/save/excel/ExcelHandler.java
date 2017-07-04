@@ -102,7 +102,6 @@ public class ExcelHandler {
                 result.getRow(row).getCell(7).setCellValue("Weekend");
                 result.getRow(row).getCell(8).setCellValue("Average");
 
-               // int tramWeekdaySum = 0, tramWeekendAvgSum = 0;
                 for(BusInfo tramInfo : tramList){
                     row++;
 

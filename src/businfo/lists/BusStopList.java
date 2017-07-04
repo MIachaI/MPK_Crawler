@@ -10,7 +10,13 @@ import java.util.ArrayList;
 /**
  * Created by MIachaI on 29.05.2017.
  */
+
 public class BusStopList extends Thread {
+    /**
+     * This metod is prepared to get all bus stop names from certain city, MPK for Cracow
+     * @return ArrayList which contains the bus stop names and links to them
+     * @throws IOException - just to handle multithreading
+     */
     public static ArrayList<busStop> MPKBusStopLinksGetter ()throws IOException {
         //connect to main page of MPK Cracow
         Document initialConnect = Jsoup.connect("http://rozklady.mpk.krakow.pl").get();
@@ -35,6 +41,12 @@ public class BusStopList extends Thread {
         }
         return MPKstops;
     }
+
+    /**
+     * This metod is prepared to get all bus stop names from certain city, ZTM for Warsaw
+     * @return ArrayList which contains the bus stop names and links to them
+     * @throws IOException - just to handle multithreading
+     */
     public static ArrayList<busStop> ZTMBusStopLinksGetter () throws IOException {
 
         //connect to bus stops page of ZTM Warsaw
@@ -54,6 +66,9 @@ public class BusStopList extends Thread {
         return ZTMstops;
     }
 
+    /**
+     * We are overriding method run from thread class to get possibility to use multithreading
+     */
     @Override
     public void run() {
 

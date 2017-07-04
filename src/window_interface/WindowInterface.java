@@ -87,8 +87,6 @@ public class WindowInterface extends Application implements EventHandler<ActionE
 
         //statusLabel
         Label statusLabel = new Label("Status: w gotowości");
-        //WindowInterface d = new WindowInterface();
-       // statusLabel.textProperty().bind(labelText1);
         GridPane.setConstraints(statusLabel, 0, 4);
 
         //Menu

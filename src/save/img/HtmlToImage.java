@@ -12,7 +12,10 @@ import java.awt.Color;
  * Created by MIachal on 25.05.2017.
  */
 public class  HtmlToImage extends HtmlImageGenerator {
-
+    /**
+     * We changed thi method a bit, because of bug which put pink or red background to the output images
+     * @param file - the screenshot of the bus timetable
+     */
         @Override
         public void saveAsImage(File file)
         {
