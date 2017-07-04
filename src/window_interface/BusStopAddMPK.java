@@ -8,25 +8,29 @@ import java.io.IOException;
 
 /**
  * Created by MIachal on 19.06.2017.
+ *
  */
 public class BusStopAddMPK extends Thread {
 
     public ListContainer linkContainer;
     public String busStopNameFromList;
 
+    /**
+     *
+     * @param linkContainerFromWindowInterface - this is container prepared for contain bus stops which are significant for case
+     * @param busStopNameFromListFromWindowInterface - this is bus stop name which is given by busStopNameTextField from Window Interface
+     * @throws IOException - just to handle multithreading
+     */
     public void addLinkToListCointainer(ListContainer linkContainerFromWindowInterface, String busStopNameFromListFromWindowInterface) throws IOException {
 
         linkContainer = linkContainerFromWindowInterface;
         busStopNameFromList = busStopNameFromListFromWindowInterface;
-       // linkContainer.addListHandler(new MPKList(busStopNameFromList));
     }
 
 
     @Override
     public void run(){
-       // BusStopAdd threadUsage = new BusStopAdd();
         try {
-           // threadUsage.addLinkToListCointainer(linkContainer, busStopNameFromList);
             linkContainer.addListHandler(new MPKList(busStopNameFromList));
         } catch (IOException e) {
             e.printStackTrace();

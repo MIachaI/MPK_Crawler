@@ -24,8 +24,6 @@ public class SaveHandler extends Thread {
     @Override
     public void run(){
         SaveHandler engineStart = new SaveHandler();
-        WindowInterface label = new WindowInterface();
-        label.setLabelText("rozpoczynam");
         try {
             engineStart.saveAll();
         } catch (IOException e) {
