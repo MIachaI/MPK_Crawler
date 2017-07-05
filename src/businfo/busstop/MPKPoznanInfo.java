@@ -1,7 +1,6 @@
 package businfo.busstop;
 
 import org.jsoup.Connection;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -67,5 +66,33 @@ public class MPKPoznanInfo extends BusInfo {
             result.append(info.text()).append("\t");
         }
         return result.toString();
+    }
+
+    @Override
+    public String getRawHtml() throws IOException {
+        StringBuilder result = new StringBuilder();
+        Document document = this.jsoupConnection.get();
+        Element head = document.select("head").first();
+        Element table = document.select("div[id='MpkBoard']").first();
+
+        result.append("<!DOCTYPE HTML>\n<html>");
+        result.append(head.outerHtml());        // append body section
+        result.append(table.outerHtml());		// append table section
+        result.append("</html>");
+        return result.toString();
+    }
+
+    @Override
+    public boolean checkColumnNames(ArrayList<String> columnNames) {
+        if (
+                columnNames.size() == 3
+                && Objects.equals(columnNames.get(0), "Dni robocze")
+                && Objects.equals(columnNames.get(1), "Soboty")
+                && Objects.equals(columnNames.get(2), "Święta"))
+            return true;
+        else {
+            this.warnings.add("Niestandardowe nazwy kolumn. Sprawdź przystanek \t" + this.html);
+            return false;
+        }
     }
 }

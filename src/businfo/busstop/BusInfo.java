@@ -70,6 +70,12 @@ public abstract class BusInfo {
      * @throws IOException
      */
     abstract String getRawResult(Connection connection) throws IOException;
+
+    /**
+     * Method to get HTML code required for generating images. It should  extract only timetable part of the site, ignoring all unnecessary contents
+     * @return HTML code as a string required contents to be saved as image
+     * @throws IOException
+     */
     public String getRawHtml() throws IOException{
         // TODO either make abstract or smth?
         return "";
@@ -265,6 +271,13 @@ public abstract class BusInfo {
     public ArrayList<String> getWarnings(){
         return this.warnings;
     }
+
+    /**
+     * Method checks if column names from retrieved timetable are as expected.
+     * If colum names are not standard information is saved to "warnings" class property
+     * @param columnNames ArrayList containing column names
+     * @return true if table contains expected column names, otherwise false (additionally information saved to "warnings" field)
+     */
     public boolean checkColumnNames(ArrayList<String> columnNames){
         return false;
     };
