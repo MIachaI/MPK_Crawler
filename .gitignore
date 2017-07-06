@@ -10,3 +10,4 @@ out/artifacts/*
 *.xls
 src/Main2.java
 .idea/*
+BusCounter/*
