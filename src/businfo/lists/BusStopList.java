@@ -43,6 +43,29 @@ public class BusStopList extends Thread {
     }
 
     /**
+     * This method is prepared to get all bus stops names from certain city, in this case - Wrocław
+     * @return ArrayList which contains the bus stop names and links to them
+     * @throws IOException - just to handle multithreading
+     */
+    public static ArrayList<busStop> MPKWrocloveBusStopLinksGetter ()throws IOException {
+        //connect to main page of MPK Wrocław
+        Document initialConnect = Jsoup.connect("http://www.wroclaw.pl/wszystkie-przystanki-wydruk").get();
+        ArrayList<busStop> MPKWroclawStop = new ArrayList<>();
+        //parse through elements to collect their links and names and save to ArrayList MPKWroclawstop
+        Elements links = initialConnect.select("ul [class='filtered-lines-list'] a[href]");
+
+        for(Element link : links) {
+            String linkToBusStop=link.attr("href");
+            String tak = "http://www.wroclaw.pl"+linkToBusStop;
+            String busStopName=link.text();
+            System.out.println(tak);
+            System.out.println(busStopName);
+            MPKWroclawStop.add(new busStop(tak, busStopName));
+        }
+        return MPKWroclawStop;
+    }
+
+    /**
      * This metod is prepared to get all bus stop names from certain city, ZTM for Warsaw
      * @return ArrayList which contains the bus stop names and links to them
      * @throws IOException - just to handle multithreading
@@ -73,6 +96,7 @@ public class BusStopList extends Thread {
     public void run() {
 
         try {
+            BusStopList.MPKWrocloveBusStopLinksGetter();
             BusStopList.MPKBusStopLinksGetter();
             BusStopList.ZTMBusStopLinksGetter();
         } catch (IOException e) {
