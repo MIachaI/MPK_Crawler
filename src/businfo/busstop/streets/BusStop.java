@@ -18,15 +18,31 @@ public abstract class BusStop {
         this.linesOnStops = new ArrayList<>();
     }
 
-    public BusStop(String html){
+    public BusStop(ArrayList<LineOnStop> busList){
         this();
-        this.fetchLines(html);
+        this.setLinesOnStop(busList);
     }
 
     /**
-     * Fetch all info for LineOnStop class from one bus stop.
-     * You need to provide proper link
-     * @param html link with information
+     * @return ArrayList with information about specific lines
      */
-    protected abstract void fetchLines(String html);
+    public ArrayList<LineOnStop> getBusLines(){
+        return this.linesOnStops;
+    }
+
+    /**
+     * Add one more bus info to the list
+     * @param busLine to be added
+     */
+    public void addBusLine(LineOnStop busLine){
+        this.linesOnStops.add(busLine);
+    }
+
+    /**
+     * Set a list with bus information
+     * @param lines to be set in ArrayList
+     */
+    public void setLinesOnStop(ArrayList<LineOnStop> lines){
+        this.linesOnStops = lines;
+    }
 }
