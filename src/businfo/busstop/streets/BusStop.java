@@ -7,7 +7,7 @@ import java.util.ArrayList;
 /**
  * Created by umat on 06.07.17.
  */
-public abstract class BusStop {
+public class BusStop {
     private String streetName;
     /**
      * Bus lines that pass through
@@ -17,10 +17,17 @@ public abstract class BusStop {
     public BusStop(){
         this.linesOnStops = new ArrayList<>();
     }
-
     public BusStop(ArrayList<LineOnStop> busList){
         this();
         this.setLinesOnStop(busList);
+    }
+    public BusStop(String streetName, ArrayList<LineOnStop> busList){
+        this(busList);
+        this.streetName = streetName;
+    }
+    public BusStop(String streetName){
+        this();
+        this.streetName = streetName;
     }
 
     /**
@@ -29,7 +36,6 @@ public abstract class BusStop {
     public ArrayList<LineOnStop> getBusLines(){
         return this.linesOnStops;
     }
-
     /**
      * Add one more bus info to the list
      * @param busLine to be added
@@ -44,5 +50,13 @@ public abstract class BusStop {
      */
     public void setLinesOnStop(ArrayList<LineOnStop> lines){
         this.linesOnStops = lines;
+    }
+
+    public String toString(){
+        StringBuilder result = new StringBuilder(this.streetName);
+        for (LineOnStop line : this.linesOnStops){
+            result.append("\n\t> ").append(line.getNumber()).append(": ").append(line.getLink());
+        }
+        return result.toString();
     }
 }
