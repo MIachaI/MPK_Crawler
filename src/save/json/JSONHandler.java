@@ -7,6 +7,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Set;
@@ -15,7 +16,6 @@ import java.util.Set;
  * Created by umat on 12.07.17.
  */
 public abstract class JSONHandler {
-
     /**
      * Get ArrayList with BusStop class from given json file in given city
      * @param jsonFile path to file containing json
@@ -72,5 +72,23 @@ public abstract class JSONHandler {
         }
 
         return result;
+    }
+
+    /**
+     * Override data for a given city with provided list (JSONObject, see class method generateCityObject())
+     * @param fileName json file name
+     * @param cityName
+     * @param cityObject city object generated via class method generateCityObject()
+     * @throws IOException
+     * @throws ParseException
+     */
+    public static void updateJSONFile(String fileName, String cityName, JSONObject cityObject) throws IOException, ParseException {
+        JSONParser parser = new JSONParser();
+        JSONObject mainObj = (JSONObject) parser.parse(new FileReader(fileName));
+        mainObj.put(cityName, cityObject);
+
+        FileWriter writer = new FileWriter(fileName);
+        writer.write(mainObj.toJSONString());
+        writer.close();
     }
 }
