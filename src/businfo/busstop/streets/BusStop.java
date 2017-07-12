@@ -44,6 +44,10 @@ public class BusStop {
         this.linesOnStops.add(busLine);
     }
 
+    public String getStreetName(){
+        return this.streetName;
+    }
+
     /**
      * Set a list with bus information
      * @param lines to be set in ArrayList

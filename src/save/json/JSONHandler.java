@@ -2,7 +2,6 @@ package save.json;
 
 import businfo.busstop.lines.LineOnStop;
 import businfo.busstop.streets.BusStop;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -24,8 +23,9 @@ public abstract class JSONHandler {
      * @return ArrayList containing BusStop objects for a city
      * @throws IOException upon no file found
      * @throws ParseException when wrong format
+     * @throws NullPointerException if city name was not found in the json file
      */
-    public static ArrayList<BusStop> fetchBusStopArray(String jsonFile, String city) throws IOException, ParseException {
+    public static ArrayList<BusStop> fetchBusStopArray(String jsonFile, String city) throws IOException, ParseException, NullPointerException {
         ArrayList<BusStop> result = new ArrayList<>();
         JSONParser parser = new JSONParser();
         Object obj = parser.parse(new FileReader(jsonFile));
@@ -37,21 +37,38 @@ public abstract class JSONHandler {
         for (Object key : keySet) {
             String keyStr = (String) key;
             BusStop busStopToAdd = new BusStop(keyStr);
-            Object keyVal = busStops.get(keyStr);
-            JSONArray linesArray = (JSONArray) keyVal;
-            for (Object item : linesArray) {
-                JSONObject line = (JSONObject) item;
-                Set lineKeySet = line.keySet();
-                for(Object lineKey : lineKeySet){
-                    // line number
-                    String lineKeyStr = (String) lineKey;
-                    // link to schedule
-                    String lineKeyVal = (String) line.get(lineKeyStr);
-                    busStopToAdd.addBusLine(new LineOnStop(lineKeyStr, lineKeyVal));
-                }
+            JSONObject line = (JSONObject) busStops.get(keyStr);
+            Set lineKeySet = line.keySet();
+            for(Object lineKey : lineKeySet){
+                // line number
+                String lineKeyStr = (String) lineKey;
+                // link to schedule
+                String lineKeyVal = (String) line.get(lineKeyStr);
+                busStopToAdd.addBusLine(new LineOnStop(lineKeyStr, lineKeyVal));
             }
 
             result.add(busStopToAdd);
+        }
+
+        return result;
+    }
+
+    /**
+     * Generate JSON object for given bus stop list.
+     * Usage: provide bus stop list and get JSONObject that you can later use to update json file with data for one city
+     * @param busStops ArrayList with bus stops info (should be list for one city)
+     * @return JSONObject containing info about bus stops eg. in a city
+     */
+    public static JSONObject generateCityObject(ArrayList<BusStop> busStops){
+        JSONObject result = new JSONObject();
+        for(BusStop busStop : busStops){
+            JSONObject linesObj = new JSONObject();
+            for(LineOnStop line : busStop.getBusLines()){
+                // line info (number, link)
+                linesObj.put(line.getNumber(), line.getLink());
+            }
+            // bus stop info (name, line info)
+            result.put(busStop.getStreetName(), linesObj);
         }
 
         return result;
