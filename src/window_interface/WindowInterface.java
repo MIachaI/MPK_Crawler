@@ -3,7 +3,6 @@ package window_interface;
 import businfo.lists.*;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.fxml.FXML;
 import save.SaveHandler;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -19,9 +18,6 @@ import save.excel.ExcelHandler;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
 
 import static jdk.nashorn.internal.objects.NativeString.substring;
 
@@ -184,15 +180,15 @@ public class WindowInterface extends Application implements EventHandler<ActionE
             try {
                 if(cracowBox.isSelected()){
 
-                for (busStop busStopNameFromList : BusStopList.MPKBusStopLinksGetter()){
-                    if(firstLetterOfBusName.equalsIgnoreCase(busStopNameFromList.toName().substring(0,1))){
-                        if(busStopName.equalsIgnoreCase(busStopNameFromList.toName())){
-                                String busStopNameToThreadUsage= busStopNameFromList.toLink();
+                for (BusStopLink busStopNameFromList : BusStopList.MPKBusStopLinksGetter()){
+                    if(firstLetterOfBusName.equalsIgnoreCase(busStopNameFromList.getName().substring(0,1))){
+                        if(busStopName.equalsIgnoreCase(busStopNameFromList.getName())){
+                                String busStopNameToThreadUsage= busStopNameFromList.getLink();
                                 BusStopAddMPK secondThread = new BusStopAddMPK();
                                 secondThread.addLinkToListCointainer(linkContainer, busStopNameToThreadUsage);
                                 secondThread.start();
                                 String loadedLinks = loadedLinksTextField.getText();
-                                loadedLinksTextField.setText(loadedLinks + busStopNameFromList.toName()+", ");
+                                loadedLinksTextField.setText(loadedLinks + busStopNameFromList.getName()+", ");
                                 linkTextField.setText("");
                                 statusLabel.setText("Status: dodano");
                                 break;
@@ -201,15 +197,15 @@ public class WindowInterface extends Application implements EventHandler<ActionE
                 }
             }
             else if(warsawBox.isSelected()) {
-                    for (busStop busStopNameFromList : BusStopList.ZTMBusStopLinksGetter()) {
-                        if (firstLetterOfBusName.equalsIgnoreCase(busStopNameFromList.toName().substring(0, 1))) {
-                            if (busStopName.equalsIgnoreCase(busStopNameFromList.toName())) {
-                                String busStopNameToThreadUsage= busStopNameFromList.toLink();
+                    for (BusStopLink busStopNameFromList : BusStopList.ZTMBusStopLinksGetter()) {
+                        if (firstLetterOfBusName.equalsIgnoreCase(busStopNameFromList.getName().substring(0, 1))) {
+                            if (busStopName.equalsIgnoreCase(busStopNameFromList.getName())) {
+                                String busStopNameToThreadUsage= busStopNameFromList.getLink();
                                 BusStopAddZTM secondThread = new BusStopAddZTM();
                                 secondThread.addLinkToListCointainer(linkContainer, busStopNameToThreadUsage);
                                 secondThread.start();
                                 String loadedLinks = loadedLinksTextField.getText();
-                                loadedLinksTextField.setText(loadedLinks + busStopNameFromList.toName()+", ");
+                                loadedLinksTextField.setText(loadedLinks + busStopNameFromList.getName()+", ");
                                 linkTextField.setText("");
                                 statusLabel.setText("Status: dodano");
                                 break;

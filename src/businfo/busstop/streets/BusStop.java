@@ -57,7 +57,7 @@ public class BusStop {
     }
 
     public String toString(){
-        StringBuilder result = new StringBuilder(this.streetName);
+        StringBuilder result = new StringBuilder("\n" + this.streetName);
         for (LineOnStop line : this.linesOnStops){
             result.append("\n\t> ").append(line.getNumber()).append(": ").append(line.getLink());
         }

@@ -17,7 +17,7 @@ public class BusStopList extends Thread {
      * @return ArrayList which contains the bus stop names and links to them
      * @throws IOException - just to handle multithreading
      */
-    public static ArrayList<busStop> MPKBusStopLinksGetter ()throws IOException {
+    public static ArrayList<BusStopLink> MPKBusStopLinksGetter ()throws IOException {
         //connect to main page of MPK Cracow
         Document initialConnect = Jsoup.connect("http://rozklady.mpk.krakow.pl").get();
         //choose polish language
@@ -30,14 +30,14 @@ public class BusStopList extends Thread {
         String connection = connectionToSourcePage.attr("href");
         //connect to bus stops page
         Document document = Jsoup.connect(connection).get();
-        ArrayList<busStop> MPKstops = new ArrayList<>();
+        ArrayList<BusStopLink> MPKstops = new ArrayList<>();
         //parse through elements to collect their links and names and save to ArrayList MPKstop
         Elements links = document.select("form[id='main'] tbody tr a[href]");
 
         for(Element link : links) {
             String linkToBusStop=link.attr("href");
             String busStopName=link.text();
-            MPKstops.add(new busStop(linkToBusStop, busStopName));
+            MPKstops.add(new BusStopLink(linkToBusStop, busStopName));
         }
         return MPKstops;
     }
@@ -47,10 +47,10 @@ public class BusStopList extends Thread {
      * @return ArrayList which contains the bus stop names and links to them
      * @throws IOException - just to handle multithreading
      */
-    public static ArrayList<busStop> MPKWrocloveBusStopLinksGetter ()throws IOException {
+    public static ArrayList<BusStopLink> MPKWrocloveBusStopLinksGetter ()throws IOException {
         //connect to main page of MPK Wrocław
         Document initialConnect = Jsoup.connect("http://www.wroclaw.pl/wszystkie-przystanki-wydruk").get();
-        ArrayList<busStop> MPKWroclawStop = new ArrayList<>();
+        ArrayList<BusStopLink> MPKWroclawStop = new ArrayList<>();
         //parse through elements to collect their links and names and save to ArrayList MPKWroclawstop
         Elements links = initialConnect.select("ul [class='filtered-lines-list'] a[href]");
 
@@ -60,7 +60,7 @@ public class BusStopList extends Thread {
             String busStopName=link.text();
             System.out.println(tak);
             System.out.println(busStopName);
-            MPKWroclawStop.add(new busStop(tak, busStopName));
+            MPKWroclawStop.add(new BusStopLink(tak, busStopName));
         }
         return MPKWroclawStop;
     }
@@ -70,13 +70,13 @@ public class BusStopList extends Thread {
      * @return ArrayList which contains the bus stop names and links to them
      * @throws IOException - just to handle multithreading
      */
-    public static ArrayList<busStop> ZTMBusStopLinksGetter () throws IOException {
+    public static ArrayList<BusStopLink> ZTMBusStopLinksGetter () throws IOException {
 
         //connect to bus stops page of ZTM Warsaw
         Document initialConnect = Jsoup.connect("http://www.ztm.waw.pl/rozklad_nowy.php?c=183&l=1").get();
         //choose content
         Elements links = initialConnect.select("div[id='RozkladContent'] a[href]");
-        ArrayList<busStop> ZTMstops = new ArrayList<>();
+        ArrayList<BusStopLink> ZTMstops = new ArrayList<>();
         //parse through elements to collect their links and names and save to ArrayList ZTMstop
         String mainLink = "http://www.ztm.waw.pl/";
         for(Element link : links) {
@@ -84,7 +84,7 @@ public class BusStopList extends Thread {
             String busStopName=link.text();
             busStopName = busStopName.replaceAll("\\(.*\\)", "");
             busStopName = busStopName.substring(0, busStopName.length()-1);
-            ZTMstops.add(new busStop(linkToBusStop, busStopName));
+            ZTMstops.add(new BusStopLink(linkToBusStop, busStopName));
         }
         return ZTMstops;
     }
@@ -94,7 +94,6 @@ public class BusStopList extends Thread {
      */
     @Override
     public void run() {
-
         try {
             BusStopList.MPKWrocloveBusStopLinksGetter();
             BusStopList.MPKBusStopLinksGetter();
