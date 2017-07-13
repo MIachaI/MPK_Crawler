@@ -11,3 +11,4 @@ out/artifacts/*
 src/Main2.java
 .idea/*
 BusCounter/*
+*.json

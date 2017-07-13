@@ -2,6 +2,7 @@ package save.json;
 
 import businfo.busstop.lines.LineOnStop;
 import businfo.busstop.streets.BusStop;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -37,14 +38,18 @@ public abstract class JSONHandler {
         for (Object key : keySet) {
             String keyStr = (String) key;
             BusStop busStopToAdd = new BusStop(keyStr);
-            JSONObject line = (JSONObject) busStops.get(keyStr);
-            Set lineKeySet = line.keySet();
-            for(Object lineKey : lineKeySet){
-                // line number
-                String lineKeyStr = (String) lineKey;
-                // link to schedule
-                String lineKeyVal = (String) line.get(lineKeyStr);
-                busStopToAdd.addBusLine(new LineOnStop(lineKeyStr, lineKeyVal));
+            Object keyVal = busStops.get(keyStr);
+            JSONArray linesArray = (JSONArray) keyVal;
+            for (Object item : linesArray) {
+                JSONObject line = (JSONObject) item;
+                Set lineKeySet = line.keySet();
+                for(Object lineKey : lineKeySet){
+                    // line number
+                    String lineKeyStr = (String) lineKey;
+                    // link to schedule
+                    String lineKeyVal = (String) line.get(lineKeyStr);
+                    busStopToAdd.addBusLine(new LineOnStop(lineKeyStr, lineKeyVal));
+                }
             }
 
             result.add(busStopToAdd);
@@ -62,13 +67,15 @@ public abstract class JSONHandler {
     public static JSONObject generateCityObject(ArrayList<BusStop> busStops){
         JSONObject result = new JSONObject();
         for(BusStop busStop : busStops){
-            JSONObject linesObj = new JSONObject();
+            JSONArray linesArray = new JSONArray();
             for(LineOnStop line : busStop.getBusLines()){
                 // line info (number, link)
-                linesObj.put(line.getNumber(), line.getLink());
+                JSONObject obj = new JSONObject();
+                obj.put(line.getNumber(), line.getLink());
+                linesArray.add(obj);
             }
             // bus stop info (name, line info)
-            result.put(busStop.getStreetName(), linesObj);
+            result.put(busStop.getStreetName(), linesArray);
         }
 
         return result;
