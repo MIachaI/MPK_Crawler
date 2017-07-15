@@ -6,9 +6,10 @@
 .idea/misc.xml
 out/production/*
 out/artifacts/*
+out/*
 /output.*
 *.xls
 src/Main2.java
-.idea/*
 BusCounter/*
 *.json
+.idea/*

@@ -88,7 +88,7 @@ public abstract class BusInfo {
      * * sundayList
      * @throws IOException
      */
-    protected void count(String rawResult){
+    private void count(String rawResult){
         // clear lists if they are not empty
         this.weekdayList.clear();
         this.saturdayList.clear();
@@ -156,21 +156,21 @@ public abstract class BusInfo {
      * Add new item to the list storing timetable for weekday
      * @param time that bus leaves bus stop
      */
-    protected void addWeekdayCourse(HourMinute time){
+    private void addWeekdayCourse(HourMinute time){
         this.weekdayList.add(time);
     }
     /**
      * Add new item to the list storing timetable for Saturdays
      * @param time that bus leaves bus stop
      */
-    protected void addSaturdayCourse(HourMinute time){
+    private void addSaturdayCourse(HourMinute time){
         this.saturdayList.add(time);
     }
     /**
      * Add new item to the list storing timetable for weekday
      * @param time that bus leaves bus stop
      */
-    protected void addSundayCourse(HourMinute time){
+    private void addSundayCourse(HourMinute time){
         this.sundayList.add(time);
     }
 
@@ -178,18 +178,21 @@ public abstract class BusInfo {
         this.warnings.add(warning);
     }
 
+
     protected int findLineNumber(){
         return Integer.parseInt(this.rawResult.split("\n")[0].replaceAll("[^\\d]",""));
     }
+
     protected String findLineNumberString(){
         return this.rawResult.split("\n")[0];
     }
     protected String findVehicleType(){
         return this.rawResult.split("\n")[1];
     }
-    protected String findStreetName(){
+    private String findStreetName(){
         return this.rawResult.split("\n")[2];
     }
+
     protected ArrayList<String> findColumnNames(){
         ArrayList<String> columnNames = new ArrayList<>();
         columnNames.addAll(Arrays.asList(this.rawResult.split("\n")[3].split("\t"))); // add all detected column names to the list
