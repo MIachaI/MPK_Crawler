@@ -6,7 +6,6 @@ import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
 import javafx.scene.layout.*;
 
 import java.io.IOException;
@@ -46,7 +45,7 @@ public class Main extends Application{
 
     // center pane items
     private GridPane centerPane = new GridPane();
-    private TextArea textArea = new TextArea();
+    private TextField searchField = new TextField();
     private ListView<BusStop> busStopList = new ListView<>();
     private ObservableList<BusStop> displayedStops;
     private Button addButton = new Button("Dodaj");
@@ -55,6 +54,7 @@ public class Main extends Application{
     private GridPane rightPane = new GridPane();
     private Label stopsLabel = new Label("Lista przystanków");
     private Button startButton = new Button("Start");
+    private Button clearButton = new Button("Wyczyść");
 
     // border pane
     private BorderPane borderPane = new BorderPane();
@@ -95,9 +95,29 @@ public class Main extends Application{
         centerPane.setPadding(new Insets(10,10,10,10));
         centerPane.setVgap(8);
         centerPane.setHgap(10);
-        textArea.setPromptText("Podaj linki do stron z rozkładem");
+        searchField.setPromptText("Szukaj");
+        searchField.textProperty().addListener((observableValue, oldVal, newVal) -> {
+            if (oldVal != null && (newVal.length() < oldVal.length())) {
+                busStopList.setItems(displayedStops);
+            }
+            String value = newVal.toUpperCase();
+            ObservableList<BusStop> subentries = FXCollections.observableArrayList();
+            for (BusStop entry : busStopList.getItems()) {
+                boolean match = true;
+                String entryText = entry.getStreetName();
+                if (!entryText.toUpperCase().contains(value)) {
+                    match = false;
+                    //break;
+                }
+                if (match) {
+                    subentries.add(entry);
+                }
+            }
+            busStopList.setItems(subentries);
+        });
         // busStopList of  bus stops
         displayedStops = FXCollections.observableArrayList(JSONHandler.fetchBusStopArray(jsonSource, cities.get(0)));
+        //busStopList.setMinWidth(350);
         busStopList.setItems(displayedStops);
         busStopList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         // setting in what form to display list object
@@ -118,10 +138,10 @@ public class Main extends Application{
             addSelectedBusStops();
         });
 
-        GridPane.setConstraints(textArea, 0, 0);
+        GridPane.setConstraints(searchField, 0, 0);
         GridPane.setConstraints(busStopList, 0, 1);
         GridPane.setConstraints(addButton, 0, 2);
-        centerPane.getChildren().addAll(textArea, addButton, busStopList);
+        centerPane.getChildren().addAll(searchField, addButton, busStopList);
 
         // right pane
         startButton.setOnAction(event -> {
@@ -135,9 +155,11 @@ public class Main extends Application{
         });
 
         rightPane.setPadding(new Insets(10, 10, 10, 10));
+        rightPane.setVgap(8);
         GridPane.setConstraints(startButton, 0, 0);
-        GridPane.setConstraints(stopsLabel, 0, 1);
-        rightPane.getChildren().addAll(stopsLabel, startButton);
+        GridPane.setConstraints(clearButton, 0,1);
+        GridPane.setConstraints(stopsLabel, 0, 2);
+        rightPane.getChildren().addAll(stopsLabel, startButton, clearButton);
 
         // adding everything to BorderPane
         borderPane.setTop(topMenu);
@@ -169,7 +191,7 @@ public class Main extends Application{
     private void handleCityChoiceBox(ChoiceBox<String> choiceBox) throws IOException {
         String city = choiceBox.getValue();
         ListContainer list = new ListContainer();
-        ArrayList<String> links = new ArrayList<>(Arrays.asList(textArea.getText().split("\n")));
+        ArrayList<String> links = new ArrayList<>(Arrays.asList(searchField.getText().split("\n")));
         if (Objects.equals(city, "Kraków")){
             for (String link : links){
                 list.addListHandler(new MPKList(link));
@@ -180,7 +202,7 @@ public class Main extends Application{
                 list.addListHandler(new ZTMList(link));
             }
         }
-        textArea.setText(list.toString());
+        searchField.setText(list.toString());
     }
 
     /**
