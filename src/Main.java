@@ -1,3 +1,4 @@
+import businfo.busstop.streets.BusStop;
 import businfo.lists.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -16,11 +17,23 @@ import java.util.Objects;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.json.simple.parser.ParseException;
+import save.json.JSONHandler;
 import window_interface.dialogs.ConfirmBox;
 import window_interface.dialogs.ErrorDialog;
 
 public class Main extends Application{
     private Stage window;
+
+    // city list (only cities mentioned below will be in the program)
+    private ArrayList<String> cities = new ArrayList<>(Arrays.asList(
+            "Kraków",
+            "Warszawa",
+            "Poznań",
+            "Wrocław",
+            "Fake miasto"
+    ));
+    private String jsonSource = "test.json";
 
     // top menu items
     private HBox topMenu = new HBox();
@@ -34,9 +47,8 @@ public class Main extends Application{
     // center pane items
     private GridPane centerPane = new GridPane();
     private TextArea textArea = new TextArea();
-    private ListView<String> busStopList = new ListView<>();
-    private ObservableList<String> mpkStops = FXCollections.observableArrayList("MPK1", "MPK2", "MPK3", "MPK4", "MPK5", "MPK6");
-    private ObservableList<String> ztmStops = FXCollections.observableArrayList("ZTM1", "ZTM2", "ZTM3", "ZTM4", "ZTM5", "ZTM6");
+    private ListView<BusStop> busStopList = new ListView<>();
+    private ObservableList<BusStop> displayedStops;
     private Button addButton = new Button("Dodaj");
 
     // right pane items
@@ -61,18 +73,19 @@ public class Main extends Application{
 
         // left pane
         leftPane.setPadding(new Insets(10, 10, 10, 10));
-        chooseCityBox.getItems().addAll("Kraków", "Warszawa");
+        chooseCityBox.getItems().addAll(cities);
         // ChoiceBox default value
-        chooseCityBox.setValue("Kraków");
+        chooseCityBox.setValue(cities.get(0));
 
         // listen for selection changes in chooseCityBox
         chooseCityBox.getSelectionModel().selectedItemProperty().addListener((v, oldValue, newValue) -> {
             // TODO if mode was changed, remember to remove all already selected bus stops
-            if (Objects.equals(newValue, "Kraków")){
-                busStopList.setItems(mpkStops);
-            }
-            else if (Objects.equals(newValue, "Warszawa")){
-                busStopList.setItems(ztmStops);
+            try {
+                displayedStops = FXCollections.observableArrayList(JSONHandler.fetchBusStopArray(jsonSource, newValue));
+                busStopList.setItems(displayedStops);
+            } catch (IOException | NullPointerException | ParseException e) {
+                e.printStackTrace();
+                ErrorDialog.displayException(e);
             }
         });
 
@@ -84,11 +97,25 @@ public class Main extends Application{
         centerPane.setHgap(10);
         textArea.setPromptText("Podaj linki do stron z rozkładem");
         // busStopList of  bus stops
-        busStopList.setItems(mpkStops);
+        displayedStops = FXCollections.observableArrayList(JSONHandler.fetchBusStopArray(jsonSource, cities.get(0)));
+        busStopList.setItems(displayedStops);
         busStopList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        // setting in what form to display list object
+        busStopList.setCellFactory(param -> new ListCell<BusStop>(){
+            @Override
+            protected void updateItem(BusStop item, boolean empty){
+                super.updateItem(item, empty);
+                if (empty || item == null || item.getStreetName() == null) {
+                    setText(null);
+                } else {
+                    // this string will be displayed on the list
+                    setText(item.getStreetName());
+                }
+            }
+        });
 
         addButton.setOnAction(event -> {
-            System.out.println(busStopList.getSelectionModel().getSelectedItems());
+            addSelectedBusStops();
         });
 
         GridPane.setConstraints(textArea, 0, 0);
@@ -108,8 +135,8 @@ public class Main extends Application{
         });
 
         rightPane.setPadding(new Insets(10, 10, 10, 10));
-        GridPane.setConstraints(stopsLabel, 0, 0);
-        GridPane.setConstraints(startButton, 0, 2);
+        GridPane.setConstraints(startButton, 0, 0);
+        GridPane.setConstraints(stopsLabel, 0, 1);
         rightPane.getChildren().addAll(stopsLabel, startButton);
 
         // adding everything to BorderPane
@@ -123,7 +150,7 @@ public class Main extends Application{
            closeProgram();
        });
 
-        Scene scene = new Scene(borderPane, 700, 250);
+        Scene scene = new Scene(borderPane, 700, 500);
         window.setScene(scene);
         window.show();
     }
@@ -134,28 +161,7 @@ public class Main extends Application{
             window.close();
     }
 
-    /**
-     * Handle reading links from proper site by checking state of radio buttons
-     * @param mpk RadioButton
-     * @param ztm RadioButton
-     * @throws IOException
-     */
-    @Deprecated
-    private void handleCityRadioButtons(RadioButton mpk, RadioButton ztm) throws IOException {
-        ListContainer list = new ListContainer();
-        ArrayList<String> links = new ArrayList<>(Arrays.asList(textArea.getText().split("\n")));
-        if(mpk.isSelected()){
-            for (String link : links){
-                list.addListHandler(new MPKList(link));
-            }
-        }
-        else if(ztm.isSelected()){
-            for (String link : links){
-                list.addListHandler(new ZTMList(link));
-            }
-        }
-    }
-
+    // UTITLITY
     /**
      * Choose city from ChoiceBox and perform actions // TODO implement those actions
      * @param choiceBox from which to choose city
@@ -175,5 +181,12 @@ public class Main extends Application{
             }
         }
         textArea.setText(list.toString());
+    }
+
+    /**
+     * Add BusStops button handler // TODO implement
+     */
+    private void addSelectedBusStops(){
+        System.out.println(busStopList.getSelectionModel().getSelectedItems());
     }
 }

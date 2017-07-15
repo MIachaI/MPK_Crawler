@@ -65,6 +65,6 @@ public class BusStop {
     }
 
     public String toString(){
-        return this.streetName;
+        return log();
     }
 }
