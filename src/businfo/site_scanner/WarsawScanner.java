@@ -25,7 +25,6 @@ public class WarsawScanner extends SiteScanner {
         ArrayList<BusStop> result = new ArrayList<>();
         ArrayList<BusStopLink> busStopLinks;
         busStopLinks = BusStopList.ZTMBusStopLinksGetter();
-        int i=0;
         for(BusStopLink busStopLink : busStopLinks){
             BusStop busStop = new BusStop(busStopLink.getName());
 
@@ -44,13 +43,7 @@ public class WarsawScanner extends SiteScanner {
             for(Element item : links){
                 String lineLink = "http://www.ztm.waw.pl/"+item.attr("href");
                 String lineNumber = item.text();
-                busStop.addBusLine(new LineOnStop(lineLink,lineNumber));
-                System.out.println(lineLink);
-                System.out.println(lineNumber);
-
-                i++;
-                System.out.println(i);
-
+                busStop.addBusLine(new LineOnStop(lineNumber,lineLink));
             }
 
             // when bus stop ready add to result

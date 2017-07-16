@@ -36,7 +36,7 @@ public class WroclawScanner extends SiteScanner {
             Elements links = document.select("[class='btn']");
             for (int i = 0; i < links.size(); i+=2){ // every second element due to cells with the same information in certain row
                 String linkLine ="http://www.wroclaw.pl"+links.get(i).attr("href");
-                busStop.addBusLine(new LineOnStop(links.get(i).text(), links.get(i/2).attr("href")));
+                busStop.addBusLine(new LineOnStop(links.get(i).text(),links.get(i/2).attr("href")));
             }
             // when bus stop ready add to result
             result.add(busStop);
