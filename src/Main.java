@@ -9,9 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Objects;
+import java.util.*;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -35,9 +33,7 @@ public class Main extends Application{
     private String jsonSource = "test.json";
 
     // top menu items
-    private HBox topMenu = new HBox();
-    private Button infoButton = new Button("Info");
-    private Button helpButton = new Button("Pomoc");
+    private MenuBar topMenu = new MenuBar();
 
     // left pane items
     private VBox leftPane = new VBox();
@@ -53,11 +49,15 @@ public class Main extends Application{
     // right pane items
     private GridPane rightPane = new GridPane();
     private Label stopsLabel = new Label("Lista przystanków");
+    private Label stopsList = new Label("");
     private Button startButton = new Button("Start");
     private Button clearButton = new Button("Wyczyść");
 
     // border pane
     private BorderPane borderPane = new BorderPane();
+
+    // OTHER
+    private Set<BusStop> selectedBusStops = new HashSet<>();
 
     public static void main(String[] args) throws IOException{
         launch(args);
@@ -69,7 +69,7 @@ public class Main extends Application{
         window.setTitle("MPK Crawler");
 
         // top menu
-        topMenu.getChildren().addAll(infoButton, helpButton);
+        topMenu = initMenuBar();
 
         // left pane
         leftPane.setPadding(new Insets(10, 10, 10, 10));
@@ -83,6 +83,8 @@ public class Main extends Application{
             try {
                 displayedStops = FXCollections.observableArrayList(JSONHandler.fetchBusStopArray(jsonSource, newValue));
                 busStopList.setItems(displayedStops);
+                selectedBusStops.clear();
+                updateSelectedStops();
             } catch (IOException | NullPointerException | ParseException e) {
                 e.printStackTrace();
                 ErrorDialog.displayException(e);
@@ -134,9 +136,7 @@ public class Main extends Application{
             }
         });
 
-        addButton.setOnAction(event -> {
-            addSelectedBusStops();
-        });
+        addButton.setOnAction(event -> addSelectedBusStops());
 
         GridPane.setConstraints(searchField, 0, 0);
         GridPane.setConstraints(busStopList, 0, 1);
@@ -153,13 +153,18 @@ public class Main extends Application{
                 ErrorDialog.displayException(e);
             }
         });
+        clearButton.setOnAction(event -> {
+            selectedBusStops.clear();
+            updateSelectedStops();
+        });
 
         rightPane.setPadding(new Insets(10, 10, 10, 10));
         rightPane.setVgap(8);
         GridPane.setConstraints(startButton, 0, 0);
         GridPane.setConstraints(clearButton, 0,1);
         GridPane.setConstraints(stopsLabel, 0, 2);
-        rightPane.getChildren().addAll(stopsLabel, startButton, clearButton);
+        GridPane.setConstraints(stopsList,0,3);
+        rightPane.getChildren().addAll(stopsLabel, startButton, clearButton, stopsList);
 
         // adding everything to BorderPane
         borderPane.setTop(topMenu);
@@ -209,6 +214,86 @@ public class Main extends Application{
      * Add BusStops button handler // TODO implement
      */
     private void addSelectedBusStops(){
+        ObservableList<BusStop> selectedItems = busStopList.getSelectionModel().getSelectedItems();
+        selectedBusStops.addAll(selectedItems);
+        updateSelectedStops();
         System.out.println(busStopList.getSelectionModel().getSelectedItems());
+    }
+
+    /**
+     * Update label displaying currently selected bus stops with values stored in set: selectedBusStops
+     */
+    private void updateSelectedStops(){
+        StringBuilder result = new StringBuilder();
+        for(BusStop stop : selectedBusStops){
+            result.append(stop.getStreetName()).append("\n");
+        }
+        stopsList.setText(result.toString());
+    }
+
+    // adding GUI elements
+    /**
+     * Init MenuBar object to use in main program as a topbar menu
+     * @return MenuBar to put on the top of the window
+     */
+    private MenuBar initMenuBar(){
+        Menu actionsMenu = new Menu("Akcje");
+        Menu optionsMenu = new Menu("Opcje");
+        Menu helpMenu = new Menu("Pomoc");
+
+        // actions
+        MenuItem runOption = new MenuItem("Uruchom analizę");
+        MenuItem exitOption = new MenuItem("Wyjdź");
+        Menu updateOption = new Menu("Aktualizuj listy");
+        MenuItem updateKrakow = new MenuItem("Kraków");
+        MenuItem updateWarszawa = new MenuItem("Warszawa");
+        MenuItem updateWroclaw = new MenuItem("Wrocław");
+        MenuItem updatePoznan = new MenuItem("Poznań");
+        updateOption.getItems().addAll(
+                updateKrakow,
+                updateWarszawa,
+                updateWroclaw,
+                updatePoznan
+        );
+        {
+            // Action listeners
+            exitOption.setOnAction(event -> closeProgram());
+        }
+
+        // options
+        MenuItem outputFolder = new MenuItem("Miejsce zapisu...");
+        {
+            // action listeners
+        }
+
+        // information (help)
+        MenuItem instructionsOption = new MenuItem("Instrukcje");
+        MenuItem contactOption = new MenuItem("Kontakt");
+        {
+            // action listeners
+        }
+
+        // add all submenus to menu
+        actionsMenu.getItems().addAll(
+                runOption,
+                updateOption,
+                new SeparatorMenuItem(),
+                exitOption
+        );
+        optionsMenu.getItems().addAll(
+                outputFolder
+        );
+        helpMenu.getItems().addAll(
+                instructionsOption,
+                contactOption
+        );
+
+        MenuBar menuBar = new MenuBar();
+        menuBar.getMenus().addAll(
+                actionsMenu,
+                optionsMenu,
+                helpMenu
+        );
+        return menuBar;
     }
 }

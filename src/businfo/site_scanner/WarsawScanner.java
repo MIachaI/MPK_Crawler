@@ -18,7 +18,7 @@ import java.util.ArrayList;
 public class WarsawScanner extends SiteScanner {
     public WarsawScanner(){
         super();
-        this.mainPageURL = "http://www.ztm.waw.pl/rozklad_nowy.php?c=183&l=1&a=2145";
+        this.mainPageURL = "http://www.ztm.waw.pl/";
     }
     @Override
     public ArrayList<BusStop> scan() throws IOException {
@@ -32,13 +32,8 @@ public class WarsawScanner extends SiteScanner {
             String subSite = busStopLink.getLink();
             Document document = Jsoup.connect(subSite).get();
 
-
             // get links and numbers elements
             Elements links = document.select("div[class=' PrzystanekLineList'] a[href]");
-            Elements numbers = document.select("div[class='PrzystanekLineList'] a[href]");
-            Element link = document.select("div[class=' PrzystanekLineList'] a[href]").first();
-            String wyswietl = link.attr("href");
-
 
             for(Element item : links){
                 String lineLink = "http://www.ztm.waw.pl/"+item.attr("href");
