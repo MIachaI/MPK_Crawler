@@ -198,7 +198,13 @@ public abstract class BusInfo {
 
 
     protected int findLineNumber(){
-        return Integer.parseInt(this.rawResult.split("\n")[0].replaceAll("[^\\d]",""));
+        int result = 0;
+        try {
+            Integer.parseInt(this.rawResult.split("\n")[0].replaceAll("[^\\d]",""));
+        } catch(NumberFormatException e){
+            result = 0;
+        }
+        return result;
     }
 
     protected String findLineNumberString(){
