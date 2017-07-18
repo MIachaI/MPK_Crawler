@@ -6,22 +6,63 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.TreeMap;
 import businfo.busstop.*;
+import businfo.busstop.lines.LineOnStop;
+import businfo.busstop.streets.BusStop;
 
 /**
  * Created by umat on 02.05.17.
  */
-public abstract class ListHandler {
+public class SelectedBusStopsHandler {
     protected ArrayList<BusInfo> busInfos;
     protected ArrayList<String> linkList;
     protected ArrayList<BusInfo> busInfosPurified;
 
-    public ListHandler(){
+    public SelectedBusStopsHandler(){
         this.busInfos = new ArrayList<>();
         this.linkList = new ArrayList<>();
         this.busInfosPurified = new ArrayList<>();
     }
+    public SelectedBusStopsHandler(ArrayList<BusStop> selectedBusStops){
+        this();
+        for(BusStop stop : selectedBusStops){
+            for(LineOnStop line : stop.getBusLines()){
+                this.linkList.add(line.getLink());
+            }
+        }
+    }
 
-    protected abstract ArrayList<String> findLinks(String html) throws IOException;
+    /**
+     * Prepare object for counting
+     * Remember: after adding new city always update switch statement of this constructor
+     * @param city in which bus stops are
+     * @param selectedBusStops chosen to analyses
+     * @throws IOException
+     */
+    public SelectedBusStopsHandler(String city, ArrayList<BusStop> selectedBusStops) throws IOException {
+        this(selectedBusStops);
+        switch(city){
+            case "Kraków":{
+                for(String link : this.linkList){
+                    busInfos.add(new MPKinfo(link));
+                }
+            }
+            break;
+            case "Warszawa":{
+                for(String link : this.linkList){
+                    busInfos.add(new ZTMinfo(link));
+                }
+            }
+            break;
+            default:
+                break;
+        }
+        this.busInfosPurified = purifyList(this.busInfos);
+    }
+
+    @Deprecated
+    protected ArrayList<String> findLinks(String html) throws IOException{
+        return null;
+    }
 
     //GETTERS
     public ArrayList<String> getLinkList(){

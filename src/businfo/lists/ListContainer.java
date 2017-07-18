@@ -8,7 +8,7 @@ import java.util.ArrayList;
  * Class to hold multiple ListHandlers (multiple lines for one bus stop)
  */
 public class ListContainer {
-    private ArrayList<ListHandler> listHandlers;
+    private ArrayList<SelectedBusStopsHandler> selectedBusStopsHandlers;
     private boolean isNonPurified;
 
     public ListContainer(){
@@ -16,30 +16,30 @@ public class ListContainer {
     }
 
     public ListContainer(boolean isNonPurified){
-        this.listHandlers = new ArrayList<>();
+        this.selectedBusStopsHandlers = new ArrayList<>();
         this.isNonPurified = isNonPurified;
     }
 
-    public ListContainer(ArrayList<ListHandler> lists){
+    public ListContainer(ArrayList<SelectedBusStopsHandler> lists){
         this(lists, false);
     }
 
-    public ListContainer(ArrayList<ListHandler> lists, boolean isNonPurified){
-        this.listHandlers = lists;
+    public ListContainer(ArrayList<SelectedBusStopsHandler> lists, boolean isNonPurified){
+        this.selectedBusStopsHandlers = lists;
         this.isNonPurified = isNonPurified;
     }
 
-    public void addListHandler(ListHandler listHandler){
-        this.listHandlers.add(listHandler);
+    public void addListHandler(SelectedBusStopsHandler selectedBusStopsHandler){
+        this.selectedBusStopsHandlers.add(selectedBusStopsHandler);
     }
 
     public void deleteListHandler() {
-        this.listHandlers.clear();
+        this.selectedBusStopsHandlers.clear();
     }
 
-    public static ArrayList<BusInfo> getBusInfosFromLists(ArrayList<ListHandler> listHandlers){
+    public static ArrayList<BusInfo> getBusInfosFromLists(ArrayList<SelectedBusStopsHandler> selectedBusStopsHandlers){
         ArrayList<BusInfo> result = new ArrayList<>();
-        for(ListHandler list : listHandlers){
+        for(SelectedBusStopsHandler list : selectedBusStopsHandlers){
             result.addAll(list.getBusInfosPurified());
         }
         return result;
@@ -53,12 +53,12 @@ public class ListContainer {
     public ArrayList<BusInfo> getBusInfos(){
         ArrayList<BusInfo> result = new ArrayList<>();
         if(this.isNonPurified){
-            for (ListHandler listHandler : this.listHandlers) {
-                result.addAll(listHandler.getBusInfosNonPurified());
+            for (SelectedBusStopsHandler selectedBusStopsHandler : this.selectedBusStopsHandlers) {
+                result.addAll(selectedBusStopsHandler.getBusInfosNonPurified());
             }
         } else {
-            for (ListHandler listHandler : this.listHandlers) {
-                result.addAll(listHandler.getBusInfosPurified());
+            for (SelectedBusStopsHandler selectedBusStopsHandler : this.selectedBusStopsHandlers) {
+                result.addAll(selectedBusStopsHandler.getBusInfosPurified());
             }
         }
         return result;
@@ -67,11 +67,11 @@ public class ListContainer {
     public ArrayList<BusInfo> getOnlyTrams(){
         ArrayList<BusInfo> result = new ArrayList<>();
         if(this.isNonPurified){
-            for(ListHandler list : this.listHandlers){
+            for(SelectedBusStopsHandler list : this.selectedBusStopsHandlers){
                 result.addAll(list.getOnlyTramsNonPurified());
             }
         } else {
-            for (ListHandler list : this.listHandlers) {
+            for (SelectedBusStopsHandler list : this.selectedBusStopsHandlers) {
                 result.addAll(list.getOnlyTrams());
             }
         }
@@ -81,11 +81,11 @@ public class ListContainer {
     public ArrayList<BusInfo> getOnlyBuses(){
         ArrayList<BusInfo> result = new ArrayList<>();
         if(this.isNonPurified){
-            for(ListHandler list : this.listHandlers){
+            for(SelectedBusStopsHandler list : this.selectedBusStopsHandlers){
                 result.addAll(list.getOnlyBusesNonPurified());
             }
         } else {
-            for(ListHandler list : this.listHandlers){
+            for(SelectedBusStopsHandler list : this.selectedBusStopsHandlers){
                 result.addAll(list.getOnlyBuses());
             }
         }

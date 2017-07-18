@@ -1,8 +1,8 @@
 package window_interface;
 
 
+import businfo.lists.KrakowSelectedBusStops;
 import businfo.lists.ListContainer;
-import businfo.lists.MPKList;
 
 import java.io.IOException;
 
@@ -31,7 +31,7 @@ public class BusStopAddMPK extends Thread {
     @Override
     public void run(){
         try {
-            linkContainer.addListHandler(new MPKList(busStopNameFromList));
+            linkContainer.addListHandler(new KrakowSelectedBusStops(busStopNameFromList));
         } catch (IOException e) {
             e.printStackTrace();
         }

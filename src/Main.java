@@ -15,6 +15,7 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.json.simple.parser.ParseException;
+import save.SaveHandler;
 import save.json.JSONHandler;
 import window_interface.dialogs.ConfirmBox;
 import window_interface.dialogs.ErrorDialog;
@@ -25,12 +26,9 @@ public class Main extends Application{
     // city list (only cities mentioned below will be in the program)
     private ArrayList<String> cities = new ArrayList<>(Arrays.asList(
             "Kraków",
-            "Warszawa",
-            "Poznań",
-            "Wrocław",
-            "Fake miasto"
+            "Warszawa"
     ));
-    private String jsonSource = "test.json";
+    private String jsonSource = "new_test.json";
 
     // top menu items
     private MenuBar topMenu = new MenuBar();
@@ -65,6 +63,7 @@ public class Main extends Application{
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        updateSelectedStops();
         window = primaryStage;
         window.setTitle("MPK Crawler");
 
@@ -79,7 +78,6 @@ public class Main extends Application{
 
         // listen for selection changes in chooseCityBox
         chooseCityBox.getSelectionModel().selectedItemProperty().addListener((v, oldValue, newValue) -> {
-            // TODO if mode was changed, remember to remove all already selected bus stops
             try {
                 displayedStops = FXCollections.observableArrayList(JSONHandler.fetchBusStopArray(jsonSource, newValue));
                 busStopList.setItems(displayedStops);
@@ -146,11 +144,10 @@ public class Main extends Application{
         // right pane
         startButton.setOnAction(event -> {
             try {
-                handleCityChoiceBox(chooseCityBox);
-            } catch (Exception e) {
-                // TODO delete following line in prod
-                e.printStackTrace();
+                runAnalysesAndSave();
+            } catch (IOException e) {
                 ErrorDialog.displayException(e);
+                e.printStackTrace();
             }
         });
         clearButton.setOnAction(event -> {
@@ -199,12 +196,12 @@ public class Main extends Application{
         ArrayList<String> links = new ArrayList<>(Arrays.asList(searchField.getText().split("\n")));
         if (Objects.equals(city, "Kraków")){
             for (String link : links){
-                list.addListHandler(new MPKList(link));
+                list.addListHandler(new KrakowSelectedBusStops(link));
             }
         }
         else if (Objects.equals(city, "Warszawa")){
             for (String link : links){
-                list.addListHandler(new ZTMList(link));
+                list.addListHandler(new WarszawaSelectedBusStops(link));
             }
         }
         searchField.setText(list.toString());
@@ -229,6 +226,11 @@ public class Main extends Application{
             result.append(stop.getStreetName()).append("\n");
         }
         stopsList.setText(result.toString());
+        if(selectedBusStops.isEmpty()){
+            startButton.setDisable(true);
+        } else {
+            startButton.setDisable(false);
+        }
     }
 
     // adding GUI elements
@@ -245,16 +247,11 @@ public class Main extends Application{
         MenuItem runOption = new MenuItem("Uruchom analizę");
         MenuItem exitOption = new MenuItem("Wyjdź");
         Menu updateOption = new Menu("Aktualizuj listy");
-        MenuItem updateKrakow = new MenuItem("Kraków");
-        MenuItem updateWarszawa = new MenuItem("Warszawa");
-        MenuItem updateWroclaw = new MenuItem("Wrocław");
-        MenuItem updatePoznan = new MenuItem("Poznań");
-        updateOption.getItems().addAll(
-                updateKrakow,
-                updateWarszawa,
-                updateWroclaw,
-                updatePoznan
-        );
+        for(String city : this.cities){
+            MenuItem menuItem = new MenuItem(city);
+            updateOption.getItems().add(menuItem);
+        }
+
         {
             // Action listeners
             exitOption.setOnAction(event -> closeProgram());
@@ -295,5 +292,16 @@ public class Main extends Application{
                 helpMenu
         );
         return menuBar;
+    }
+
+    private void runAnalysesAndSave() throws IOException {
+        String selectedCity = chooseCityBox.getValue();
+        ArrayList<BusStop> list = new ArrayList<>();
+        list.addAll(this.selectedBusStops);
+        SelectedBusStopsHandler handler = new SelectedBusStopsHandler(selectedCity, list);
+        ArrayList<SelectedBusStopsHandler> toListContainer = new ArrayList<>();
+        toListContainer.add(handler);
+        ListContainer lc = new ListContainer(toListContainer);
+        SaveHandler.saveAll(lc,"TEST");
     }
 }

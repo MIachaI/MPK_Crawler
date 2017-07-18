@@ -47,7 +47,11 @@ public abstract class BusInfo {
     public void setHTML(String html) throws IOException {
         this.html = html;
         this.jsoupConnection = Jsoup.connect(this.html);
-        this.rawResult = getRawResult(this.jsoupConnection);
+        try{
+            this.rawResult = getRawResult(this.jsoupConnection);
+        } catch(IndexOutOfBoundsException e) {
+            this.rawResult = getEmptyRawReuslt();
+        }
         this.count(this.rawResult);
         this.lineNumber = findLineNumber();
         this.lineNumberString = findLineNumberString();
@@ -70,6 +74,20 @@ public abstract class BusInfo {
      * @throws IOException
      */
     abstract String getRawResult(Connection connection) throws IOException;
+
+    /**
+     * Method to return blank result upon bad reading from page
+     * @return blank timetable
+     */
+    private String getEmptyRawReuslt(){
+        StringBuilder result = new StringBuilder();
+        result.append("0").append("\n");
+        result.append("undefined").append("\n");
+        result.append("undefined").append("\n");
+        result.append("undefined").append("\n");
+        result.append("Error loading this stop").append("\n");
+        return result.toString();
+    }
 
     /**
      * Method to get HTML code required for generating images. It should  extract only timetable part of the site, ignoring all unnecessary contents

@@ -2,7 +2,7 @@ package window_interface;
 
 
 import businfo.lists.ListContainer;
-import businfo.lists.ZTMList;
+import businfo.lists.WarszawaSelectedBusStops;
 
 import java.io.IOException;
 
@@ -18,7 +18,7 @@ public class BusStopAddZTM extends Thread {
 
         linkContainer = linkContainerFromWindowInterface;
         busStopNameFromList = busStopNameFromListFromWindowInterface;
-        // linkContainer.addListHandler(new MPKList(busStopNameFromList));
+        // linkContainer.addListHandler(new KrakowSelectedBusStops(busStopNameFromList));
     }
 
 
@@ -27,7 +27,7 @@ public class BusStopAddZTM extends Thread {
         // BusStopAdd threadUsage = new BusStopAdd();
         try {
             // threadUsage.addLinkToListCointainer(linkContainer, busStopNameFromList);
-            linkContainer.addListHandler(new ZTMList(busStopNameFromList));
+            linkContainer.addListHandler(new WarszawaSelectedBusStops(busStopNameFromList));
         } catch (IOException e) {
             e.printStackTrace();
         }

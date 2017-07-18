@@ -12,11 +12,12 @@ import java.util.ArrayList;
 /**
  * Created by umat on 11.05.17.
  */
-public class ZTMList extends ListHandler {
-    public ZTMList(){
+public class WarszawaSelectedBusStops extends SelectedBusStopsHandler {
+    public WarszawaSelectedBusStops(){
         super();
     }
-    public ZTMList(String html) throws IOException {
+    @Deprecated
+    public WarszawaSelectedBusStops(String html) throws IOException {
         super();
         this.linkList = findLinks(html);
         for(String link : this.linkList){
