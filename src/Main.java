@@ -1,4 +1,5 @@
 import businfo.busstop.streets.BusStop;
+import businfo.busstop.streets.BusStopNameComparator;
 import businfo.lists.*;
 import businfo.site_scanner.CityUpdate;
 import businfo.site_scanner.WarsawScanner;
@@ -86,7 +87,7 @@ public class Main extends Application{
         chooseCityBox.getSelectionModel().selectedItemProperty().addListener((v, oldValue, newValue) -> {
             try {
                 displayedStops = FXCollections.observableArrayList(JSONHandler.fetchBusStopArray(jsonSource, newValue));
-                busStopList.setItems(displayedStops);
+                busStopList.setItems(displayedStops.sorted());
                 selectedBusStops.clear();
                 updateSelectedStops();
             } catch (IOException | NullPointerException | ParseException e) {
@@ -124,7 +125,7 @@ public class Main extends Application{
         // busStopList of  bus stops
         displayedStops = FXCollections.observableArrayList(JSONHandler.fetchBusStopArray(jsonSource, cities.get(0)));
         //busStopList.setMinWidth(350);
-        busStopList.setItems(displayedStops);
+        busStopList.setItems(displayedStops.sorted());
         busStopList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         // setting in what form to display list object
         busStopList.setCellFactory(param -> new ListCell<BusStop>(){
