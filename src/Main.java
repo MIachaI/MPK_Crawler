@@ -305,10 +305,13 @@ public class Main extends Application{
         String selectedCity = chooseCityBox.getValue();
         ArrayList<BusStop> list = new ArrayList<>();
         list.addAll(this.selectedBusStops);
-        SelectedBusStopsHandler handler = new SelectedBusStopsHandler(selectedCity, list);
-        ArrayList<SelectedBusStopsHandler> toListContainer = new ArrayList<>();
-        toListContainer.add(handler);
-        ListContainer lc = new ListContainer(toListContainer);
-        SaveHandler.saveAll(lc,"TEST");
+        SelectedBusStopsHandler handler = null;
+        try {
+            handler = new SelectedBusStopsHandler(selectedCity, list);
+        } catch (Exception e) {
+            ErrorDialog.displayException(e);
+            e.printStackTrace();
+        }
+        SaveHandler.saveAll(handler,"Crawl");
     }
 }

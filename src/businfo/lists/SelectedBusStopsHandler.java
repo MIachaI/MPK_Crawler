@@ -22,6 +22,7 @@ public class SelectedBusStopsHandler {
         this.linkList = new ArrayList<>();
         this.busInfosPurified = new ArrayList<>();
     }
+    @Deprecated
     public SelectedBusStopsHandler(ArrayList<BusStop> selectedBusStops){
         this();
         for(BusStop stop : selectedBusStops){
@@ -36,26 +37,47 @@ public class SelectedBusStopsHandler {
      * Remember: after adding new city always update switch statement of this constructor
      * @param city in which bus stops are
      * @param selectedBusStops chosen to analyses
-     * @throws IOException
+     * @throws Exception when incorrect city name provided
      */
-    public SelectedBusStopsHandler(String city, ArrayList<BusStop> selectedBusStops) throws IOException {
-        this(selectedBusStops);
-        switch(city){
-            case "Kraków":{
+    public SelectedBusStopsHandler(String city, ArrayList<BusStop> selectedBusStops) throws Exception {
+        this();
+        for(BusStop stop : selectedBusStops){
+            for(LineOnStop line : stop.getBusLines()){
+                this.linkList.add(line.getLink());
+            }
+        }
+
+        switch(city.toLowerCase()){
+            case "kraków":
+            case "krakow":
+            case "cracow":{
                 for(String link : this.linkList){
                     busInfos.add(new MPKinfo(link));
                 }
             }
             break;
-            case "Warszawa":{
+            case "warszawa":
+            case "warsaw": {
                 for(String link : this.linkList){
                     busInfos.add(new ZTMinfo(link));
                 }
             }
             break;
+            case "poznan":
+                for(String link : this.linkList){
+                    busInfos.add(new MPKPoznanInfo(link));
+                }
+                // break;
+            case "wrocław":
+            case "wroclaw":
+            case "breslau":
+                throw new Exception("Wrocław not yet implemented");
+                // break;
             default:
-                break;
+                throw new Exception("Invalid city");
         }
+
+        // after adding all BusInfos - purify the list
         this.busInfosPurified = purifyList(this.busInfos);
     }
 

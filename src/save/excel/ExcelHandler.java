@@ -2,6 +2,7 @@ package save.excel;
 
 import businfo.busstop.BusInfo;
 import businfo.lists.ListContainer;
+import businfo.lists.SelectedBusStopsHandler;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
@@ -21,11 +22,7 @@ import static org.apache.poi.hssf.record.ExtendedFormatRecord.CENTER;
 
 public class ExcelHandler {
     // TODO reduce code
-    public static int excelHandlerFlag=0;
-
-    public static void saveExcel(ListContainer listContainer, String path) throws IOException {
-        ExcelHandler setFlag = new ExcelHandler();
-        setFlag.flagSetter();
+    public static void saveExcel(SelectedBusStopsHandler selectedStops, String path, boolean purified) throws IOException {
         FileOutputStream fileOut;
         int tramWeekdaySum = 0, tramWeekendAvgSum = 0;
 
@@ -39,8 +36,16 @@ public class ExcelHandler {
                 }
             }
 
-            ArrayList<BusInfo> tramList = listContainer.getOnlyTrams();
-            ArrayList<BusInfo> busList = listContainer.getOnlyBuses();
+            ArrayList<BusInfo> tramList;
+            ArrayList<BusInfo> busList;
+            // check if lists should be purified or not
+            if(purified) {
+                tramList = selectedStops.getOnlyTrams();
+                 busList = selectedStops.getOnlyBuses();
+            } else {
+                tramList = selectedStops.getOnlyTramsNonPurified();
+                busList = selectedStops.getOnlyBusesNonPurified();
+            }
 
             int row = 1;
             // set width of certain columns
@@ -217,17 +222,15 @@ public class ExcelHandler {
                 result.getRow(row).getCell(4).setCellStyle(lineCellStyle);
                 result.getRow(row).getCell(8).setCellValue(tramWeekdaySum+busWeekdaySum);
                 result.getRow(row).getCell(9).setCellValue(tramWeekendAvgSum+busWeekendAvgSum);
-
             }
+
             fileOut = new FileOutputStream(path + ".xls");
             output.write(fileOut);
-
         }
         fileOut.close();
-
-    }
-    public void flagSetter(){
-        excelHandlerFlag=1;
     }
 
+    public static void saveExcel(SelectedBusStopsHandler selectedStops, String path) throws IOException {
+        saveExcel(selectedStops, path, true);
+    }
 }

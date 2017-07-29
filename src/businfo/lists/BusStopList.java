@@ -10,7 +10,6 @@ import java.util.ArrayList;
 /**
  * Created by MIachaI on 29.05.2017.
  */
-
 public class BusStopList extends Thread {
     /**
      * This metod is prepared to get all bus stop names from certain city, MPK for Cracow
@@ -63,12 +62,11 @@ public class BusStopList extends Thread {
     }
 
     /**
-     * This metod is prepared to get all bus stop names from certain city, ZTM for Warsaw
+     * This method is prepared to get all bus stop names from certain city, ZTM for Warsaw
      * @return ArrayList which contains the bus stop names and links to them
      * @throws IOException - just to handle multithreading
      */
     public static ArrayList<BusStopLink> ZTMBusStopLinksGetter () throws IOException {
-
         //connect to bus stops page of ZTM Warsaw
         Document initialConnect = Jsoup.connect("http://www.ztm.waw.pl/rozklad_nowy.php?c=183&l=1").get();
         //choose content

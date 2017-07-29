@@ -7,6 +7,7 @@ import java.util.ArrayList;
 /**
  * Class to hold multiple ListHandlers (multiple lines for one bus stop)
  */
+@Deprecated
 public class ListContainer {
     private ArrayList<SelectedBusStopsHandler> selectedBusStopsHandlers;
     private boolean isNonPurified;

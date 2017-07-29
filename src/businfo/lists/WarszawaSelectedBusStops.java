@@ -12,6 +12,7 @@ import java.util.ArrayList;
 /**
  * Created by umat on 11.05.17.
  */
+@Deprecated
 public class WarszawaSelectedBusStops extends SelectedBusStopsHandler {
     public WarszawaSelectedBusStops(){
         super();

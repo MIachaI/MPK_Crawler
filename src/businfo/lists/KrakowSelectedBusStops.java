@@ -10,7 +10,7 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
-
+@Deprecated
 public class KrakowSelectedBusStops extends SelectedBusStopsHandler {
     public KrakowSelectedBusStops(){
         super();
