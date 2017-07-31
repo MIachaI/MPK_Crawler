@@ -12,13 +12,18 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import save.SaveHandler;
 import save.json.JSONHandler;
@@ -28,14 +33,12 @@ import window_interface.dialogs.ErrorDialog;
 public class Main extends Application{
     private Stage window;
 
-
-
     // city list (only cities mentioned below will be in the program)
     private ArrayList<String> cities = new ArrayList<>(Arrays.asList(
             "Kraków",
             "Warszawa"
     ));
-    private String jsonSource = "new_test.json";
+    private String jsonSource = "crawler_10_05_17.json";
 
     // top menu items
     private MenuBar topMenu = new MenuBar();
@@ -72,7 +75,7 @@ public class Main extends Application{
     public void start(Stage primaryStage) throws Exception {
         updateSelectedStops();
         window = primaryStage;
-        window.setTitle("MPK Crawler");
+        window.setTitle("Crawler");
 
         // top menu
         topMenu = initMenuBar();
@@ -240,18 +243,83 @@ public class Main extends Application{
         }
     }
 
+    /**
+     * Check program directory for existence of JSON file. JSON file name has to be formatted following way:
+     * crawler_dd_mm_yy.json where the date is indicating last update time
+     * @param supportedCities if any of those cities was missing from the JSON file it should be updated if user desires it
+     */
+    private static void checkJSON(ArrayList<String> supportedCities) throws IOException, ParseException {
+        // 1. check if json file exists
+        final String CURRENT_DIR = System.getProperty("user.dir"); // current dir
+        // list all files in directory to find json files
+        File folder = new File(CURRENT_DIR);
+        File[] files = folder.listFiles();
+        // find json file matching regex
+        String[] date = new String[3];
+        Pattern jsonNamePattern = Pattern.compile("crawler_(\\d{2})_(\\d{2})_(\\d{2})\\.json");
+        boolean jsonFound = false;
+        String filepath = "";
+        for (File file : files){
+            Matcher matcher = jsonNamePattern.matcher(file.getName());
+            //System.out.println(matcher);
+            if(matcher.matches()) {
+                date[0] = matcher.group(1);
+                date[1] = matcher.group(2);
+                date[2] = matcher.group(3);
+                System.out.println(file.getName());
+                for (String d : date) {
+                    System.out.println(d);
+                }
+                jsonFound = true;
+                filepath = file.getAbsolutePath();
+                break;
+            }
+        }
+
+        if(!jsonFound){
+            // TODO popup window?
+            System.out.println("Update or download json file");
+            return ;
+        }
+
+        // 2. check for supported cities
+        JSONParser parser = new JSONParser();
+        Object obj = parser.parse(new FileReader(filepath));
+        JSONObject jsonObject = (JSONObject) obj;
+        ArrayList<String> citiesInJson = new ArrayList<>();
+        for(Object cityObj : jsonObject.keySet()){
+            String city = (String) cityObj;
+            citiesInJson.add(city);
+        }
+        ArrayList<String> missingCities = supportedCities;
+        missingCities.removeAll(citiesInJson);
+        System.out.println(missingCities);
+
+        // 3. ask if user wants to update missing cities
+        if(missingCities.size() > 0){
+            if(ConfirmBox.display("Hej","klej")){
+                // update
+                System.out.println("UPDATE");
+            }
+        }
+
+        // 4. update missing cities if positive answer
+
+        // 5. check date of the last update
+    }
+
     // adding GUI elements
     /**
      * Init MenuBar object to use in main program as a topbar menu
      * @return MenuBar to put on the top of the window
      */
     private MenuBar initMenuBar(){
-        Menu actionsMenu = new Menu("Akcje");
-        Menu optionsMenu = new Menu("Opcje");
-        Menu helpMenu = new Menu("Pomoc");
+        Menu actionsMenu = new Menu("_Akcje");
+        Menu optionsMenu = new Menu("_Opcje");
+        Menu helpMenu = new Menu("_Pomoc");
 
         // actions
-        MenuItem runOption = new MenuItem("Uruchom analizę");
+        MenuItem runOption = new MenuItem("U_ruchom analizę");
         MenuItem exitOption = new MenuItem("Wyjdź");
         Menu updateOption = new Menu("Aktualizuj listy");
         for(String city : this.cities){
