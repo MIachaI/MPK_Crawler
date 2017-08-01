@@ -10,11 +10,17 @@ import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URL;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -46,6 +52,7 @@ public class Main extends Application{
     // left pane items
     private VBox leftPane = new VBox();
     private ChoiceBox<String> chooseCityBox = new ChoiceBox<>();
+    private Button homePageButton = new Button("Strona przewoźnika");
 
     // center pane items
     private GridPane centerPane = new GridPane();
@@ -81,8 +88,9 @@ public class Main extends Application{
         topMenu = initMenuBar();
 
         // left pane
-        leftPane.setPadding(new Insets(10, 10, 10, 10));
         chooseCityBox.getItems().addAll(cities);
+        leftPane.setSpacing(10);
+
         // ChoiceBox default value
         chooseCityBox.setValue(cities.get(0));
 
@@ -98,8 +106,25 @@ public class Main extends Application{
                 ErrorDialog.displayException(e);
             }
         });
+        homePageButton.setOnAction(event -> {
+            if (chooseCityBox.getValue()=="Kraków"){
+                try
+                {
+                    Desktop.getDesktop().browse(new URL("http://rozklady.mpk.krakow.pl/").toURI());
+                }
+                catch (Exception e) {}
+        }
+        else if(chooseCityBox.getValue()=="Warszawa"){
+                try
+                {
+                    Desktop.getDesktop().browse(new URL("http://www.ztm.waw.pl/rozklad_nowy.php?c=183&l=1").toURI());
+                }
+                catch (Exception e) {}
+            }
+        });
 
-        leftPane.getChildren().addAll(chooseCityBox);
+        leftPane.getChildren().addAll(chooseCityBox, homePageButton);
+
 
         // center pane
         centerPane.setPadding(new Insets(10,10,10,10));
@@ -130,7 +155,7 @@ public class Main extends Application{
         //busStopList.setMinWidth(350);
         busStopList.setItems(displayedStops.sorted());
         busStopList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-        // setting in what form to display list object
+        // setting the form, in which the list object will be displayed
         busStopList.setCellFactory(param -> new ListCell<BusStop>(){
             @Override
             protected void updateItem(BusStop item, boolean empty){
