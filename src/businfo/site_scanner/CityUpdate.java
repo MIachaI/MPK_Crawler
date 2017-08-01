@@ -75,6 +75,11 @@ public class CityUpdate {
 
     }
 
+    public void checkUpdates(){
+
+
+
+    }
 
 
 
