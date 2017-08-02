@@ -17,10 +17,11 @@ public class AlertBox {
         Label label1 = new Label();
         label1.setText(message);
 
-        Button closeButton = new Button("close the window");
+        Button closeButton = new Button("OK");
         closeButton.setOnAction(e -> window.close());
 
         VBox layout = new VBox(10);
+        layout.setPadding(new Insets(10, 10, 10, 10));
         layout.getChildren().addAll(label1, closeButton);
         layout.setAlignment(Pos.CENTER);
 

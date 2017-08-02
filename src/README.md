@@ -1,4 +1,4 @@
-###Adding new city to program
+### Adding new city to program
 To add support for a new city you have to follow below steps:
 * create a class inheriting from `BusInfo` and implementing following methods:
   * `String getRawResult(Connection)`

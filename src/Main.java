@@ -1,9 +1,6 @@
 import businfo.busstop.streets.BusStop;
-import businfo.busstop.streets.BusStopNameComparator;
 import businfo.lists.*;
 import businfo.site_scanner.CityUpdate;
-import businfo.site_scanner.WarsawScanner;
-import businfo.site_scanner.WroclawScanner;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -16,9 +13,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 
-import java.awt.*;
 import java.io.*;
-import java.net.URL;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -31,6 +26,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import save.SaveHandler;
 import save.json.JSONHandler;
+import window_interface.dialogs.AlertBox;
 import window_interface.dialogs.ConfirmBox;
 import window_interface.dialogs.ErrorDialog;
 
@@ -40,10 +36,10 @@ public class Main extends Application{
     // city list (only cities mentioned below will be in the program)
     private final ArrayList<String> cities = new ArrayList<>(Arrays.asList(
             "Kraków",
-            "Warszawa",
-            "Wrocław"
+            "Warszawa"
     ));
-    private String jsonSource = "crawler_10_05_17.json";
+    private final String CURRENT_DIR = System.getProperty("user.dir"); // current dir
+    private final String JSON_SOURCE = CURRENT_DIR + File.separator + "crawler_10_05_17.json";
 
     // top menu items
     private MenuBar topMenu = new MenuBar();
@@ -97,7 +93,7 @@ public class Main extends Application{
         // listen for selection changes in chooseCityBox
         chooseCityBox.getSelectionModel().selectedItemProperty().addListener((v, oldValue, newValue) -> {
             try {
-                displayedStops = FXCollections.observableArrayList(JSONHandler.fetchBusStopArray(jsonSource, newValue));
+                displayedStops = FXCollections.observableArrayList(JSONHandler.fetchBusStopArray(JSON_SOURCE, newValue));
                 busStopList.setItems(displayedStops.sorted());
                 selectedBusStops.clear();
                 updateSelectedStops();
@@ -151,7 +147,7 @@ public class Main extends Application{
             busStopList.setItems(subentries.sorted());
         });
         // busStopList of  bus stops
-        displayedStops = FXCollections.observableArrayList(JSONHandler.fetchBusStopArray(jsonSource, this.cities.get(0)));
+        displayedStops = FXCollections.observableArrayList(JSONHandler.fetchBusStopArray(JSON_SOURCE, this.cities.get(0)));
         //busStopList.setMinWidth(350);
         busStopList.setItems(displayedStops.sorted());
         busStopList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
@@ -387,6 +383,17 @@ public class Main extends Application{
         Menu updateOption = new Menu("Aktualizuj listy");
         for(String city : this.cities){
             MenuItem menuItem = new MenuItem(city);
+            menuItem.setOnAction(actionEvent -> {
+                if(ConfirmBox.display("Aktualizacja", "Czy na pewno chcesz aktualizować " + city + "?")) {
+                    try {
+                        CityUpdate.updateHandler(city, this.JSON_SOURCE);
+                        AlertBox.display("Sukces", "Udało się zaktualizować " + city);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        ErrorDialog.displayException(e);
+                    }
+                }
+            });
             updateOption.getItems().add(menuItem);
         }
 
