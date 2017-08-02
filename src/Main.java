@@ -110,14 +110,14 @@ public class Main extends Application{
             if (chooseCityBox.getValue()=="Kraków"){
                 try
                 {
-                    Desktop.getDesktop().browse(new URL("http://rozklady.mpk.krakow.pl/").toURI());
+                    getHostServices().showDocument("http://rozklady.mpk.krakow.pl/");
                 }
                 catch (Exception e) {}
         }
         else if(chooseCityBox.getValue()=="Warszawa"){
                 try
                 {
-                    Desktop.getDesktop().browse(new URL("http://www.ztm.waw.pl/rozklad_nowy.php?c=183&l=1").toURI());
+                    getHostServices().showDocument("http://www.ztm.waw.pl/rozklad_nowy.php?c=183&l=1");
                 }
                 catch (Exception e) {}
             }
