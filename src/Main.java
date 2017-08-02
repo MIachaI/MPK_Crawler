@@ -148,7 +148,7 @@ public class Main extends Application{
                     subentries.add(entry);
                 }
             }
-            busStopList.setItems(subentries);
+            busStopList.setItems(subentries.sorted());
         });
         // busStopList of  bus stops
         displayedStops = FXCollections.observableArrayList(JSONHandler.fetchBusStopArray(jsonSource, cities.get(0)));
