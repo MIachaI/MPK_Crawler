@@ -83,7 +83,7 @@ public abstract class JSONHandler {
 
     /**
      * Override data for a given city with provided list (JSONObject, see class method generateCityObject())
-     * @param fileName json file name
+     * @param fileName json file path
      * @param cityName
      * @param cityObject city object generated via class method generateCityObject()
      * @throws IOException

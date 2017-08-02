@@ -17,9 +17,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 
 import java.awt.*;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -40,9 +38,10 @@ public class Main extends Application{
     private Stage window;
 
     // city list (only cities mentioned below will be in the program)
-    private ArrayList<String> cities = new ArrayList<>(Arrays.asList(
+    private final ArrayList<String> cities = new ArrayList<>(Arrays.asList(
             "Kraków",
-            "Warszawa"
+            "Warszawa",
+            "Wrocław"
     ));
     private String jsonSource = "crawler_10_05_17.json";
 
@@ -80,6 +79,7 @@ public class Main extends Application{
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        checkJSON(cities);
         updateSelectedStops();
         window = primaryStage;
         window.setTitle("Crawler");
@@ -92,7 +92,7 @@ public class Main extends Application{
         leftPane.setSpacing(10);
 
         // ChoiceBox default value
-        chooseCityBox.setValue(cities.get(0));
+        chooseCityBox.setValue(this.cities.get(0));
 
         // listen for selection changes in chooseCityBox
         chooseCityBox.getSelectionModel().selectedItemProperty().addListener((v, oldValue, newValue) -> {
@@ -151,7 +151,7 @@ public class Main extends Application{
             busStopList.setItems(subentries.sorted());
         });
         // busStopList of  bus stops
-        displayedStops = FXCollections.observableArrayList(JSONHandler.fetchBusStopArray(jsonSource, cities.get(0)));
+        displayedStops = FXCollections.observableArrayList(JSONHandler.fetchBusStopArray(jsonSource, this.cities.get(0)));
         //busStopList.setMinWidth(350);
         busStopList.setItems(displayedStops.sorted());
         busStopList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
@@ -273,7 +273,8 @@ public class Main extends Application{
      * crawler_dd_mm_yy.json where the date is indicating last update time
      * @param supportedCities if any of those cities was missing from the JSON file it should be updated if user desires it
      */
-    private static void checkJSON(ArrayList<String> supportedCities) throws IOException, ParseException {
+    private void checkJSON(ArrayList<String> supportedCities) throws Exception {
+        ArrayList supCities = new ArrayList(supportedCities);
         // 1. check if json file exists
         final String CURRENT_DIR = System.getProperty("user.dir"); // current dir
         // list all files in directory to find json files
@@ -291,19 +292,45 @@ public class Main extends Application{
                 date[0] = matcher.group(1);
                 date[1] = matcher.group(2);
                 date[2] = matcher.group(3);
-                System.out.println(file.getName());
-                for (String d : date) {
-                    System.out.println(d);
-                }
+
                 jsonFound = true;
                 filepath = file.getAbsolutePath();
                 break;
             }
         }
 
+        // handle non-existing file
         if(!jsonFound){
-            // TODO popup window?
-            System.out.println("Update or download json file");
+            if(ConfirmBox.display(
+                    "Brakujące dane",
+                    "Brak pliku z danymi przystanków. Czy chcesz teraz pobrać dane?\n" +
+                            "UWAGA! Może zająć to od kilku do kilkunastu minut (w zależności od szybkości twojego łącza)"
+            )){
+                int year = Calendar.getInstance().get(Calendar.YEAR);
+                int month = Calendar.getInstance().get(Calendar.MONTH);
+                int day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+
+                String fileName = "crawler_" + day + "_" + month + "_" + year % 100 + ".json";
+                filepath = CURRENT_DIR + File.separator + fileName;
+                File file = new File(filepath);
+                if(!file.exists()){
+                    file.createNewFile();
+                }
+                FileWriter fw = new FileWriter(file.getAbsoluteFile());
+                BufferedWriter bw = new BufferedWriter(fw);
+
+                // Write in file
+                bw.write("{}");
+
+                // Close connection
+                bw.close();
+
+                for(String city : this.cities){
+                    CityUpdate.updateHandler(city, filepath);
+                }
+            } else {
+                closeProgram();
+            }
             return ;
         }
 
@@ -316,19 +343,30 @@ public class Main extends Application{
             String city = (String) cityObj;
             citiesInJson.add(city);
         }
-        ArrayList<String> missingCities = supportedCities;
+        ArrayList<String> missingCities = supCities;
         missingCities.removeAll(citiesInJson);
         System.out.println(missingCities);
 
         // 3. ask if user wants to update missing cities
         if(missingCities.size() > 0){
-            if(ConfirmBox.display("Hej","klej")){
-                // update
-                System.out.println("UPDATE");
+            String listOfCities = "";
+            for(String city : missingCities){
+                listOfCities += city + "\n";
+            }
+
+            // 4. update missing cities if positive answer
+            if(ConfirmBox.display(
+                    "Brakujące miasta",
+                    "Brakuje danych dla następujących miast:\n" + listOfCities.toString() +
+                            "Czy chcesz pobrać dane teraz?\n" +
+                            "UWAGA! Może zająć to od kilku do kilkunastu minut (w zależności od szybkości twojego łącza)"
+            )) {
+                for(String city : missingCities){
+                    CityUpdate.updateHandler(city, filepath);
+                    System.out.println("Updated city: " + city);
+                }
             }
         }
-
-        // 4. update missing cities if positive answer
 
         // 5. check date of the last update
     }

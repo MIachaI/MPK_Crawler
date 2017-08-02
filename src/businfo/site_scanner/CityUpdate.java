@@ -12,8 +12,7 @@ import java.util.ArrayList;
  * Created by Michal on 18.07.2017.
  */
 public class CityUpdate {
-
-    public void ZTMWarsawUpdate () throws IOException {
+    public static void ZTMWarsawUpdate() throws IOException {
          WarsawScanner scanner = new WarsawScanner(); // stworz scanner
          ArrayList<BusStop> warsawList = new ArrayList<>(); // stworz listę do przechowania wyników dzialania scannera
          warsawList = scanner.scan(); // skanuj (i zapisz do tablicy)
@@ -33,7 +32,7 @@ public class CityUpdate {
          }
 
     }
-    public void MPKKrakowUpdate () throws IOException {
+    public static void MPKKrakowUpdate() throws IOException {
         System.out.println("działam");
         KrakowScanner scanner = new KrakowScanner(); // stworz scanner
         ArrayList<BusStop> krakowList = new ArrayList<>(); // stworz listę do przechowania wyników dzialania scannera
@@ -54,7 +53,7 @@ public class CityUpdate {
         }
 
     }
-    public void MPKWroclawUpdate () throws IOException {
+    public static void MPKWroclawUpdate() throws IOException {
         WroclawScanner scanner = new WroclawScanner(); // stworz scanner
         ArrayList<BusStop> wroclawList = new ArrayList<>(); // stworz listę do przechowania wyników dzialania scannera
         wroclawList = scanner.scan(); // skanuj (i zapisz do tablicy)
@@ -74,6 +73,44 @@ public class CityUpdate {
         }
 
     }
+
+    /**
+     * Automatically update given JSON file with provided city name
+     * @param cityName city to update. Supported cities can be found inside switch statement
+     * @param filename JSON file path
+     * @throws Exception
+     */
+    public static void updateHandler(String cityName, String filename) throws Exception {
+        ArrayList<BusStop> busStops;
+        SiteScanner scanner;
+        switch (cityName.toLowerCase()) {
+            case "kraków":
+            case "krakow":
+            case "cracow":{
+                scanner = new KrakowScanner();
+            }
+                break;
+            case "warszawa":
+            case "warsaw":
+                scanner = new WarsawScanner();
+                break;
+            case "poznan":
+                throw new Exception("Poznań not yet implemented");
+                // break;
+            case "wrocław":
+            case "wroclaw":
+            case "breslau":
+                scanner = new WroclawScanner();
+                break;
+            default:
+                throw new Exception("Invalid city");
+        }
+        busStops = scanner.scan();
+        JSONObject cityObject;
+        cityObject = JSONHandler.generateCityObject(busStops);
+        JSONHandler.updateJSONFile(filename, cityName, cityObject);
+    }
+
 
     public void checkUpdates(){
 

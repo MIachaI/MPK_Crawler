@@ -76,7 +76,7 @@ public abstract class BusInfo {
     abstract String getRawResult(Connection connection) throws IOException;
 
     /**
-     * Method to return blank result upon bad reading from page
+     * Method to return blank result upon incorrect reading from page
      * @return blank timetable
      */
     private String getEmptyRawReuslt(){
@@ -94,10 +94,7 @@ public abstract class BusInfo {
      * @return HTML code as a string required contents to be saved as image
      * @throws IOException
      */
-    public String getRawHtml() throws IOException{
-        // TODO either make abstract or smth?
-        return "";
-    }
+    public abstract String getRawHtml() throws IOException;
 
     /**
      * Saves found information to suitable class fields based on rawResult provided as a parameter
