@@ -64,15 +64,15 @@ public class SelectedBusStopsHandler {
             }
             break;
             case "poznan":
-                for(String link : this.linkList){
-                    busInfos.add(new MPKPoznanInfo(link));
-                }
+                throw new Exception("Not yet implemented");
                 // break;
             case "wrocław":
             case "wroclaw":
             case "breslau":
-                throw new Exception("Wrocław not yet implemented");
-                // break;
+                for(String link: this.linkList){
+                    busInfos.add(new MPKWroclaw(link));
+                }
+                break;
             default:
                 throw new Exception("Invalid city");
         }

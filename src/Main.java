@@ -36,7 +36,8 @@ public class Main extends Application{
     // city list (only cities mentioned below will be in the program)
     private final ArrayList<String> cities = new ArrayList<>(Arrays.asList(
             "Kraków",
-            "Warszawa"
+            "Warszawa",
+            "Wrocław"
     ));
     private final String CURRENT_DIR = System.getProperty("user.dir"); // current dir
     private String JSON_SOURCE;

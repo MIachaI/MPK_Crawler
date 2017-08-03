@@ -13,4 +13,5 @@ To add support for a new city you have to follow below steps:
                 "Warszawa"
         ));
     ```
+* add city in `SelectedBusStopsHandler` class constructor
    
