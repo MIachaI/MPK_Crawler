@@ -39,7 +39,7 @@ public class Main extends Application{
             "Warszawa"
     ));
     private final String CURRENT_DIR = System.getProperty("user.dir"); // current dir
-    private final String JSON_SOURCE = CURRENT_DIR + File.separator + "crawler_10_05_17.json";
+    private String JSON_SOURCE;
 
     // top menu items
     private MenuBar topMenu = new MenuBar();
@@ -69,13 +69,16 @@ public class Main extends Application{
     // OTHER
     private Set<BusStop> selectedBusStops = new HashSet<>();
 
+    public Main() throws IOException {
+    }
+
     public static void main(String[] args) throws IOException{
         launch(args);
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        checkJSON(cities);
+        this.JSON_SOURCE = this.checkJSONexistance();
         updateSelectedStops();
         window = primaryStage;
         window.setTitle("Crawler");
@@ -98,8 +101,9 @@ public class Main extends Application{
                 selectedBusStops.clear();
                 updateSelectedStops();
             } catch (IOException | NullPointerException | ParseException e) {
+                busStopList.setItems(null);
                 e.printStackTrace();
-                ErrorDialog.displayException(e);
+                //ErrorDialog.displayException(e);
             }
         });
         homePageButton.setOnAction(event -> {
@@ -147,9 +151,17 @@ public class Main extends Application{
             busStopList.setItems(subentries.sorted());
         });
         // busStopList of  bus stops
-        displayedStops = FXCollections.observableArrayList(JSONHandler.fetchBusStopArray(JSON_SOURCE, this.cities.get(0)));
+        try {
+            displayedStops = FXCollections.observableArrayList(JSONHandler.fetchBusStopArray(JSON_SOURCE, this.cities.get(0)));
+        } catch(Exception e){
+            System.out.println("Empty file");
+        }
         //busStopList.setMinWidth(350);
-        busStopList.setItems(displayedStops.sorted());
+        try {
+            busStopList.setItems(displayedStops.sorted());
+        } catch(Exception e){
+            busStopList.setItems(null);
+        }
         busStopList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         // setting the form, in which the list object will be displayed
         busStopList.setCellFactory(param -> new ListCell<BusStop>(){
@@ -208,6 +220,7 @@ public class Main extends Application{
         Scene scene = new Scene(borderPane, 700, 500);
         window.setScene(scene);
         window.show();
+        checkJSON(cities, JSON_SOURCE);
     }
 
     private void closeProgram(){
@@ -265,70 +278,57 @@ public class Main extends Application{
     }
 
     /**
-     * Check program directory for existence of JSON file. JSON file name has to be formatted following way:
-     * crawler_dd_mm_yy.json where the date is indicating last update time
-     * @param supportedCities if any of those cities was missing from the JSON file it should be updated if user desires it
+     * checks if JSON file exists, if not creates blank file
+     * @return absolute path to created (or found) JSON file
      */
-    private void checkJSON(ArrayList<String> supportedCities) throws Exception {
-        ArrayList supCities = new ArrayList(supportedCities);
-        // 1. check if json file exists
+    private String checkJSONexistance() throws IOException {
         final String CURRENT_DIR = System.getProperty("user.dir"); // current dir
-        // list all files in directory to find json files
         File folder = new File(CURRENT_DIR);
         File[] files = folder.listFiles();
-        // find json file matching regex
         String[] date = new String[3];
-        Pattern jsonNamePattern = Pattern.compile("crawler_(\\d{2})_(\\d{2})_(\\d{2})\\.json");
+        Pattern jsonNamePattern = Pattern.compile("crawler_(\\d{1,2})_(\\d{1,2})_(\\d{1,2})\\.json");
         boolean jsonFound = false;
-        String filepath = "";
+        String filepath;
         for (File file : files){
-            Matcher matcher = jsonNamePattern.matcher(file.getName());
+            Matcher matcher = jsonNamePattern.matcher(file.getName().replace(CURRENT_DIR, ""));
             //System.out.println(matcher);
             if(matcher.matches()) {
+                // if file was found - return its absolute path
                 date[0] = matcher.group(1);
                 date[1] = matcher.group(2);
                 date[2] = matcher.group(3);
 
-                jsonFound = true;
                 filepath = file.getAbsolutePath();
-                break;
+                return filepath;
             }
         }
 
-        // handle non-existing file
-        if(!jsonFound){
-            if(ConfirmBox.display(
-                    "Brakujące dane",
-                    "Brak pliku z danymi przystanków. Czy chcesz teraz pobrać dane?\n" +
-                            "UWAGA! Może zająć to od kilku do kilkunastu minut (w zależności od szybkości twojego łącza)"
-            )){
-                int year = Calendar.getInstance().get(Calendar.YEAR);
-                int month = Calendar.getInstance().get(Calendar.MONTH);
-                int day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
-
-                String fileName = "crawler_" + day + "_" + month + "_" + year % 100 + ".json";
-                filepath = CURRENT_DIR + File.separator + fileName;
-                File file = new File(filepath);
-                if(!file.exists()){
-                    file.createNewFile();
-                }
-                FileWriter fw = new FileWriter(file.getAbsoluteFile());
-                BufferedWriter bw = new BufferedWriter(fw);
-
-                // Write in file
-                bw.write("{}");
-
-                // Close connection
-                bw.close();
-
-                for(String city : this.cities){
-                    CityUpdate.updateHandler(city, filepath);
-                }
-            } else {
-                closeProgram();
-            }
-            return ;
+        // else - return path to newly created file
+        int year = Calendar.getInstance().get(Calendar.YEAR);
+        int month = Calendar.getInstance().get(Calendar.MONTH);
+        int day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+        String fileName = "crawler_" + day + "_" + month + "_" + year % 100 + ".json";
+        filepath = CURRENT_DIR + File.separator + fileName;
+        File file = new File(filepath);
+        if(!file.exists()){
+            file.createNewFile();
         }
+        FileWriter fw = new FileWriter(file.getAbsoluteFile());
+        BufferedWriter bw = new BufferedWriter(fw);
+
+        bw.write("{}"); // required for JSON library to work properly
+        bw.close();
+        return file.getAbsolutePath();
+    }
+
+    /**
+     * Check program directory for existence of JSON file. JSON file name has to be formatted following way:
+     * crawler_dd_mm_yy.json where the date is indicating last update time
+     * @param supportedCities if any of those cities was missing from the JSON file it should be updated if user desires it
+     */
+    private void checkJSON(ArrayList<String> supportedCities, String filepath) throws Exception {
+        // 1. check json file existence - functionality moved to function checkJSONexistance()
+        ArrayList supCities = new ArrayList(supportedCities);
 
         // 2. check for supported cities
         JSONParser parser = new JSONParser();
@@ -341,7 +341,7 @@ public class Main extends Application{
         }
         ArrayList<String> missingCities = supCities;
         missingCities.removeAll(citiesInJson);
-        System.out.println(missingCities);
+        System.out.println("Missing cities: " + missingCities);
 
         // 3. ask if user wants to update missing cities
         if(missingCities.size() > 0){
@@ -360,6 +360,16 @@ public class Main extends Application{
                 for(String city : missingCities){
                     CityUpdate.updateHandler(city, filepath);
                     System.out.println("Updated city: " + city);
+                }
+                try {
+                    displayedStops = FXCollections.observableArrayList(JSONHandler.fetchBusStopArray(JSON_SOURCE, this.cities.get(0)));
+                } catch(Exception e){
+                    System.out.println("Empty file");
+                }
+                try {
+                    busStopList.setItems(displayedStops.sorted());
+                } catch(Exception e){
+                    busStopList.setItems(null);
                 }
             }
         }
