@@ -72,7 +72,7 @@ public class SelectedBusStopsHandler {
                 for(String link: this.linkList){
                     busInfos.add(new MPKWroclaw(link));
                 }
-                break;
+            break;
             default:
                 throw new Exception("Invalid city");
         }

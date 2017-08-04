@@ -27,9 +27,9 @@ public class MPKWroclaw extends BusInfo {
         // vehicle type
         String vehicle = document.select("table[class='table table-bordered table-schedule hide-to-print'] thead tr td[colspan='2'] h2").text();
         if(vehicle.contains("Tramwaj") || vehicle.contains("tramwaj")){
-            vehicle = "tram";
+            vehicle = "Light train";
         } else if (vehicle.contains("Autobus") || vehicle.contains("bus")){
-            vehicle = "bus";
+            vehicle = "Bus";
         } else {
             vehicle = "undefined";
         }
@@ -50,12 +50,15 @@ public class MPKWroclaw extends BusInfo {
 
         // schedule
         Elements hourTables = document.select("table[class='table table-bordered table-schedule table-departures'] tbody tr td table[class='table-hours']");
-        HashMap<String, ArrayList<String>> hours = new HashMap<>();
+        HashMap<Integer, ArrayList<String>> hours = new HashMap<>();
         for(Element table : hourTables){
             Elements rows = table.select("tbody tr");
             for(Element row : rows){
                 Element hourCell = row.select("td b").first();
-                String hour = hourCell.text();
+                int hour = Integer.parseInt(hourCell.text());
+//                if(hour.charAt(0) == '0'){
+//                    hour = hour.replaceAll("0", "");
+//                }
                 // after storing hour - delete cell
                 row.select("td b").remove();
                 Elements cells = row.select("td");
@@ -75,10 +78,10 @@ public class MPKWroclaw extends BusInfo {
         }
 
         // now save all from map to string
-        ArrayList<String> sortedKeys = new ArrayList<>();
+        ArrayList<Integer> sortedKeys = new ArrayList<>();
         sortedKeys.addAll(hours.keySet());
         Collections.sort(sortedKeys);
-        for(String hour : sortedKeys){
+        for(int hour : sortedKeys){
             result.append(hour).append("\t");
             ArrayList<String> minuteColumns = hours.get(hour);
             for(String minuteString : minuteColumns){
@@ -100,7 +103,8 @@ public class MPKWroclaw extends BusInfo {
         Element head = document.select("head").first();
         StringBuilder result = new StringBuilder();
         result.append("<!DOCTYPE html><html>");
-        result.append(head);
+        // result.append(head);
+        result.append("<head></head>");
         result.append("<body>");
         result.append(table);
         result.append("</body></html>");
