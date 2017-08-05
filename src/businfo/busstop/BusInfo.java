@@ -1,6 +1,6 @@
 package businfo.busstop;
 
-import businfo.HourMinute;
+import businfo.busstop.timetable.HourMinute;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -50,6 +50,8 @@ public abstract class BusInfo {
         try{
             this.rawResult = getRawResult(this.jsoupConnection);
         } catch(IndexOutOfBoundsException e) {
+            System.out.println("Error while fetching info from " + this.html +
+            "\n> saved empty timetable");
             this.rawResult = getEmptyRawReuslt();
         }
         this.count(this.rawResult);
@@ -60,6 +62,7 @@ public abstract class BusInfo {
         this.columnNames = findColumnNames();
         this.additionalInfo = findAdditionalInfo();
     }
+
     /**
      * Get information from table posted on MPK site as a string.
      * Information has to be ordered in new lines as follows:<br/>

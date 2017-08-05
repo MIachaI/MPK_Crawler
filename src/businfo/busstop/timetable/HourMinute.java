@@ -1,21 +1,22 @@
-package businfo;
+package businfo.busstop.timetable;
+
+import java.util.Comparator;
 
 /**
 	 * @author umat
 	 * Class stores hour and minute
 	 * Infomation is used to describe time that bus stops on a bus stop.
-	 * 
 	 */
 	public class HourMinute{
-		private int hour;
-		private int minute;
+		public int hour;
+		public int minute;
 		
 		public HourMinute(int hour, int minute){
 			this.hour = hour;
 			this.minute = minute;
 		}
 		public HourMinute(){
-			new HourMinute(0,0);
+			this(0,0);
 		}
 		
 		public int getHour(){
@@ -29,4 +30,12 @@ package businfo;
 			if(minute < 10) return this.hour+":0"+this.minute;
 			else return this.hour+":"+this.minute;
 		}
+
+	public int compare(HourMinute t1) {
+		int compareHours = this.hour - t1.hour;
+		if(compareHours == 0){
+			return this.minute - t1.minute;
+		}
+		return compareHours;
 	}
+}

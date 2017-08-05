@@ -31,9 +31,9 @@ public class MPKPoznanInfo extends BusInfo {
         // vehicle type
         Element vehicleType = document.select("img[class='MpkZoneImgBig']").first();
         if (Objects.equals(vehicleType.attr("title"), "autobus"))
-            result.append("\nbus");
+            result.append("\nBus");
         else if (Objects.equals(vehicleType.attr("title"),"tramwaj"))
-            result.append("\ntram");
+            result.append("\nLight train");
         else
             result.append("\nundefined");
 

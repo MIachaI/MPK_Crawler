@@ -234,28 +234,8 @@ public class Main extends Application{
 
     // UTITLITY
     /**
-     * Choose city from ChoiceBox and perform actions // TODO implement those actions
-     * @param choiceBox from which to choose city
-     */
-    private void handleCityChoiceBox(ChoiceBox<String> choiceBox) throws IOException {
-        String city = choiceBox.getValue();
-        ListContainer list = new ListContainer();
-        ArrayList<String> links = new ArrayList<>(Arrays.asList(searchField.getText().split("\n")));
-        if (Objects.equals(city, "Kraków")){
-            for (String link : links){
-                list.addListHandler(new KrakowSelectedBusStops(link));
-            }
-        }
-        else if (Objects.equals(city, "Warszawa")){
-            for (String link : links){
-                list.addListHandler(new WarszawaSelectedBusStops(link));
-            }
-        }
-        searchField.setText(list.toString());
-    }
-
-    /**
-     * Add BusStops button handler // TODO implement
+     * Check center bus stop list for selected items and add them to the right pane
+     * (also update selected bus stops)
      */
     private void addSelectedBusStops(){
         ObservableList<BusStop> selectedItems = busStopList.getSelectionModel().getSelectedItems();
@@ -385,6 +365,7 @@ public class Main extends Application{
         int day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
         return "crawler_" + day + "_" + month + "_" + year % 100 + ".json";
     }
+
     // adding GUI elements
     /**
      * Init MenuBar object to use in main program as a topbar menu
