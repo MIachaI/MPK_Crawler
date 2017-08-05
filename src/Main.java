@@ -14,6 +14,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,6 +32,8 @@ import save.json.JSONHandler;
 import window_interface.dialogs.AlertBox;
 import window_interface.dialogs.ConfirmBox;
 import window_interface.dialogs.ErrorDialog;
+
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class Main extends Application{
     private Stage window;
@@ -69,9 +74,6 @@ public class Main extends Application{
 
     // OTHER
     private Set<BusStop> selectedBusStops = new HashSet<>();
-
-    public Main() throws IOException {
-    }
 
     public static void main(String[] args) throws IOException{
         launch(args);
@@ -283,12 +285,10 @@ public class Main extends Application{
      * @return absolute path to created (or found) JSON file
      */
     private String checkJSONexistance() throws IOException {
-        final String CURRENT_DIR = System.getProperty("user.dir"); // current dir
         File folder = new File(CURRENT_DIR);
         File[] files = folder.listFiles();
         String[] date = new String[3];
         Pattern jsonNamePattern = Pattern.compile("crawler_(\\d{1,2})_(\\d{1,2})_(\\d{1,2})\\.json");
-        boolean jsonFound = false;
         String filepath;
         for (File file : files){
             Matcher matcher = jsonNamePattern.matcher(file.getName().replace(CURRENT_DIR, ""));
@@ -305,10 +305,7 @@ public class Main extends Application{
         }
 
         // else - return path to newly created file
-        int year = Calendar.getInstance().get(Calendar.YEAR);
-        int month = Calendar.getInstance().get(Calendar.MONTH);
-        int day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
-        String fileName = "crawler_" + day + "_" + month + "_" + year % 100 + ".json";
+        String fileName = generateNewJsonFileName();
         filepath = CURRENT_DIR + File.separator + fileName;
         File file = new File(filepath);
         if(!file.exists()){
@@ -378,6 +375,16 @@ public class Main extends Application{
         // 5. check date of the last update
     }
 
+    /**
+     * generate json file name based on current date
+     * @return jason file name (with .json extension included)
+     */
+    private String generateNewJsonFileName(){
+        int year = Calendar.getInstance().get(Calendar.YEAR);
+        int month = Calendar.getInstance().get(Calendar.MONTH) + 1;
+        int day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+        return "crawler_" + day + "_" + month + "_" + year % 100 + ".json";
+    }
     // adding GUI elements
     /**
      * Init MenuBar object to use in main program as a topbar menu
@@ -398,6 +405,10 @@ public class Main extends Application{
                 if(ConfirmBox.display("Aktualizacja", "Czy na pewno chcesz aktualizować " + city + "?")) {
                     try {
                         CityUpdate.updateHandler(city, this.JSON_SOURCE);
+                        // override json file name
+                        Path source = Paths.get(this.JSON_SOURCE);
+                        Files.move(source, source.resolveSibling(this.CURRENT_DIR + File.separator +generateNewJsonFileName()), REPLACE_EXISTING);
+                        this.JSON_SOURCE = this.checkJSONexistance();
                         AlertBox.display("Sukces", "Udało się zaktualizować " + city);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -454,7 +465,7 @@ public class Main extends Application{
         String selectedCity = chooseCityBox.getValue();
         ArrayList<BusStop> list = new ArrayList<>();
         list.addAll(this.selectedBusStops);
-        SelectedBusStopsHandler handler = null;
+        SelectedBusStopsHandler handler = new SelectedBusStopsHandler();
         try {
             handler = new SelectedBusStopsHandler(selectedCity, list);
         } catch (Exception e) {
