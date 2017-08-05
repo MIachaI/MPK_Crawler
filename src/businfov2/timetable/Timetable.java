@@ -1,27 +1,12 @@
-package businfo.busstop.timetable;
+package businfov2.timetable;
+
+import businfov2.VehicleType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Timetable {
-    public enum VehicleType {
-        BUS,
-        TRAM,
-        UNDEFINED;
-
-        public String toString(){
-            switch(this){
-                case BUS:
-                    return "Bus";
-                case TRAM:
-                    return "Light train";
-                case UNDEFINED:
-                    return "undefined";
-                default:
-                    return "undefined";
-            }
-        }
-    }
+    private final static String UNDEFINED = "undefined";
 
     public String lineNumber;
     public VehicleType vehicleType;
@@ -30,11 +15,35 @@ public class Timetable {
     public ArrayList<String> additionalInfo;
 
     public Timetable(){
-        this.lineNumber = "undefined";
+        this.lineNumber = UNDEFINED;
         this.vehicleType = VehicleType.UNDEFINED;
-        this.busStopName = "undefined";
+        this.busStopName = UNDEFINED;
         this.columns = new ArrayList<>();
         this.additionalInfo = new ArrayList<>();
+    }
+
+    /**
+     * @return amount of all departures of this line
+     */
+    public int getDeparturesAmount(){
+        int result = 0;
+        for(Column column : this.columns) {
+            result += column.departures.size();
+        }
+        return result;
+    }
+
+    /**
+     * Get amount of departures depending on the day of the week
+     * @param day can either be WEEKDAY, SATURDAY, SUNDAY or HOLIDAY
+     * @return amount of departures for a given day
+     */
+    public int getDeparturesAmount(Day day){
+        int result = 0;
+        for(Column column : this.columns){
+            result += column.day == day ? column.departures.size() : 0;
+        }
+        return result;
     }
 
     public static Timetable rawResultToTimetable(String rawResult) throws Exception {
@@ -109,19 +118,28 @@ public class Timetable {
         return result.toString();
     }
 
+    public enum Day{
+        WEEKDAY,
+        SATURDAY,
+        SUNDAY,
+        HOLIDAY
+    }
+
     /**
      * Class representing single column in a timetable
      * It usually contains information about departures for a given day of week (e.g.
      */
-    public static class Column{
-        public String name;
+    public static class Column {
+        private String name;
         public ArrayList<HourMinute> departures;
+        private Day day;
+
         public Column(){
             this.departures = new ArrayList<>();
         }
         public Column(String name){
             this();
-            this.name = name;
+            this.setColumnName(name);
         }
 
         public ArrayList<HourMinute> getDeparturesFromHour(int hour){
@@ -129,6 +147,43 @@ public class Timetable {
             for(HourMinute time : this.departures)
                 if(time.hour == hour) result.add(time);
             return result;
+        }
+
+        /**
+         * Sets column name and also sets variable that tells which part of the week column belongs to.
+         * @param name street name to be saved
+         * @return given name
+         */
+        public String setColumnName(String name){
+            this.name = name;
+            String lower = this.name.toLowerCase();
+            if (lower.contains("dzień powszedni")
+                    || lower.contains("dni powszednie")
+                    || lower.contains("dzień roboczy")
+                    || lower.contains("dni robocze")
+                    || lower.contains("weekday")) {
+                this.day = Day.WEEKDAY;
+            } else if (lower.contains("sobota")
+                    || lower.contains("soboty")
+                    || lower.contains("saturday")){
+                this.day = Day.SATURDAY;
+            } else if (lower.contains("niedziele")
+                    || lower.contains("niedziela")
+                    || lower.contains("sunday"))
+                this.day = Day.SUNDAY;
+            else if (lower.contains("święto")
+                    || lower.contains("święta")
+                    || lower.contains("wolny")
+                    || lower.contains("wolne")
+                    || lower.contains("holiday"))
+                this.day = Day.HOLIDAY;
+            else
+                this.day = Day.WEEKDAY;
+            return this.name;
+        }
+
+        public Day getDayType(){
+            return this.day;
         }
     }
 }

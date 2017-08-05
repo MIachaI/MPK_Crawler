@@ -1,6 +1,4 @@
-package businfo.busstop.timetable;
-
-import java.util.Comparator;
+package businfov2.timetable;
 
 /**
 	 * @author umat

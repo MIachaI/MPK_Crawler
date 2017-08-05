@@ -1,6 +1,6 @@
 package businfo.busstop;
 
-import businfo.busstop.timetable.HourMinute;
+import businfov2.timetable.HourMinute;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
