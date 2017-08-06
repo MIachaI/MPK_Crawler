@@ -11,6 +11,8 @@ public class Timetable {
     public String lineNumber;
     public VehicleType vehicleType;
     public String busStopName;
+    public String previousStop;
+    public String nextStop;
     public ArrayList<Column> columns;
     public ArrayList<String> additionalInfo;
 
@@ -18,6 +20,8 @@ public class Timetable {
         this.lineNumber = UNDEFINED;
         this.vehicleType = VehicleType.UNDEFINED;
         this.busStopName = UNDEFINED;
+        this.previousStop = UNDEFINED;
+        this.nextStop = UNDEFINED;
         this.columns = new ArrayList<>();
         this.additionalInfo = new ArrayList<>();
     }
@@ -46,6 +50,18 @@ public class Timetable {
         return result;
     }
 
+    public int getWeekendAverage(){
+        int saturdayAmount = this.getDeparturesAmount(Day.SATURDAY);
+        int sundayAmount = this.getDeparturesAmount(Day.SUNDAY);
+        return (saturdayAmount + sundayAmount) / 2;
+    }
+
+    /**
+     * Convert rawResult got from BusInfo class to get Timetable object (compatibile with new method)
+     * @param rawResult to parse. Raw result can be generated using BusInfo.getRawResult() method
+     * @return parsed Timetable
+     * @throws Exception upon providing incorrect rawResult
+     */
     public static Timetable rawResultToTimetable(String rawResult) throws Exception {
         Timetable result = new Timetable();
         ArrayList<String> lines = new ArrayList<>(Arrays.asList(rawResult.split("\n")));
@@ -92,7 +108,7 @@ public class Timetable {
         return result;
     }
 
-    public String toString(){
+    public String log(){
         StringBuilder result = new StringBuilder();
         String newline = System.getProperty("line.separator");
         result.append(this.vehicleType).append(" numer: ").append(this.lineNumber).append(newline);
@@ -116,6 +132,14 @@ public class Timetable {
         }
 
         return result.toString();
+    }
+
+    public String toString(){
+        String result = this.vehicleType + " " + this.lineNumber;
+        for(Column column : this.columns){
+            result += "\t" + this.getDeparturesAmount(column.day);
+        }
+        return result;
     }
 
     public enum Day{
