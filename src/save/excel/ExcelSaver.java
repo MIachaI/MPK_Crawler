@@ -1,8 +1,10 @@
 package save.excel;
 
-import businfo.busstop.BusInfo;
-import businfo.lists.ListContainer;
-import businfo.lists.SelectedBusStopsHandler;
+import businfov2.BusStop;
+import businfov2.CertificationMethod;
+import businfov2.VehicleType;
+import businfov2.timetable.Timetable;
+import businfov2.timetable.TimetableNumberComparator;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
@@ -12,18 +14,25 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import static org.apache.poi.hssf.record.ExtendedFormatRecord.CENTER;
 
-/**
- * Created by umat on 17.05.17.
- */
-public class ExcelHandler {
-    // TODO reduce code
-    public static void saveExcel(SelectedBusStopsHandler selectedStops, String path, boolean purified) throws IOException {
-        FileOutputStream fileOut;
-        int tramWeekdaySum = 0, tramWeekendAvgSum = 0;
+public abstract class ExcelSaver {
+    public static void save(String path, ArrayList<BusStop> selectedStops, CertificationMethod method) throws IOException {
+        ArrayList<Timetable> selectedBuses = new ArrayList<>();
+        ArrayList<Timetable> selectedTrams = new ArrayList<>();
+        for (BusStop stop : selectedStops) {
+            selectedBuses.addAll(stop.getTimetables(VehicleType.BUS, method));
+            selectedTrams.addAll(stop.getTimetables(VehicleType.TRAM, method));
+        }
+        selectedBuses.sort(new TimetableNumberComparator());
+        selectedTrams.sort(new TimetableNumberComparator());
 
+        int tramWeekdaySum=0, tramWeekendAvgSum=0;
+        int busWeekdaySum=0, busWeekendAvgSum=0;
+
+        FileOutputStream fileOut;
         try (Workbook output = new HSSFWorkbook()) {
             Sheet result = output.createSheet("wynik");
 
@@ -32,17 +41,6 @@ public class ExcelHandler {
                 for (int column = 0; column < 20; column++) {
                     result.getRow(row).createCell(column);
                 }
-            }
-
-            ArrayList<BusInfo> tramList;
-            ArrayList<BusInfo> busList;
-            // check if lists should be purified or not
-            if(purified) {
-                tramList = selectedStops.getOnlyTrams();
-                 busList = selectedStops.getOnlyBuses();
-            } else {
-                tramList = selectedStops.getOnlyTramsNonPurified();
-                busList = selectedStops.getOnlyBusesNonPurified();
             }
 
             int row = 1;
@@ -76,13 +74,12 @@ public class ExcelHandler {
             CellStyle lineCellStyle = output.createCellStyle();
             lineCellStyle.setAlignment(HorizontalAlignment.CENTER);
 
-
-            if(!tramList.isEmpty()){ // if there are trams on the list
-                result.addMergedRegion(new CellRangeAddress(row, row+1, 1, 1));
-                result.addMergedRegion(new CellRangeAddress(row, row+1, 2, 2));
-                result.addMergedRegion(new CellRangeAddress(row, row+1, 3, 3));
-                result.addMergedRegion(new CellRangeAddress(row, row+1, 4, 4));
-                result.addMergedRegion(new CellRangeAddress(row, row+1, 5, 8));
+            if(!selectedTrams.isEmpty()) {
+                result.addMergedRegion(new CellRangeAddress(row, row + 1, 1, 1));
+                result.addMergedRegion(new CellRangeAddress(row, row + 1, 2, 2));
+                result.addMergedRegion(new CellRangeAddress(row, row + 1, 3, 3));
+                result.addMergedRegion(new CellRangeAddress(row, row + 1, 4, 4));
+                result.addMergedRegion(new CellRangeAddress(row, row + 1, 5, 8));
 
 
                 result.getRow(row).getCell(1).setCellStyle(titleRowStyle);
@@ -104,39 +101,38 @@ public class ExcelHandler {
                 result.getRow(row).getCell(7).setCellValue("Weekend");
                 result.getRow(row).getCell(8).setCellValue("Average");
 
-                for(BusInfo tramInfo : tramList){
+                for (Timetable tram : selectedTrams) {
                     row++;
 
-                    result.getRow(row).getCell(1).setCellValue(tramInfo.getLineNumberString());
+                    result.getRow(row).getCell(1).setCellValue(tram.lineNumber);
                     result.getRow(row).getCell(1).setCellStyle(lineCellStyle);
-                    result.getRow(row).getCell(2).setCellValue(tramInfo.getStreetName());
-                    result.getRow(row).getCell(3).setCellValue(tramInfo.getVehicleType());
-                    result.getRow(row).getCell(5).setCellValue(tramInfo.getWeekdayCourseCount());
-                    result.getRow(row).getCell(6).setCellValue(tramInfo.getSaturdayCourseCount());
-                    result.getRow(row).getCell(7).setCellValue(tramInfo.getSundayCourseCount());
-                    result.getRow(row).getCell(8).setCellValue((tramInfo.getSaturdayCourseCount() + tramInfo.getSundayCourseCount()) / 2);
+                    result.getRow(row).getCell(2).setCellValue(tram.busStopName);
+                    result.getRow(row).getCell(3).setCellValue(tram.vehicleType.toString());
+                    result.getRow(row).getCell(5).setCellValue(tram.getDeparturesAmount(Timetable.Day.WEEKDAY));
+                    result.getRow(row).getCell(6).setCellValue(tram.getDeparturesAmount(Timetable.Day.SATURDAY));
+                    result.getRow(row).getCell(7).setCellValue(tram.getDeparturesAmount(Timetable.Day.SUNDAY));
+                    result.getRow(row).getCell(8).setCellValue(tram.getWeekendAverage());
 
-                    tramWeekdaySum += tramInfo.getWeekdayCourseCount();
-                    tramWeekendAvgSum += (tramInfo.getSaturdayCourseCount() + tramInfo.getSundayCourseCount()) / 2;
-                    if (!tramInfo.getWarnings().isEmpty()) {
-                        for (String warning : tramInfo.getWarnings()) {
-                            result.getRow(row).getCell(10).setCellValue(warning);
-                        }
-                    }
+                    tramWeekdaySum += tram.getDeparturesAmount(Timetable.Day.WEEKDAY);
+                    tramWeekendAvgSum += tram.getWeekendAverage();
+                    result.getRow(row).getCell(10).setCellValue(
+                            !tram.getWarnings().isEmpty() ? tram.getWarnings().get(0) : ""
+                    );
+
+                    // write summary (sum of courses for weekday and weekend avgs)
+                    row++;
+                    result.addMergedRegion(new CellRangeAddress(row, row, 7, 8));
+                    result.getRow(row).getCell(7).setCellValue("Total");
+                    result.getRow(row).getCell(7).setCellStyle(lineCellStyle);
+                    result.getRow(++row).getCell(7).setCellValue("Weekday");
+                    result.getRow(row).getCell(8).setCellValue("Weekend");
+                    result.getRow(++row).getCell(7).setCellValue(tramWeekdaySum);
+                    result.getRow(row).getCell(8).setCellValue(tramWeekendAvgSum);
+                    row += 4;
                 }
-                // write summary (sum of courses for weekday and weekend avgs)
-                row++;
-                result.addMergedRegion(new CellRangeAddress(row, row, 7, 8));
-                result.getRow(row).getCell(7).setCellValue("Total");
-                result.getRow(row).getCell(7).setCellStyle(lineCellStyle);
-                result.getRow(++row).getCell(7).setCellValue("Weekday");
-                result.getRow(row).getCell(8).setCellValue("Weekend");
-                result.getRow(++row).getCell(7).setCellValue(tramWeekdaySum);
-                result.getRow(row).getCell(8).setCellValue(tramWeekendAvgSum);
-                row += 4;
             }
 
-            if(!busList.isEmpty()){ // save buses if found any
+            if(!selectedBuses.isEmpty()) { // save buses if found any
                 result.addMergedRegion(new CellRangeAddress(row, row+1, 1, 1));
                 result.addMergedRegion(new CellRangeAddress(row, row+1, 2, 2));
                 result.addMergedRegion(new CellRangeAddress(row, row+1, 3, 3));
@@ -162,25 +158,23 @@ public class ExcelHandler {
                 result.getRow(row).getCell(7).setCellValue("Weekend");
                 result.getRow(row).getCell(8).setCellValue("Average");
 
-                int busWeekdaySum = 0, busWeekendAvgSum = 0;
-                for(BusInfo busInfo : busList){
+                for(Timetable bus : selectedBuses){
                     row++;
-                    result.getRow(row).getCell(1).setCellValue(busInfo.getLineNumberString());
+                    result.getRow(row).getCell(1).setCellValue(bus.lineNumber);
                     result.getRow(row).getCell(1).setCellStyle(lineCellStyle);
-                    result.getRow(row).getCell(2).setCellValue(busInfo.getStreetName());
-                    result.getRow(row).getCell(3).setCellValue(busInfo.getVehicleType());
-                    result.getRow(row).getCell(5).setCellValue(busInfo.getWeekdayCourseCount());
-                    result.getRow(row).getCell(6).setCellValue(busInfo.getSaturdayCourseCount());
-                    result.getRow(row).getCell(7).setCellValue(busInfo.getSundayCourseCount());
-                    result.getRow(row).getCell(8).setCellValue((busInfo.getSaturdayCourseCount() + busInfo.getSundayCourseCount()) / 2);
+                    result.getRow(row).getCell(2).setCellValue(bus.busStopName);
+                    result.getRow(row).getCell(3).setCellValue(bus.vehicleType.toString());
+                    result.getRow(row).getCell(5).setCellValue(bus.getDeparturesAmount(Timetable.Day.WEEKDAY));
+                    result.getRow(row).getCell(6).setCellValue(bus.getDeparturesAmount(Timetable.Day.SATURDAY));
+                    result.getRow(row).getCell(7).setCellValue(bus.getDeparturesAmount(Timetable.Day.SUNDAY));
+                    result.getRow(row).getCell(8).setCellValue(bus.getWeekendAverage());
 
-                    busWeekdaySum += busInfo.getWeekdayCourseCount();
-                    busWeekendAvgSum += (busInfo.getSaturdayCourseCount() + busInfo.getSundayCourseCount()) / 2;
-                    if (!busInfo.getWarnings().isEmpty()) {
-                        for (String warning : busInfo.getWarnings()) {
-                            result.getRow(row).getCell(10).setCellValue(warning);
-                        }
-                    }
+                    busWeekdaySum += bus.getDeparturesAmount(Timetable.Day.WEEKDAY);
+                    busWeekendAvgSum += bus.getWeekendAverage();
+
+                    result.getRow(row).getCell(10).setCellValue(
+                            !bus.getWarnings().isEmpty() ? bus.getWarnings().get(0) : ""
+                    );
                 }
                 // write summary (sum of courses for weekday and weekend avgs)
                 row+=2;
@@ -192,6 +186,9 @@ public class ExcelHandler {
                 result.getRow(row+2).getCell(7).setCellValue(busWeekdaySum);
                 result.getRow(row+2).getCell(8).setCellValue(busWeekendAvgSum);
                 row+=4;
+            }
+
+            if(!selectedBuses.isEmpty() || !selectedTrams.isEmpty()){
                 result.addMergedRegion(new CellRangeAddress(row+1,row+1,4,7));
                 result.addMergedRegion(new CellRangeAddress(row+2,row+2,4,7));
                 result.addMergedRegion(new CellRangeAddress(row+3,row+3,4,7));
@@ -224,11 +221,7 @@ public class ExcelHandler {
 
             fileOut = new FileOutputStream(path + ".xls");
             output.write(fileOut);
-        }
+        } // try
         fileOut.close();
-    }
-
-    public static void saveExcel(SelectedBusStopsHandler selectedStops, String path) throws IOException {
-        saveExcel(selectedStops, path, true);
     }
 }

@@ -4,6 +4,8 @@ import businfov2.VehicleType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.regex.Pattern;
 
 public class Timetable {
     private final static String UNDEFINED = "undefined";
@@ -15,6 +17,8 @@ public class Timetable {
     public String nextStop;
     public ArrayList<Column> columns;
     public ArrayList<String> additionalInfo;
+    public String sourceHtml;
+    private ArrayList<String> warnings;
 
     public Timetable(){
         this.lineNumber = UNDEFINED;
@@ -24,6 +28,12 @@ public class Timetable {
         this.nextStop = UNDEFINED;
         this.columns = new ArrayList<>();
         this.additionalInfo = new ArrayList<>();
+        this.sourceHtml = UNDEFINED;
+        this.warnings = new ArrayList<>();
+    }
+    public Timetable(String sourceHtml){
+        this();
+        this.sourceHtml = sourceHtml;
     }
 
     /**
@@ -57,7 +67,7 @@ public class Timetable {
     }
 
     /**
-     * Convert rawResult got from BusInfo class to get Timetable object (compatibile with new method)
+     * Convert rawResult got from BusInfo class to get Timetable object (compatible with new method)
      * @param rawResult to parse. Raw result can be generated using BusInfo.getRawResult() method
      * @return parsed Timetable
      * @throws Exception upon providing incorrect rawResult
@@ -88,8 +98,8 @@ public class Timetable {
         ArrayList<String> timetableLines = new ArrayList<>(Arrays.asList(Arrays.copyOfRange(rawResult.split("\n"), 4, rawResult.split("\n").length-1)));
         for(String line : timetableLines){
             line = line.replaceAll("[^\\d\\s]", "");
-            ArrayList<String> fields = new ArrayList<>(Arrays.asList(line.split("\t")));
-            if(fields.size() != result.columns.size() + 1) throw new Exception("Columns amount does not match timetable");
+            ArrayList<String> fields = new ArrayList<>(Arrays.asList(line.split("\t", -1)));
+            // if(fields.size() != result.columns.size() + 2 || fields.size() != result.columns.size() + 1) throw new Exception("Columns amount does not match timetable");
             int hour = Integer.parseInt(fields.get(0));
             fields = new ArrayList<String>(fields.subList(1, fields.size()));
             for(int i = 0 ; i < result.columns.size(); i++){
@@ -106,6 +116,32 @@ public class Timetable {
         result.additionalInfo.addAll(Arrays.asList(lines.get(lines.size() - 1).split("\t")));
 
         return result;
+    }
+
+    public boolean checkColumnNames(){
+        if(this.columns.size() == 3
+                && this.columns.get(0).getDayType() == Day.WEEKDAY
+                && this.columns.get(1).getDayType() == Day.SATURDAY
+                && this.columns.get(2).getDayType() == Day.SUNDAY){
+            return true;
+        }
+        if(this.columns.size() == 1 && this.columns.get(0).getDayType() == Day.WEEKDAY) return true;
+        if(this.columns.size() > 3) {
+            this.warnings.add("Niestandardowa ilość kolumn. Sprawdź adres " + this.sourceHtml);
+            return false;
+        }
+        if(this.columns.size() == 2
+                && this.columns.get(0).getDayType() == Day.WEEKDAY
+                && (this.columns.get(1).getDayType() == Day.SATURDAY || this.columns.get(1).getDayType() == Day.SUNDAY)){
+            return true;
+        } else {
+            this.warnings.add("Niestandardowy rozkład. Sprawdź adres " + this.sourceHtml);
+            return false;
+        }
+    }
+
+    public ArrayList<String> getWarnings(){
+        return this.warnings;
     }
 
     public String log(){
@@ -145,8 +181,7 @@ public class Timetable {
     public enum Day{
         WEEKDAY,
         SATURDAY,
-        SUNDAY,
-        HOLIDAY
+        SUNDAY
     }
 
     /**
@@ -193,14 +228,13 @@ public class Timetable {
                 this.day = Day.SATURDAY;
             } else if (lower.contains("niedziele")
                     || lower.contains("niedziela")
-                    || lower.contains("sunday"))
-                this.day = Day.SUNDAY;
-            else if (lower.contains("święto")
+                    || lower.contains("sunday")
+                    || lower.contains("święto")
                     || lower.contains("święta")
                     || lower.contains("wolny")
                     || lower.contains("wolne")
                     || lower.contains("holiday"))
-                this.day = Day.HOLIDAY;
+                this.day = Day.SUNDAY;
             else
                 this.day = Day.WEEKDAY;
             return this.name;

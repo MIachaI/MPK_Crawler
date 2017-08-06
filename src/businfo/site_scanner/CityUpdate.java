@@ -71,7 +71,6 @@ public class CityUpdate {
             e.printStackTrace();
             System.out.println("WYSTĄPIŁ BŁĄD");
         }
-
     }
 
     /**

@@ -56,9 +56,7 @@ public class MPKWroclaw extends BusInfo {
             for(Element row : rows){
                 Element hourCell = row.select("td b").first();
                 int hour = Integer.parseInt(hourCell.text());
-//                if(hour.charAt(0) == '0'){
-//                    hour = hour.replaceAll("0", "");
-//                }
+
                 // after storing hour - delete cell
                 row.select("td b").remove();
                 Elements cells = row.select("td");

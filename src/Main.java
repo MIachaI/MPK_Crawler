@@ -81,7 +81,7 @@ public class Main extends Application{
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        this.JSON_SOURCE = this.checkJSONexistance();
+        this.JSON_SOURCE = this.checkJsonExistence();
         updateSelectedStops();
         window = primaryStage;
         window.setTitle("Crawler");
@@ -264,7 +264,7 @@ public class Main extends Application{
      * checks if JSON file exists, if not creates blank file
      * @return absolute path to created (or found) JSON file
      */
-    private String checkJSONexistance() throws IOException {
+    private String checkJsonExistence() throws IOException {
         File folder = new File(CURRENT_DIR);
         File[] files = folder.listFiles();
         String[] date = new String[3];
@@ -389,7 +389,7 @@ public class Main extends Application{
                         // override json file name
                         Path source = Paths.get(this.JSON_SOURCE);
                         Files.move(source, source.resolveSibling(this.CURRENT_DIR + File.separator +generateNewJsonFileName()), REPLACE_EXISTING);
-                        this.JSON_SOURCE = this.checkJSONexistance();
+                        this.JSON_SOURCE = this.checkJsonExistence();
                         AlertBox.display("Sukces", "Udało się zaktualizować " + city);
                     } catch (Exception e) {
                         e.printStackTrace();
