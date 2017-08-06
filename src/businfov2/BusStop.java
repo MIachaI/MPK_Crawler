@@ -2,10 +2,7 @@ package businfov2;
 
 import businfov2.timetable.Timetable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class BusStop {
     public static final String UNDEFINED = "undefined";
@@ -37,6 +34,18 @@ public class BusStop {
             default:
                 return new ArrayList<>();
         }
+    }
+
+    public ArrayList<Timetable> getTimetables(VehicleType vehicleType){
+        ArrayList<Timetable> result = new ArrayList<>(this.timetables);
+        result.removeIf(timetable -> timetable.vehicleType != vehicleType);
+        return result;
+    }
+
+    public ArrayList<Timetable> getTimetables(VehicleType vehicle, CertificationMethod method){
+        ArrayList<Timetable> result = new ArrayList<>(this.getTimetables(method));
+        result.removeIf(timetable -> timetable.vehicleType != vehicle);
+        return result;
     }
 
     /**
