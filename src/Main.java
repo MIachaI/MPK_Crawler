@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.json.simple.JSONObject;
@@ -411,16 +412,12 @@ public class Main extends Application{
         {
             // action listeners
             outputFolder.setOnAction(event ->{
-                FileChooser fileChooser = new FileChooser();
-
-                //Set extension filter
-                FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Excel XLS (*.xls)", "*.xls");
-                fileChooser.getExtensionFilters().add(extFilter);
-
-                //Show save file dialog
-                File file = fileChooser.showSaveDialog(window);
-                String destinationPath = file.getAbsolutePath();
-                System.out.println(destinationPath);
+                DirectoryChooser chooser = new DirectoryChooser();
+                chooser.setTitle("JavaFX Projects");
+                File defaultDirectory = new File(CURRENT_DIR);
+                chooser.setInitialDirectory(defaultDirectory);
+                File selectedDirectory = chooser.showDialog(window);
+                System.out.println(selectedDirectory.getAbsolutePath());
             });
         }
 
