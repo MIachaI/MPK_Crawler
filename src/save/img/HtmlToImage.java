@@ -41,4 +41,10 @@ public class  HtmlToImage extends HtmlImageGenerator {
             imageGenerator.loadHtml(html);
             imageGenerator.saveAsImage(path+".jpg");
         }
+
+        public static void generateImage(String html, String path){
+            HtmlToImage imageGenerator = new HtmlToImage();
+            imageGenerator.loadHtml(html);
+            imageGenerator.saveAsImage(path);
+        }
 }

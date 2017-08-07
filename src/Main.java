@@ -1,6 +1,8 @@
 import businfo.busstop.streets.BusStop;
 import businfo.lists.*;
 import businfo.site_scanner.CityUpdate;
+import businfov2.CertificationMethod;
+import businfov2.City;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -30,6 +32,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import save.SaveHandler;
+import save.Saver;
 import save.json.JSONHandler;
 import window_interface.dialogs.AlertBox;
 import window_interface.dialogs.ConfirmBox;
@@ -414,12 +417,7 @@ public class Main extends Application{
         {
             // action listeners
             outputFolder.setOnAction(event ->{
-                DirectoryChooser chooser = new DirectoryChooser();
-                chooser.setTitle("Wybierz folder do zapisu");
-                File defaultDir = new File(this.CURRENT_DIR);
-                chooser.setInitialDirectory(defaultDir);
-                this.SELECTED_DIRECTORY = chooser.showDialog(window).toString();
-                System.out.println(this.SELECTED_DIRECTORY);
+                this.chooseSaveDirectory();
             });
         }
 
@@ -454,17 +452,28 @@ public class Main extends Application{
         return menuBar;
     }
 
+    private void chooseSaveDirectory(){
+        DirectoryChooser chooser = new DirectoryChooser();
+        chooser.setTitle("Wybierz folder do zapisu");
+        File defaultDir = new File(this.CURRENT_DIR);
+        chooser.setInitialDirectory(defaultDir);
+        this.SELECTED_DIRECTORY = chooser.showDialog(window).toString();
+        System.out.println(this.SELECTED_DIRECTORY);
+    }
+
     private void runAnalysesAndSave() throws IOException {
-        String selectedCity = chooseCityBox.getValue();
-        ArrayList<BusStop> list = new ArrayList<>();
-        list.addAll(this.selectedBusStops);
-        SelectedBusStopsHandler handler = new SelectedBusStopsHandler();
+        if(SELECTED_DIRECTORY == null){
+            chooseSaveDirectory();
+        }
+        if(SELECTED_DIRECTORY == null) return ;
         try {
-            handler = new SelectedBusStopsHandler(selectedCity, list);
+            City selectedCity = City.stringToEnum(chooseCityBox.getValue());
+            ArrayList<BusStop> list = new ArrayList<>();
+            list.addAll(this.selectedBusStops);
+            Saver.saveAll(SELECTED_DIRECTORY, businfov2.BusStop.convertBusStops(selectedCity, list), CertificationMethod.LEED_v4);
         } catch (Exception e) {
             ErrorDialog.displayException(e);
             e.printStackTrace();
         }
-        SaveHandler.saveAll(handler,"Crawl");
     }
 }

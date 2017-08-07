@@ -19,6 +19,8 @@ public class Timetable {
     public ArrayList<String> additionalInfo;
     public String sourceHtml;
     private ArrayList<String> warnings;
+    private String imageHtml;
+
 
     public Timetable(){
         this.lineNumber = UNDEFINED;
@@ -30,6 +32,8 @@ public class Timetable {
         this.additionalInfo = new ArrayList<>();
         this.sourceHtml = UNDEFINED;
         this.warnings = new ArrayList<>();
+        this.imageHtml = null;
+
     }
     public Timetable(String sourceHtml){
         this();
@@ -138,6 +142,14 @@ public class Timetable {
             this.warnings.add("Niestandardowy rozkład. Sprawdź adres " + this.sourceHtml);
             return false;
         }
+    }
+
+    public void setImageHtml(String html){
+        this.imageHtml = html;
+    }
+
+    public String getImageHtml(){
+        return this.imageHtml;
     }
 
     public ArrayList<String> getWarnings(){

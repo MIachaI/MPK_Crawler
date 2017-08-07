@@ -1,7 +1,7 @@
 package businfov2;
 
 public enum CertificationMethod {
-    LEED_v4(false),
+    LEED_v4(true),
     LEED_2009(true),
     BREEAM(false);
 

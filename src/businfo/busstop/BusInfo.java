@@ -62,6 +62,7 @@ public abstract class BusInfo {
         this.columnNames = findColumnNames();
         this.additionalInfo = findAdditionalInfo();
     }
+    public String getHtml(){ return this.html; }
 
     /**
      * Get information from table posted on MPK site as a string.

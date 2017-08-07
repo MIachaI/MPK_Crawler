@@ -9,10 +9,7 @@ public class TimetableNumberComparator implements Comparator<Timetable> {
         String l1 = timetable.lineNumber;
         String l2 = t1.lineNumber;
         // check if any of the numbers contains letters
-        String containingLetterRegex = "\\D";
         String onlyDigitsRegex = "^\\d+$";
-//        Pattern containingLetter = Pattern.compile(containingLetterRegex);
-//        Pattern onlyDigits = Pattern.compile(onlyDigitsRegex);
         // if both are numbers - return difference
         if(l1.matches(onlyDigitsRegex) && l2.matches(onlyDigitsRegex)){
             return Integer.parseInt(l1) - Integer.parseInt(l2);

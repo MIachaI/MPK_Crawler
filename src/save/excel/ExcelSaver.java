@@ -19,7 +19,7 @@ import java.util.Collections;
 import static org.apache.poi.hssf.record.ExtendedFormatRecord.CENTER;
 
 public abstract class ExcelSaver {
-    public static void save(String path, ArrayList<BusStop> selectedStops, CertificationMethod method) throws IOException {
+    public static void save(String path, ArrayList<BusStop> selectedStops, CertificationMethod method) throws Exception {
         ArrayList<Timetable> selectedBuses = new ArrayList<>();
         ArrayList<Timetable> selectedTrams = new ArrayList<>();
         for (BusStop stop : selectedStops) {
