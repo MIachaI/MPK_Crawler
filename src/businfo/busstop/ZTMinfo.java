@@ -12,6 +12,7 @@ import org.jsoup.select.Elements;
 /**
  * Created by umat on 11.05.17.
  */
+@Deprecated
 public class ZTMinfo extends BusInfo {
     private String innerHtml;
     public ZTMinfo(){

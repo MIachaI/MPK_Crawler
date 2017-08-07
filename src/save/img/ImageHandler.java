@@ -12,6 +12,7 @@ import java.util.ArrayList;
 /**
  * Created by umat on 26.05.17.
  */
+@Deprecated
 public class ImageHandler {
     public static void saveAllImages(SelectedBusStopsHandler selectedStops, String path, boolean purified) throws IOException {
         ArrayList<BusInfo> selectedTrams;

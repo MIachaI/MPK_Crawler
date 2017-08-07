@@ -18,6 +18,7 @@ import static org.apache.poi.hssf.record.ExtendedFormatRecord.CENTER;
 /**
  * Created by umat on 17.05.17.
  */
+@Deprecated
 public class ExcelHandler {
     // TODO reduce code
     public static void saveExcel(SelectedBusStopsHandler selectedStops, String path, boolean purified) throws IOException {

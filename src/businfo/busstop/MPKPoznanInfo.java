@@ -12,6 +12,7 @@ import java.util.Objects;
 /**
  * MPK Poznan main page: http://www.mpk.poznan.pl/
  */
+@Deprecated
 public class MPKPoznanInfo extends BusInfo {
     public MPKPoznanInfo(){
         super();

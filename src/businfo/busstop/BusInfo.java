@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.io.IOException;
 import java.util.Arrays;
 
+@Deprecated
 public abstract class BusInfo {
     protected String html;
     protected Connection jsoupConnection;

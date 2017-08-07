@@ -1,5 +1,4 @@
 import businfo.busstop.streets.BusStop;
-import businfo.lists.*;
 import businfo.site_scanner.CityUpdate;
 import businfov2.CertificationMethod;
 import businfov2.City;
@@ -116,14 +115,14 @@ public class Main extends Application{
             }
         });
         homePageButton.setOnAction(event -> {
-            if (chooseCityBox.getValue()=="Kraków"){
+            if (Objects.equals(chooseCityBox.getValue(), "Kraków")){
                 try
                 {
                     getHostServices().showDocument("http://rozklady.mpk.krakow.pl/");
                 }
                 catch (Exception e) {}
         }
-        else if(chooseCityBox.getValue()=="Warszawa"){
+        else if(Objects.equals(chooseCityBox.getValue(), "Warszawa")){
                 try
                 {
                     getHostServices().showDocument("http://www.ztm.waw.pl/rozklad_nowy.php?c=183&l=1");
@@ -313,7 +312,8 @@ public class Main extends Application{
      */
     private void checkJSON(ArrayList<String> supportedCities, String filepath) throws Exception {
         // 1. check json file existence - functionality moved to function checkJSONexistance()
-        ArrayList supCities = new ArrayList(supportedCities);
+        ArrayList supCities;
+        supCities = new ArrayList(supportedCities);
 
         // 2. check for supported cities
         JSONParser parser = new JSONParser();
@@ -330,15 +330,15 @@ public class Main extends Application{
 
         // 3. ask if user wants to update missing cities
         if(missingCities.size() > 0){
-            String listOfCities = "";
+            StringBuilder listOfCities = new StringBuilder();
             for(String city : missingCities){
-                listOfCities += city + "\n";
+                listOfCities.append(city).append("\n");
             }
 
             // 4. update missing cities if positive answer
             if(ConfirmBox.display(
                     "Brakujące miasta",
-                    "Brakuje danych dla następujących miast:\n" + listOfCities.toString() +
+                    "Brakuje danych dla następujących miast:\n" + listOfCities +
                             "Czy chcesz pobrać dane teraz?\n" +
                             "UWAGA! Może zająć to od kilku do kilkunastu minut (w zależności od szybkości twojego łącza)"
             )) {

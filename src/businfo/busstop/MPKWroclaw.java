@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
+@Deprecated
 public class MPKWroclaw extends BusInfo {
     public MPKWroclaw(String html) throws IOException {
         super(html);
