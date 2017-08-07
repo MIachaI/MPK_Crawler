@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.json.simple.JSONObject;
@@ -47,6 +48,7 @@ public class Main extends Application{
     ));
     private final String CURRENT_DIR = System.getProperty("user.dir"); // current dir
     private String JSON_SOURCE;
+    private String SELECTED_DIRECTORY = null;
 
     // top menu items
     private MenuBar topMenu = new MenuBar();
@@ -271,6 +273,7 @@ public class Main extends Application{
         String[] date = new String[3];
         Pattern jsonNamePattern = Pattern.compile("crawler_(\\d{1,2})_(\\d{1,2})_(\\d{1,2})\\.json");
         String filepath;
+        assert files != null;
         for (File file : files){
             Matcher matcher = jsonNamePattern.matcher(file.getName().replace(CURRENT_DIR, ""));
             //System.out.println(matcher);
@@ -411,16 +414,12 @@ public class Main extends Application{
         {
             // action listeners
             outputFolder.setOnAction(event ->{
-                FileChooser fileChooser = new FileChooser();
-
-                //Set extension filter
-                FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Excel XLS (*.xls)", "*.xls");
-                fileChooser.getExtensionFilters().add(extFilter);
-
-                //Show save file dialog
-                File file = fileChooser.showSaveDialog(window);
-                String destinationPath = file.getAbsolutePath();
-                System.out.println(destinationPath);
+                DirectoryChooser chooser = new DirectoryChooser();
+                chooser.setTitle("Wybierz folder do zapisu");
+                File defaultDir = new File(this.CURRENT_DIR);
+                chooser.setInitialDirectory(defaultDir);
+                this.SELECTED_DIRECTORY = chooser.showDialog(window).toString();
+                System.out.println(this.SELECTED_DIRECTORY);
             });
         }
 
