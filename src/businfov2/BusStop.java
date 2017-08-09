@@ -1,6 +1,9 @@
 package businfov2;
 
+import businfo.busstop.lines.LineOnStop;
+import businfov2.parsers.Parser;
 import businfov2.timetable.Timetable;
+import jdk.nashorn.internal.ir.annotations.Ignore;
 
 import java.util.*;
 
@@ -22,8 +25,8 @@ public class BusStop {
     }
     public ArrayList<Timetable> getTimetables() { return this.timetables; }
 
-    public ArrayList<Timetable> getTimetables(CertificationMethod method){
-        if(!method.isImplemented()) return new ArrayList<>();
+    public ArrayList<Timetable> getTimetables(CertificationMethod method) throws Exception {
+        if(!method.isImplemented()) throw new  Exception("Method not yet implemented");
         switch(method){
             case LEED_2009:
                 return this.leed2009Timetables();
@@ -42,7 +45,7 @@ public class BusStop {
         return result;
     }
 
-    public ArrayList<Timetable> getTimetables(VehicleType vehicle, CertificationMethod method){
+    public ArrayList<Timetable> getTimetables(VehicleType vehicle, CertificationMethod method) throws Exception {
         ArrayList<Timetable> result = new ArrayList<>(this.getTimetables(method));
         result.removeIf(timetable -> timetable.vehicleType != vehicle);
         return result;
@@ -51,6 +54,7 @@ public class BusStop {
     /**
      * @return timetables meeting BREEAM method requirements
      */
+    @Ignore
     private ArrayList<Timetable> breeamTimetables() {
         ArrayList<Timetable> result = new ArrayList<>();
         HashMap<String, Timetable> lineTimetable = new HashMap<>();
@@ -84,7 +88,7 @@ public class BusStop {
      * @return only lineNumbers that occur in a bus stop more than once
      */
     private Set<String> getLineNumbersThatHavePair(){
-        Set<String> result = new HashSet<String>();
+        Set<String> result = new HashSet<>();
         HashMap<String, Integer> numberOfOccurances = new HashMap<>();
         for(Timetable timetable : this.timetables){
             int number = numberOfOccurances.getOrDefault(timetable.lineNumber, 1);
@@ -95,6 +99,11 @@ public class BusStop {
         return result;
     }
 
+    /**
+     * Chooses only lines that have courses in both ways on given BusStop. Also choose the lowest amount of hours among
+     * found
+     * @return
+     */
     private ArrayList<Timetable> leedv4Timetables(){
         ArrayList<Timetable> result = new ArrayList<>();
         Set<String> linesThatHavePair = this.getLineNumbersThatHavePair();
@@ -122,6 +131,20 @@ public class BusStop {
         for(String lineNumber : lineTimetable.keySet()){
             result.add(lineTimetable.get(lineNumber));
         }
+        return result;
+    }
+
+    public static ArrayList<BusStop> convertBusStops(City city, ArrayList<businfo.busstop.streets.BusStop> stops) throws Exception {
+        city.isImplemented();
+        ArrayList<BusStop> result = new ArrayList<>();
+        for(businfo.busstop.streets.BusStop stop : stops){
+            ArrayList<Timetable> timetablesToAdd = new ArrayList<>();
+            for(LineOnStop line : stop.getBusLines()){
+                timetablesToAdd.add(Parser.parse(line.getLink(), city));
+            }
+            result.add(new BusStop(stop.getStreetName(), timetablesToAdd));
+        }
+
         return result;
     }
 }

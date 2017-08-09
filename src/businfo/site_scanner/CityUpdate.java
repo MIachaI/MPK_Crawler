@@ -1,6 +1,7 @@
 package businfo.site_scanner;
 
 import businfo.busstop.streets.BusStop;
+import businfov2.City;
 import org.json.simple.JSONObject;
 import save.json.JSONHandler;
 
@@ -80,25 +81,21 @@ public class CityUpdate {
      * @throws Exception
      */
     public static void updateHandler(String cityName, String filename) throws Exception {
+        City city = City.stringToEnum(cityName);
+        city.isImplemented();
         ArrayList<BusStop> busStops;
         SiteScanner scanner;
-        switch (cityName.toLowerCase()) {
-            case "kraków":
-            case "krakow":
-            case "cracow":{
+        switch (city) {
+            case KRAKOW:
                 scanner = new KrakowScanner();
-            }
                 break;
-            case "warszawa":
-            case "warsaw":
+            case WARSZAWA:
                 scanner = new WarsawScanner();
                 break;
-            case "poznan":
-                throw new Exception("Poznań not yet implemented");
-                // break;
-            case "wrocław":
-            case "wroclaw":
-            case "breslau":
+            case POZNAN:
+                scanner = new PoznanScanner();
+                break;
+            case WROCLAW:
                 scanner = new WroclawScanner();
                 break;
             default:
@@ -113,10 +110,5 @@ public class CityUpdate {
 
     public void checkUpdates(){
 
-
-
     }
-
-
-
 }
