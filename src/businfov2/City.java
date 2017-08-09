@@ -36,6 +36,7 @@ public enum City {
             case "warszawa":
             case "warsaw":
                 return WARSZAWA;
+            case "poznań":
             case "poznan":
                 return POZNAN;
             case "wrocław":

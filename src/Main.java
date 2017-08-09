@@ -25,12 +25,10 @@ import java.util.regex.Pattern;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.DirectoryChooser;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import save.SaveHandler;
 import save.Saver;
 import save.json.JSONHandler;
 import window_interface.dialogs.AlertBox;
@@ -59,6 +57,7 @@ public class Main extends Application{
     private VBox leftPane = new VBox();
     private ChoiceBox<String> chooseCityBox = new ChoiceBox<>();
     private Button homePageButton = new Button("Strona przewoźnika");
+    private ComboBox<CertificationMethod> chooseMethodBox = new ComboBox<>();
 
     // center pane items
     private GridPane centerPane = new GridPane();
@@ -96,6 +95,10 @@ public class Main extends Application{
 
         // left pane
         chooseCityBox.getItems().addAll(cities);
+        for(CertificationMethod method : CertificationMethod.values()){
+            if(method.isImplemented()) chooseMethodBox.getItems().add(method);
+        }
+        chooseMethodBox.setPromptText("Metoda obliczeń");
         leftPane.setSpacing(10);
 
         // ChoiceBox default value
@@ -131,7 +134,7 @@ public class Main extends Application{
             }
         });
 
-        leftPane.getChildren().addAll(chooseCityBox, homePageButton);
+        leftPane.getChildren().addAll(chooseCityBox, homePageButton, chooseMethodBox);
 
 
         // center pane
@@ -409,6 +412,14 @@ public class Main extends Application{
 
         {
             // Action listeners
+            runOption.setOnAction(actionEvent -> {
+                try {
+                    runAnalysesAndSave();
+                } catch (IOException e) {
+                    ErrorDialog.displayException(e);
+                    e.printStackTrace();
+                }
+            });
             exitOption.setOnAction(event -> closeProgram());
         }
 
@@ -462,6 +473,11 @@ public class Main extends Application{
     }
 
     private void runAnalysesAndSave() throws IOException {
+        CertificationMethod selectedMethod = chooseMethodBox.getSelectionModel().getSelectedItem();
+        if(selectedMethod == null) {
+            AlertBox.display("Uwaga", "Przed rozpoczęciem analizy musisz wybrać metodę obliczeń");
+            return ;
+        }
         if(SELECTED_DIRECTORY == null){
             chooseSaveDirectory();
         }
@@ -470,7 +486,7 @@ public class Main extends Application{
             City selectedCity = City.stringToEnum(chooseCityBox.getValue());
             ArrayList<BusStop> list = new ArrayList<>();
             list.addAll(this.selectedBusStops);
-            Saver.saveAll(SELECTED_DIRECTORY, businfov2.BusStop.convertBusStops(selectedCity, list), CertificationMethod.LEED_v4);
+            Saver.saveAll(SELECTED_DIRECTORY, businfov2.BusStop.convertBusStops(selectedCity, list), selectedMethod);
         } catch (Exception e) {
             ErrorDialog.displayException(e);
             e.printStackTrace();
