@@ -1,5 +1,7 @@
 package businfov2;
 
+import java.util.ArrayList;
+
 public enum City {
     KRAKOW(true, "Kraków", "Cracow"),
     WARSZAWA(true, "Warszawa", "Warsaw"),
@@ -25,6 +27,22 @@ public enum City {
      */
     public void isImplemented() throws Exception {
         if(!this.implemented) throw new Exception("This city is not implemented");
+    }
+
+    public static ArrayList<City> getImplemented(){
+        ArrayList<City> result = new ArrayList<>();
+        for(City city : City.values()){
+            if(city.implemented) result.add(city);
+        }
+        return result;
+    }
+
+    public static ArrayList<String> getImplementedNames(){
+        ArrayList<String> result = new ArrayList<>();
+        for(City city : City.getImplemented()){
+            result.add(city.toString());
+        }
+        return result;
     }
 
     public static City stringToEnum(String cityName) throws Exception {
