@@ -113,19 +113,12 @@ public class Main extends Application{
             }
         });
         homePageButton.setOnAction(event -> {
-            if (Objects.equals(chooseCityBox.getValue(), "Kraków")){
-                try
-                {
-                    getHostServices().showDocument("http://rozklady.mpk.krakow.pl/");
-                }
-                catch (Exception e) {}
-        }
-        else if(Objects.equals(chooseCityBox.getValue(), "Warszawa")){
-                try
-                {
-                    getHostServices().showDocument("http://www.ztm.waw.pl/rozklad_nowy.php?c=183&l=1");
-                }
-                catch (Exception e) {}
+            try{
+                String html = chooseCityBox.getValue().getMainPageHtml();
+                getHostServices().showDocument(html);
+            } catch (Exception e){
+                e.printStackTrace();
+                ErrorDialog.displayException(e);
             }
         });
 
