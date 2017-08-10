@@ -50,7 +50,7 @@ public class Main extends Application{
 
     // left pane items
     private VBox leftPane = new VBox();
-    private ChoiceBox<City> chooseCityBox = new ChoiceBox<>();
+    private ComboBox<City> chooseCityBox = new ComboBox<>();
     private Button homePageButton = new Button("Strona przewoźnika");
     private ComboBox<CertificationMethod> chooseMethodBox = new ComboBox<>();
 
@@ -80,21 +80,21 @@ public class Main extends Application{
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        //setUserAgentStylesheet(STYLESHEET_CASPIAN);
         this.JSON_SOURCE = this.checkJsonExistence();
         updateSelectedStops();
         window = primaryStage;
         window.setTitle("Crawler");
+        window.setResizable(false);
 
         // top menu
         topMenu = initMenuBar();
 
         // left pane
         chooseCityBox.getItems().addAll(cities);
-        for(CertificationMethod method : CertificationMethod.values()){
-            if(method.isImplemented()) chooseMethodBox.getItems().add(method);
-        }
-        chooseMethodBox.setPromptText("Metoda obliczeń");
+        leftPane.setPadding(new Insets(10, 0, 0, 10));
         leftPane.setSpacing(10);
+        leftPane.setPrefWidth(160);
 
         // ChoiceBox default value
         chooseCityBox.setValue(this.cities.get(0));
@@ -114,15 +114,16 @@ public class Main extends Application{
         });
         homePageButton.setOnAction(event -> {
             try{
-                String html = chooseCityBox.getValue().getMainPageHtml();
-                getHostServices().showDocument(html);
+                getHostServices().showDocument(chooseCityBox.getValue().getMainPageHtml());
             } catch (Exception e){
                 e.printStackTrace();
                 ErrorDialog.displayException(e);
             }
         });
 
-        leftPane.getChildren().addAll(chooseCityBox, homePageButton, chooseMethodBox);
+        chooseCityBox.setMinWidth(leftPane.getPrefWidth());
+        homePageButton.setMinWidth(leftPane.getPrefWidth());
+        leftPane.getChildren().addAll(chooseCityBox, homePageButton);
 
 
         // center pane
@@ -196,14 +197,19 @@ public class Main extends Application{
             selectedBusStops.clear();
             updateSelectedStops();
         });
+        for(CertificationMethod method : CertificationMethod.values()){
+            if(method.isImplemented()) chooseMethodBox.getItems().add(method);
+        }
+        chooseMethodBox.setPromptText("Metoda obliczeń");
 
         rightPane.setPadding(new Insets(10, 10, 10, 10));
         rightPane.setVgap(8);
-        GridPane.setConstraints(startButton, 0, 0);
-        GridPane.setConstraints(clearButton, 0,1);
-        GridPane.setConstraints(stopsLabel, 0, 2);
-        GridPane.setConstraints(stopsList,0,3);
-        rightPane.getChildren().addAll(stopsLabel, startButton, clearButton, stopsList);
+        GridPane.setConstraints(chooseMethodBox, 0, 0);
+        GridPane.setConstraints(startButton, 0, 1);
+        GridPane.setConstraints(clearButton, 0,2);
+        GridPane.setConstraints(stopsLabel, 0, 3);
+        GridPane.setConstraints(stopsList,0,4);
+        rightPane.getChildren().addAll(chooseMethodBox, stopsLabel, startButton, clearButton, stopsList);
 
         // adding everything to BorderPane
         borderPane.setTop(topMenu);
@@ -216,7 +222,7 @@ public class Main extends Application{
            closeProgram();
        });
 
-        Scene scene = new Scene(borderPane, 700, 500);
+        Scene scene = new Scene(borderPane, 600, 500);
         window.setScene(scene);
         window.show();
         checkJSON(City.getImplementedNames(), JSON_SOURCE);
