@@ -1,6 +1,7 @@
 ## Adding new city to program
 To add support for a new city you have to follow below steps:
 * create parser function in `Parser` class so it creates `Timetable` object
+* create `ImageGetter` method for newly created city
 * create a class inheriting from `SiteScanner`. It must implement `scan()` method
 * add city to enum `City`
 * update `parse()` function in `Parser` class

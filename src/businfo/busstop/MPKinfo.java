@@ -13,6 +13,7 @@ import java.util.Objects;
 /**
  *	Class to store information about bus schedule presented on MPK Cracow website
  */
+@Deprecated
 public class MPKinfo extends BusInfo {
 	public MPKinfo(){
 		super();

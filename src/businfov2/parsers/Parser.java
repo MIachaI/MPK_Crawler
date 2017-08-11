@@ -1,5 +1,7 @@
 package businfov2.parsers;
 
+import businfo.busstop.MPKPoznanInfo;
+import businfo.busstop.MPKWroclaw;
 import businfo.busstop.MPKinfo;
 import businfo.busstop.ZTMinfo;
 import businfov2.City;
@@ -9,7 +11,7 @@ import org.jsoup.Jsoup;
 /**
  * Class to parse info from website to Timetable object
  */
-public abstract class Parser extends Timetable{
+public abstract class Parser{
     public static Timetable krakowParser(String link) throws Exception {
         MPKinfo info = new MPKinfo(link);
         String rawResult = info.getRawResult(Jsoup.connect(link));
@@ -23,7 +25,7 @@ public abstract class Parser extends Timetable{
         result.sourceHtml = link;
 
         // also save image html
-        result.setImageHtml(info.getRawHtml());
+        result.setImageHtml(ImageGetter.krakowImage(link));
 
         return result;
     }
@@ -33,17 +35,29 @@ public abstract class Parser extends Timetable{
         String rawResult = info.getRawResult(Jsoup.connect(link));
         Timetable result = Timetable.rawResultToTimetable(rawResult);
         result.sourceHtml = link;
-        result.setImageHtml(info.getRawHtml());
+        result.setImageHtml(ImageGetter.warszawaImage(link));
 
         return result;
     }
 
-    public static Timetable poznanParser(String link){
-        return null;
+    public static Timetable poznanParser(String link) throws Exception {
+        MPKPoznanInfo info = new MPKPoznanInfo(link);
+        String rawResult = info.getRawResult(Jsoup.connect(link));
+        Timetable result = Timetable.rawResultToTimetable(rawResult);
+        result.sourceHtml = link;
+        result.setImageHtml(ImageGetter.poznanImage(link));
+
+        return result;
     }
 
-    public static Timetable wroclawParser(String link){
-        return null;
+    public static Timetable wroclawParser(String link) throws Exception {
+        MPKWroclaw info = new MPKWroclaw(link);
+        String rawResult = info.getRawResult(Jsoup.connect(link));
+        Timetable result = Timetable.rawResultToTimetable(rawResult);
+        result.sourceHtml = link;
+        result.setImageHtml(ImageGetter.wroclawImage(link));
+
+        return result;
     }
 
     public static Timetable parse(String link, City city) throws Exception {

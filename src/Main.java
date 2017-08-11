@@ -1,5 +1,4 @@
 import businfo.busstop.streets.BusStop;
-import businfo.lists.*;
 import businfo.site_scanner.CityUpdate;
 import businfov2.CertificationMethod;
 import businfov2.City;
@@ -26,12 +25,10 @@ import java.util.regex.Pattern;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.DirectoryChooser;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import save.SaveHandler;
 import save.Saver;
 import save.json.JSONHandler;
 import window_interface.dialogs.AlertBox;
@@ -43,12 +40,7 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 public class Main extends Application{
     private Stage window;
 
-    // city list (only cities mentioned below will be in the program)
-    private final ArrayList<String> cities = new ArrayList<>(Arrays.asList(
-            "Kraków",
-            "Warszawa",
-            "Wrocław"
-    ));
+    private final ArrayList<City> cities = City.getImplemented();
     private final String CURRENT_DIR = System.getProperty("user.dir"); // current dir
     private String JSON_SOURCE;
     private String SELECTED_DIRECTORY = null;
@@ -58,8 +50,9 @@ public class Main extends Application{
 
     // left pane items
     private VBox leftPane = new VBox();
-    private ChoiceBox<String> chooseCityBox = new ChoiceBox<>();
+    private ComboBox<City> chooseCityBox = new ComboBox<>();
     private Button homePageButton = new Button("Strona przewoźnika");
+    private ComboBox<CertificationMethod> chooseMethodBox = new ComboBox<>();
 
     // center pane items
     private GridPane centerPane = new GridPane();
@@ -87,17 +80,21 @@ public class Main extends Application{
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        //setUserAgentStylesheet(STYLESHEET_CASPIAN);
         this.JSON_SOURCE = this.checkJsonExistence();
         updateSelectedStops();
         window = primaryStage;
         window.setTitle("Crawler");
+        window.setResizable(false);
 
         // top menu
         topMenu = initMenuBar();
 
         // left pane
         chooseCityBox.getItems().addAll(cities);
+        leftPane.setPadding(new Insets(10, 0, 0, 10));
         leftPane.setSpacing(10);
+        leftPane.setPrefWidth(160);
 
         // ChoiceBox default value
         chooseCityBox.setValue(this.cities.get(0));
@@ -105,7 +102,7 @@ public class Main extends Application{
         // listen for selection changes in chooseCityBox
         chooseCityBox.getSelectionModel().selectedItemProperty().addListener((v, oldValue, newValue) -> {
             try {
-                displayedStops = FXCollections.observableArrayList(JSONHandler.fetchBusStopArray(JSON_SOURCE, newValue));
+                displayedStops = FXCollections.observableArrayList(JSONHandler.fetchBusStopArray(JSON_SOURCE, newValue.toString()));
                 busStopList.setItems(displayedStops.sorted());
                 selectedBusStops.clear();
                 updateSelectedStops();
@@ -116,22 +113,16 @@ public class Main extends Application{
             }
         });
         homePageButton.setOnAction(event -> {
-            if (chooseCityBox.getValue()=="Kraków"){
-                try
-                {
-                    getHostServices().showDocument("http://rozklady.mpk.krakow.pl/");
-                }
-                catch (Exception e) {}
-        }
-        else if(chooseCityBox.getValue()=="Warszawa"){
-                try
-                {
-                    getHostServices().showDocument("http://www.ztm.waw.pl/rozklad_nowy.php?c=183&l=1");
-                }
-                catch (Exception e) {}
+            try{
+                getHostServices().showDocument(chooseCityBox.getValue().getMainPageHtml());
+            } catch (Exception e){
+                e.printStackTrace();
+                ErrorDialog.displayException(e);
             }
         });
 
+        chooseCityBox.setMinWidth(leftPane.getPrefWidth());
+        homePageButton.setMinWidth(leftPane.getPrefWidth());
         leftPane.getChildren().addAll(chooseCityBox, homePageButton);
 
 
@@ -161,7 +152,7 @@ public class Main extends Application{
         });
         // busStopList of  bus stops
         try {
-            displayedStops = FXCollections.observableArrayList(JSONHandler.fetchBusStopArray(JSON_SOURCE, this.cities.get(0)));
+            displayedStops = FXCollections.observableArrayList(JSONHandler.fetchBusStopArray(JSON_SOURCE, this.cities.get(0).toString()));
         } catch(Exception e){
             System.out.println("Empty file");
         }
@@ -206,14 +197,19 @@ public class Main extends Application{
             selectedBusStops.clear();
             updateSelectedStops();
         });
+        for(CertificationMethod method : CertificationMethod.values()){
+            if(method.isImplemented()) chooseMethodBox.getItems().add(method);
+        }
+        chooseMethodBox.setPromptText("Metoda obliczeń");
 
         rightPane.setPadding(new Insets(10, 10, 10, 10));
         rightPane.setVgap(8);
-        GridPane.setConstraints(startButton, 0, 0);
-        GridPane.setConstraints(clearButton, 0,1);
-        GridPane.setConstraints(stopsLabel, 0, 2);
-        GridPane.setConstraints(stopsList,0,3);
-        rightPane.getChildren().addAll(stopsLabel, startButton, clearButton, stopsList);
+        GridPane.setConstraints(chooseMethodBox, 0, 0);
+        GridPane.setConstraints(startButton, 0, 1);
+        GridPane.setConstraints(clearButton, 0,2);
+        GridPane.setConstraints(stopsLabel, 0, 3);
+        GridPane.setConstraints(stopsList,0,4);
+        rightPane.getChildren().addAll(chooseMethodBox, stopsLabel, startButton, clearButton, stopsList);
 
         // adding everything to BorderPane
         borderPane.setTop(topMenu);
@@ -226,10 +222,10 @@ public class Main extends Application{
            closeProgram();
        });
 
-        Scene scene = new Scene(borderPane, 700, 500);
+        Scene scene = new Scene(borderPane, 600, 500);
         window.setScene(scene);
         window.show();
-        checkJSON(cities, JSON_SOURCE);
+        checkJSON(City.getImplementedNames(), JSON_SOURCE);
     }
 
     private void closeProgram(){
@@ -313,7 +309,8 @@ public class Main extends Application{
      */
     private void checkJSON(ArrayList<String> supportedCities, String filepath) throws Exception {
         // 1. check json file existence - functionality moved to function checkJSONexistance()
-        ArrayList supCities = new ArrayList(supportedCities);
+        ArrayList supCities;
+        supCities = new ArrayList(supportedCities);
 
         // 2. check for supported cities
         JSONParser parser = new JSONParser();
@@ -330,15 +327,15 @@ public class Main extends Application{
 
         // 3. ask if user wants to update missing cities
         if(missingCities.size() > 0){
-            String listOfCities = "";
+            StringBuilder listOfCities = new StringBuilder();
             for(String city : missingCities){
-                listOfCities += city + "\n";
+                listOfCities.append(city).append("\n");
             }
 
             // 4. update missing cities if positive answer
             if(ConfirmBox.display(
                     "Brakujące miasta",
-                    "Brakuje danych dla następujących miast:\n" + listOfCities.toString() +
+                    "Brakuje danych dla następujących miast:\n" + listOfCities +
                             "Czy chcesz pobrać dane teraz?\n" +
                             "UWAGA! Może zająć to od kilku do kilkunastu minut (w zależności od szybkości twojego łącza)"
             )) {
@@ -347,7 +344,7 @@ public class Main extends Application{
                     System.out.println("Updated city: " + city);
                 }
                 try {
-                    displayedStops = FXCollections.observableArrayList(JSONHandler.fetchBusStopArray(JSON_SOURCE, this.cities.get(0)));
+                    displayedStops = FXCollections.observableArrayList(JSONHandler.fetchBusStopArray(JSON_SOURCE, this.cities.get(0).toString()));
                 } catch(Exception e){
                     System.out.println("Empty file");
                 }
@@ -387,12 +384,12 @@ public class Main extends Application{
         MenuItem runOption = new MenuItem("U_ruchom analizę");
         MenuItem exitOption = new MenuItem("Wyjdź");
         Menu updateOption = new Menu("Aktualizuj listy");
-        for(String city : this.cities){
-            MenuItem menuItem = new MenuItem(city);
+        for(City city : this.cities){
+            MenuItem menuItem = new MenuItem(city.toString());
             menuItem.setOnAction(actionEvent -> {
                 if(ConfirmBox.display("Aktualizacja", "Czy na pewno chcesz aktualizować " + city + "?")) {
                     try {
-                        CityUpdate.updateHandler(city, this.JSON_SOURCE);
+                        CityUpdate.updateHandler(city.toString(), this.JSON_SOURCE);
                         // override json file name
                         Path source = Paths.get(this.JSON_SOURCE);
                         Files.move(source, source.resolveSibling(this.CURRENT_DIR + File.separator +generateNewJsonFileName()), REPLACE_EXISTING);
@@ -409,6 +406,14 @@ public class Main extends Application{
 
         {
             // Action listeners
+            runOption.setOnAction(actionEvent -> {
+                try {
+                    runAnalysesAndSave();
+                } catch (IOException e) {
+                    ErrorDialog.displayException(e);
+                    e.printStackTrace();
+                }
+            });
             exitOption.setOnAction(event -> closeProgram());
         }
 
@@ -462,15 +467,20 @@ public class Main extends Application{
     }
 
     private void runAnalysesAndSave() throws IOException {
+        CertificationMethod selectedMethod = chooseMethodBox.getSelectionModel().getSelectedItem();
+        if(selectedMethod == null) {
+            AlertBox.display("Uwaga", "Przed rozpoczęciem analizy musisz wybrać metodę obliczeń");
+            return ;
+        }
         if(SELECTED_DIRECTORY == null){
             chooseSaveDirectory();
         }
         if(SELECTED_DIRECTORY == null) return ;
         try {
-            City selectedCity = City.stringToEnum(chooseCityBox.getValue());
+            City selectedCity = chooseCityBox.getValue();
             ArrayList<BusStop> list = new ArrayList<>();
             list.addAll(this.selectedBusStops);
-            Saver.saveAll(SELECTED_DIRECTORY, businfov2.BusStop.convertBusStops(selectedCity, list), CertificationMethod.LEED_v4);
+            Saver.saveAll(SELECTED_DIRECTORY, businfov2.BusStop.convertBusStops(selectedCity, list), selectedMethod);
         } catch (Exception e) {
             ErrorDialog.displayException(e);
             e.printStackTrace();

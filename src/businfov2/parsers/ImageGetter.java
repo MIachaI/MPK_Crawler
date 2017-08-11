@@ -51,7 +51,17 @@ public abstract class ImageGetter {
         return result.toString();
     }
 
-    public static String wroclawImage(){
-        return null;
+    public static String wroclawImage(String html) throws IOException {
+        Document document = Jsoup.connect(html).get();
+        Element table = document.select("table[class='table table-bordered table-schedule table-departures']").first();
+        Element head = document.select("head").first();
+        StringBuilder result = new StringBuilder();
+        result.append("<!DOCTYPE html><html>");
+        // result.append(head);
+        result.append("<head></head>");
+        result.append("<body>");
+        result.append(table);
+        result.append("</body></html>");
+        return result.toString();
     }
 }
