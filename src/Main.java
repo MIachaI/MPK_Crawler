@@ -12,6 +12,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 
 import java.io.*;
@@ -41,7 +42,9 @@ public class Main extends Application{
     private Stage window;
 
     private final ArrayList<City> cities = City.getImplemented();
-    private final String CURRENT_DIR = System.getProperty("user.dir"); // current dir
+    private final String BASE_DIR = System.getProperty("user.dir"); // current dir
+    public final String STYLESHEET_DIR = "file:src/window_interface/css/Theme.css";
+    private final String ICON_DIR = "file:src/window_interface/img/31771-200.png";
     private String JSON_SOURCE;
     private String SELECTED_DIRECTORY = null;
 
@@ -51,7 +54,7 @@ public class Main extends Application{
     // left pane items
     private VBox leftPane = new VBox();
     private ComboBox<City> chooseCityBox = new ComboBox<>();
-    private Button homePageButton = new Button("Strona przewoźnika");
+    private Button homePageButton = new Button("Strona_ przewoźnika");
     private ComboBox<CertificationMethod> chooseMethodBox = new ComboBox<>();
 
     // center pane items
@@ -63,7 +66,7 @@ public class Main extends Application{
 
     // right pane items
     private GridPane rightPane = new GridPane();
-    private Label stopsLabel = new Label("Lista przystanków");
+    private Label stopsLabel = new Label("Wybrane przystanki");
     private Label stopsList = new Label("");
     private Button startButton = new Button("Start");
     private Button clearButton = new Button("Wyczyść");
@@ -86,6 +89,7 @@ public class Main extends Application{
         window = primaryStage;
         window.setTitle("Crawler");
         window.setResizable(false);
+        window.getIcons().add(new Image(ICON_DIR));
 
         // top menu
         topMenu = initMenuBar();
@@ -223,6 +227,7 @@ public class Main extends Application{
        });
 
         Scene scene = new Scene(borderPane, 600, 500);
+        scene.getStylesheets().add(this.STYLESHEET_DIR);
         window.setScene(scene);
         window.show();
         checkJSON(City.getImplementedNames(), JSON_SOURCE);
@@ -267,14 +272,14 @@ public class Main extends Application{
      * @return absolute path to created (or found) JSON file
      */
     private String checkJsonExistence() throws IOException {
-        File folder = new File(CURRENT_DIR);
+        File folder = new File(BASE_DIR);
         File[] files = folder.listFiles();
         String[] date = new String[3];
         Pattern jsonNamePattern = Pattern.compile("crawler_(\\d{1,2})_(\\d{1,2})_(\\d{1,2})\\.json");
         String filepath;
         assert files != null;
         for (File file : files){
-            Matcher matcher = jsonNamePattern.matcher(file.getName().replace(CURRENT_DIR, ""));
+            Matcher matcher = jsonNamePattern.matcher(file.getName().replace(BASE_DIR, ""));
             //System.out.println(matcher);
             if(matcher.matches()) {
                 // if file was found - return its absolute path
@@ -289,7 +294,7 @@ public class Main extends Application{
 
         // else - return path to newly created file
         String fileName = generateNewJsonFileName();
-        filepath = CURRENT_DIR + File.separator + fileName;
+        filepath = BASE_DIR + File.separator + fileName;
         File file = new File(filepath);
         if(!file.exists()){
             file.createNewFile();
@@ -392,7 +397,7 @@ public class Main extends Application{
                         CityUpdate.updateHandler(city.toString(), this.JSON_SOURCE);
                         // override json file name
                         Path source = Paths.get(this.JSON_SOURCE);
-                        Files.move(source, source.resolveSibling(this.CURRENT_DIR + File.separator +generateNewJsonFileName()), REPLACE_EXISTING);
+                        Files.move(source, source.resolveSibling(this.BASE_DIR + File.separator +generateNewJsonFileName()), REPLACE_EXISTING);
                         this.JSON_SOURCE = this.checkJsonExistence();
                         AlertBox.display("Sukces", "Udało się zaktualizować " + city);
                     } catch (Exception e) {
@@ -460,7 +465,7 @@ public class Main extends Application{
     private void chooseSaveDirectory(){
         DirectoryChooser chooser = new DirectoryChooser();
         chooser.setTitle("Wybierz folder do zapisu");
-        File defaultDir = new File(this.CURRENT_DIR);
+        File defaultDir = new File(this.BASE_DIR);
         chooser.setInitialDirectory(defaultDir);
         this.SELECTED_DIRECTORY = chooser.showDialog(window).toString();
         System.out.println(this.SELECTED_DIRECTORY);
