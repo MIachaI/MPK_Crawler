@@ -54,7 +54,7 @@ public class Main extends Application{
     // left pane items
     private VBox leftPane = new VBox();
     private ComboBox<City> chooseCityBox = new ComboBox<>();
-    private Button homePageButton = new Button("Strona_ przewoźnika");
+    private Button homePageButton = new Button("Strona przewoźnika");
     private ComboBox<CertificationMethod> chooseMethodBox = new ComboBox<>();
 
     // center pane items
@@ -205,6 +205,7 @@ public class Main extends Application{
             if(method.isImplemented()) chooseMethodBox.getItems().add(method);
         }
         chooseMethodBox.setPromptText("Metoda obliczeń");
+        stopsLabel.setStyle("-fx-font-weight: bold;");
 
         rightPane.setPadding(new Insets(10, 10, 10, 10));
         rightPane.setVgap(8);
@@ -424,6 +425,7 @@ public class Main extends Application{
 
         // options
         MenuItem outputFolder = new MenuItem("Miejsce zapisu...");
+        MenuItem themeSelect = new MenuItem("Motyw");
         {
             // action listeners
             outputFolder.setOnAction(event ->{
