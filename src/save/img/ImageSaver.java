@@ -16,6 +16,7 @@ public abstract class ImageSaver {
                         String.format("%03d", iterator) + "_" + timetable.busStopName.replaceAll("/", "-") + "_" + timetable.lineNumber;
 
                 HtmlToImage.generateImage(timetable.getImageHtml(), fullPath + ".jpg");
+                iterator++;
             }
         }
     }
