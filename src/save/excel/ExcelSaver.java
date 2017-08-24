@@ -119,17 +119,17 @@ public abstract class ExcelSaver {
                             !tram.getWarnings().isEmpty() ? tram.getWarnings().get(0) : ""
                     );
 
-                    // write summary (sum of courses for weekday and weekend avgs)
-                    row++;
-                    result.addMergedRegion(new CellRangeAddress(row, row, 7, 8));
-                    result.getRow(row).getCell(7).setCellValue("Total");
-                    result.getRow(row).getCell(7).setCellStyle(lineCellStyle);
-                    result.getRow(++row).getCell(7).setCellValue("Weekday");
-                    result.getRow(row).getCell(8).setCellValue("Weekend");
-                    result.getRow(++row).getCell(7).setCellValue(tramWeekdaySum);
-                    result.getRow(row).getCell(8).setCellValue(tramWeekendAvgSum);
-                    row += 4;
                 }
+                // write summary (sum of courses for weekday and weekend avgs)
+                row++;
+                result.addMergedRegion(new CellRangeAddress(row, row, 7, 8));
+                result.getRow(row).getCell(7).setCellValue("Total");
+                result.getRow(row).getCell(7).setCellStyle(lineCellStyle);
+                result.getRow(++row).getCell(7).setCellValue("Weekday");
+                result.getRow(row).getCell(8).setCellValue("Weekend");
+                result.getRow(++row).getCell(7).setCellValue(tramWeekdaySum);
+                result.getRow(row).getCell(8).setCellValue(tramWeekendAvgSum);
+                row += 4;
             }
 
             if(!selectedBuses.isEmpty()) { // save buses if found any

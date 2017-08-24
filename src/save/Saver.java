@@ -22,6 +22,4 @@ public abstract class Saver {public static String excelName;
         ImageSaver.saveAllImages(path + File.separator + imgPrefix, selectedStops, method);
         ExcelSaver.save(path + File.separator + excelName, selectedStops, method);
     }
-
-
 }

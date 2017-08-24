@@ -83,16 +83,19 @@ public class Timetable {
 
         result.lineNumber = lines.get(0);
         String vehType = lines.get(1);
-        switch(vehType){
-            case "Bus":
+        switch(vehType.toLowerCase()){
             case "bus":
                 result.vehicleType = VehicleType.BUS;
                 break;
-            case "Light train":
+            case "light train":
+            case "lighttrain":
             case "tram":
+            case "tramwaj":
                 result.vehicleType = VehicleType.TRAM;
+                break;
             default:
                 result.vehicleType = VehicleType.UNDEFINED;
+                break;
         }
         result.busStopName = lines.get(2);
         for(String columnName : lines.get(3).split("\t")){
