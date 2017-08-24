@@ -20,5 +20,5 @@ public abstract class SiteScanner {
      * Scan whole site and look for desired information
      * @return array with BusStop objects containing information about all bus stops in the city with lines that have courses on them
      */
-    public abstract ArrayList<BusStop> scan() throws IOException;
+    public abstract ArrayList<BusStop> scan() throws Exception;
 }

@@ -398,7 +398,7 @@ public class Main extends Application{
                         CityUpdate.updateHandler(city.toString(), this.JSON_SOURCE);
                         // override json file name
                         Path source = Paths.get(this.JSON_SOURCE);
-                        Files.move(source, source.resolveSibling(this.BASE_DIR + File.separator +generateNewJsonFileName()), REPLACE_EXISTING);
+                        Files.move(source, source.resolveSibling(this.BASE_DIR + File.separator + generateNewJsonFileName()), REPLACE_EXISTING);
                         this.JSON_SOURCE = this.checkJsonExistence();
                         AlertBox.display("Sukces", "Udało się zaktualizować " + city);
                     } catch (Exception e) {

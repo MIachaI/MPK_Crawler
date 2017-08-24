@@ -60,7 +60,6 @@ public class PoznanScanner extends SiteScanner {
             }
                 result.add(busStop);
 
-
         }
 
 
