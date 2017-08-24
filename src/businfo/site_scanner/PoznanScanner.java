@@ -31,12 +31,12 @@ public class PoznanScanner extends SiteScanner {
     @Override
     public ArrayList<BusStop> scan() throws Exception {
         ArrayList<BusStop> result = new ArrayList<>();
-
-        String downloadedJson = new Scanner(new URL("http://www.poznan.pl/mim/plan/map_service.html?mtype=pub_transport&co=cluster").openStream(), "UTF-8").useDelimiter("\\A").next();
         JSONParser parser = new JSONParser();
-        Object primarObject = parser.parse(downloadedJson);
+        String poznan = readUrl("http://www.poznan.pl/mim/plan/map_service.html?mtype=pub_transport&co=cluster");
+        Object primarObject = parser.parse(poznan);
+
         JSONObject obj = (JSONObject) primarObject;
-        Object initialMatch = (Object) obj.get("features");
+        Object initialMatch = obj.get("features");
         String linkPattern = "http://www.mpk.poznan.pl/component/transport/";
         String buffer ="";
         for (Object jsonObject : (JSONArray) initialMatch){
