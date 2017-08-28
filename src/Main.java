@@ -1,5 +1,6 @@
 import businfo.busstop.streets.BusStop;
 import businfo.site_scanner.CityUpdate;
+import businfo.site_scanner.PoznanScanner;
 import businfov2.CertificationMethod;
 import businfov2.City;
 import javafx.collections.FXCollections;
@@ -118,7 +119,9 @@ public class Main extends Application{
         });
         homePageButton.setOnAction(event -> {
             try{
-                getHostServices().showDocument(chooseCityBox.getValue().getMainPageHtml());
+                PoznanScanner tak = new PoznanScanner();
+                tak.scan();
+               //getHostServices().showDocument(chooseCityBox.getValue().getMainPageHtml());
             } catch (Exception e){
                 e.printStackTrace();
                 ErrorDialog.displayException(e);
