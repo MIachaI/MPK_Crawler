@@ -20,16 +20,17 @@ import org.json.simple.parser.JSONParser;
 
 
 /**
- * Created by Michal on 06.08.2017.
+ * Created by MIachaI on 06.08.2017.
  */
 public class PoznanScanner extends SiteScanner {
-    public BusStop busStop;
+    //public BusStop busStop;
     public PoznanScanner(){
         super();
         this.mainPageURL = "http://www.mpk.poznan.pl/rozklad-jazdy";
     }
     @Override
     public ArrayList<BusStop> scan() throws Exception {
+        Set<String> busStopNames = new HashSet<>();
         ArrayList<BusStop> result = new ArrayList<>();
         JSONParser parser = new JSONParser();
         String poznan = readUrl("http://www.poznan.pl/mim/plan/map_service.html?mtype=pub_transport&co=cluster");
@@ -38,7 +39,8 @@ public class PoznanScanner extends SiteScanner {
         JSONObject obj = (JSONObject) primarObject;
         Object initialMatch = obj.get("features");
         String linkPattern = "http://www.mpk.poznan.pl/component/transport/";
-        String buffer ="";
+        String buffer ="Aleje Solidarności";
+        BusStop busStop = new BusStop("Aleje Solidarnosci");
         for (Object jsonObject : (JSONArray) initialMatch){
 
             Object jsonProperties = ((JSONObject) jsonObject).get("properties");
@@ -46,23 +48,19 @@ public class PoznanScanner extends SiteScanner {
             String jsonUpdatedID = jsonID.toString().replaceAll(" ", "");
             Object jsonStopName = ((JSONObject) jsonProperties).get("stop_name");
             Object jsonLines = ((JSONObject) jsonProperties).get("headsigns");
-            String linesString = jsonLines.toString();
-            String[] linesArray = linesString.split(", ");
+            String[] linesArray = jsonLines.toString().split(",");
 
-            if (buffer !=jsonStopName.toString()) {
+            if( buffer.equals(jsonStopName.toString())==false){
+                result.add(busStop);
                 busStop = new BusStop(jsonStopName.toString());
-            }
-            buffer = jsonStopName.toString();
-
+                buffer = jsonStopName.toString();
+          }
             for (String line : linesArray){
                 String linkToTimetable = linkPattern + line +"/" + jsonUpdatedID;
                 busStop.addBusLine(new LineOnStop(line, linkToTimetable));
             }
-                result.add(busStop);
-
         }
-
-
+        result.add(busStop);
         return result;
     }
     private static String readUrl(String input) throws Exception {
@@ -73,10 +71,8 @@ public class PoznanScanner extends SiteScanner {
             StringBuffer buffer = new StringBuffer();
             int read;
             char[] chars = new char[1024];
-
             while ((read = reader.read(chars)) != -1)
                 buffer.append(chars, 0, read);
-
             return buffer.toString();
 
     }
