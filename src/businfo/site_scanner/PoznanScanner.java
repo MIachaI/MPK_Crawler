@@ -46,9 +46,11 @@ public class PoznanScanner extends SiteScanner {
             Object jsonProperties = ((JSONObject) jsonObject).get("properties");
             Object jsonID = ((JSONObject) jsonObject).get("id");
             String jsonUpdatedID = jsonID.toString().replaceAll(" ", "");
+
             Object jsonStopName = ((JSONObject) jsonProperties).get("stop_name");
             Object jsonLines = ((JSONObject) jsonProperties).get("headsigns");
-            String[] linesArray = jsonLines.toString().split(",");
+            String jsonLinesPurified = jsonLines.toString().replaceAll(" ", "");
+            String[] linesArray = jsonLinesPurified.split(",");
 
             if( buffer.equals(jsonStopName.toString())==false){
                 result.add(busStop);
@@ -76,4 +78,5 @@ public class PoznanScanner extends SiteScanner {
             return buffer.toString();
 
     }
+
 }

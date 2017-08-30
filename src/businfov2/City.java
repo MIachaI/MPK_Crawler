@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public enum City {
     KRAKOW(true, "Kraków", "Cracow", "http://rozklady.mpk.krakow.pl/"),
     WARSZAWA(true, "Warszawa", "Warsaw", "http://www.ztm.waw.pl/rozklad_nowy.php?c=183&l=1"),
-    POZNAN(false, "Poznań", "Poznań", "http://www.mpk.poznan.pl/rozklad-jazdy"),
+    POZNAN(true, "Poznań", "Poznań", "http://www.mpk.poznan.pl/rozklad-jazdy"),
     WROCLAW(true, "Wrocław", "Wroclaw", "http://www.wroclaw.pl/rozklady-jazdy");
 
     private String plName;
