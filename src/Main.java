@@ -119,9 +119,7 @@ public class Main extends Application{
         });
         homePageButton.setOnAction(event -> {
             try{
-                PoznanScanner tak = new PoznanScanner();
-                tak.scan();
-               //getHostServices().showDocument(chooseCityBox.getValue().getMainPageHtml());
+               getHostServices().showDocument(chooseCityBox.getValue().getMainPageHtml());
             } catch (Exception e){
                 e.printStackTrace();
                 ErrorDialog.displayException(e);
