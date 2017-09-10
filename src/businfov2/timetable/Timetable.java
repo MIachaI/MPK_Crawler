@@ -7,6 +7,9 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.regex.Pattern;
 
+/**
+ * Stores timetable information about bus and trams departures from a stop
+ */
 public class Timetable {
     private final static String UNDEFINED = "undefined";
 

@@ -31,9 +31,9 @@ public class MPKPoznanInfo extends BusInfo {
         result.append(document.select("div[class='MpkLineNum'] a[class='MpkLineLink']").text());
         // vehicle type
         Element vehicleType = document.select("img[class='MpkZoneImgBig']").first();
-        if (Objects.equals(vehicleType.attr("title"), "autobus"))
+        if (vehicleType.attr("title").contains("autobus"))
             result.append("\nBus");
-        else if (Objects.equals(vehicleType.attr("title"),"tramwaj"))
+        else if (vehicleType.attr("title").contains("tramwaj"))
             result.append("\nLight train");
         else
             result.append("\nundefined");
@@ -76,8 +76,8 @@ public class MPKPoznanInfo extends BusInfo {
         Element head = document.select("head").first();
         Element table = document.select("div[id='MpkBoard']").first();
 
-        result.append("<!DOCTYPE HTML>\n<html>");
-        result.append(head.outerHtml());        // append body section
+        result.append("<html>");
+//        result.append(head.outerHtml());        // append body section
         result.append(table.outerHtml());		// append table section
         result.append("</html>");
         return result.toString();

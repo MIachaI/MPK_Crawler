@@ -5,6 +5,7 @@ import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.io.IOException;
 
@@ -52,13 +53,26 @@ public abstract class ImageGetter {
     }
 
     public static String wroclawImage(String html) throws IOException {
+        StringBuilder result = new StringBuilder();
+        result.append("<!DOCTYPE html><html>");
         Document document = Jsoup.connect(html).get();
         Element table = document.select("table[class='table table-bordered table-schedule table-departures']").first();
         Element head = document.select("head").first();
-        StringBuilder result = new StringBuilder();
-        result.append("<!DOCTYPE html><html>");
-        // result.append(head);
-        result.append("<head></head>");
+
+        result.append("<head><style>");
+        // find all stylesheets
+        Elements stylesheetSources = head.select("link[rel='stylesheet']");
+        for(Element stylesheetSrc : stylesheetSources){
+            String link = stylesheetSrc.attr("href");
+            if(link.charAt(0) == '/' && link.contains("bootstrap")){
+                link = "http://www.wroclaw.pl" + link;
+                Document cssDoc = Jsoup.connect(link).get();
+                String css = cssDoc.body().text();
+                result.append(css);
+            }
+        }
+        result.append("</style></head>");
+
         result.append("<body>");
         result.append(table);
         result.append("</body></html>");
