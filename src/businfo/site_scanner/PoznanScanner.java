@@ -23,7 +23,7 @@ import org.json.simple.parser.JSONParser;
  * Created by MIachaI on 06.08.2017.
  */
 public class PoznanScanner extends SiteScanner {
-    //public BusStop busStop;
+
     public PoznanScanner(){
         super();
         this.mainPageURL = "http://www.mpk.poznan.pl/rozklad-jazdy";
@@ -39,8 +39,8 @@ public class PoznanScanner extends SiteScanner {
         JSONObject obj = (JSONObject) primarObject;
         Object initialMatch = obj.get("features");
         String linkPattern = "http://www.mpk.poznan.pl/component/transport/";
-        String buffer ="Aleje Solidarności";
-        BusStop busStop = new BusStop("Aleje Solidarnosci");
+        String initialBusStop ="Aleje Solidarności";
+        BusStop busStop = new BusStop("Aleje Solidarności");
         for (Object jsonObject : (JSONArray) initialMatch){
 
             Object jsonProperties = ((JSONObject) jsonObject).get("properties");
@@ -52,10 +52,10 @@ public class PoznanScanner extends SiteScanner {
             String jsonLinesPurified = jsonLines.toString().replaceAll(" ", "");
             String[] linesArray = jsonLinesPurified.split(",");
 
-            if( buffer.equals(jsonStopName.toString())==false){
+            if( initialBusStop.equals(jsonStopName.toString())==false){
                 result.add(busStop);
                 busStop = new BusStop(jsonStopName.toString());
-                buffer = jsonStopName.toString();
+                initialBusStop = jsonStopName.toString();
           }
             for (String line : linesArray){
                 String linkToTimetable = linkPattern + line +"/" + jsonUpdatedID;
