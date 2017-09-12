@@ -19,19 +19,8 @@ public class BusStopList extends Thread {
      * @throws IOException - just to handle multithreading
      */
     public static ArrayList<BusStopLink> MPKBusStopLinksGetter ()throws IOException {
-        //connect to main page of MPK Cracow
-        Document initialConnect = Jsoup.connect("http://rozklady.mpk.krakow.pl").get();
-        //choose polish language
-        Element polishLanguageConnection = initialConnect.select("table[class='nav'] td[style='text-align: right; white-space: nowrap; '] a[href]").first();
-        String polishLanguageLink = polishLanguageConnection.attr("href");
-        //connect to polishLanguage link
-        Document polishLangugeConnect = Jsoup.connect(polishLanguageLink).get();
-        //get link to bus stops page
-        Element connectionToSourcePage =polishLangugeConnect.select("table[class='nav'] td[style=' width: 100px; '] a[href]").first();
-        String connection = connectionToSourcePage.attr("href");
-
         //connect to bus stops page
-        Document document = DocHacker.getDocument(connection);
+        Document document = DocHacker.getDocument("http://rozklady.mpk.krakow.pl/?akcja=przystanek");
         ArrayList<BusStopLink> MPKstops = new ArrayList<>();
         //parse through elements to collect their links and names and save to ArrayList MPKstop
         Elements links = document.select("form[id='main'] tbody tr a[href]");
