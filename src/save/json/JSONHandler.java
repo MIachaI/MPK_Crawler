@@ -51,7 +51,6 @@ public abstract class JSONHandler {
                     busStopToAdd.addBusLine(new LineOnStop(lineKeyStr, lineKeyVal));
                 }
             }
-
             result.add(busStopToAdd);
         }
 

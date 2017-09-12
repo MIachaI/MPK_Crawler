@@ -1,20 +1,13 @@
 package businfo.lists;
 
-import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import utils.DocHacker;
+
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.Scanner;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.Inflater;
-import java.util.zip.InflaterInputStream;
 
 /**
  * Created by MIachaI on 29.05.2017.
@@ -26,10 +19,19 @@ public class BusStopList extends Thread {
      * @throws IOException - just to handle multithreading
      */
     public static ArrayList<BusStopLink> MPKBusStopLinksGetter ()throws IOException {
-        //connect to bus stops page
+        //connect to main page of MPK Cracow
+        Document initialConnect = Jsoup.connect("http://rozklady.mpk.krakow.pl").get();
+        //choose polish language
+        Element polishLanguageConnection = initialConnect.select("table[class='nav'] td[style='text-align: right; white-space: nowrap; '] a[href]").first();
+        String polishLanguageLink = polishLanguageConnection.attr("href");
+        //connect to polishLanguage link
+        Document polishLangugeConnect = Jsoup.connect(polishLanguageLink).get();
+        //get link to bus stops page
+        Element connectionToSourcePage =polishLangugeConnect.select("table[class='nav'] td[style=' width: 100px; '] a[href]").first();
+        String connection = connectionToSourcePage.attr("href");
 
-        Connection.Response document1 = Jsoup.connect("http://rozklady.mpk.krakow.pl/?lang=PL&rozklad=20170912&akcja=przystanek").userAgent("Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101 Firefox/52.0").followRedirects(true).data("name", "mikel").referrer("https://www.google.pl/").validateTLSCertificates(true).cookie("Cookie","ROZKLADY_JEZYK=PL; ROZKLADY_WIZYTA=20; ROZKLADY_WIDTH=1920; __utma=174679166.1956832196.1504264753.1504264753.1504264753.1; __utmz=174679166.1504264753.1.1.utmcsr=google|utmccn=(organic)|utmcmd=organic|utmctr=(not%20provided); ROZKLADY_OSTATNIA=1505207038; ROZKLADY_LWT=142__2__50").execute();
-        Document document = document1.parse();
+        //connect to bus stops page
+        Document document = DocHacker.getDocument(connection);
         ArrayList<BusStopLink> MPKstops = new ArrayList<>();
         //parse through elements to collect their links and names and save to ArrayList MPKstop
         Elements links = document.select("form[id='main'] tbody tr a[href]");

@@ -5,6 +5,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import utils.DocHacker;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ public class MPKinfo extends BusInfo {
 
 	public String getRawResult(Connection connection) throws IOException{
 		ArrayList<String> lines = new ArrayList<>();
-		Document document = connection.userAgent("Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101 Firefox/52.0").followRedirects(true).data("name", "mikel").referrer("https://www.google.pl/").validateTLSCertificates(true).cookie("Cookie","ROZKLADY_JEZYK=PL; ROZKLADY_WIZYTA=20; ROZKLADY_WIDTH=1920; __utma=174679166.1956832196.1504264753.1504264753.1504264753.1; __utmz=174679166.1504264753.1.1.utmcsr=google|utmccn=(organic)|utmcmd=organic|utmctr=(not%20provided); ROZKLADY_OSTATNIA=1505207038; ROZKLADY_LWT=142__2__50").get();
+		Document document = DocHacker.getDocument(connection);
 		//get bus number
 		Elements number = document.select("p[style='font-size: 40px;']");
 		lines.add(number.text());
@@ -60,7 +61,9 @@ public class MPKinfo extends BusInfo {
 	public String getRawHtml() throws IOException {
 		StringBuilder result = new StringBuilder();
 		// find print view page (looks nicer)
-		Element printLink = this.jsoupConnection.get().select("td[style=' width: 100px; '] a[target='_blank']").first();
+		Element printLink = DocHacker.getDocument(this.jsoupConnection)
+				.select("td[style=' width: 100px; '] a[target='_blank']").first();
+
 		String link = printLink.attr("href");
 		// go to print view page
 		Connection connection2 = Jsoup.connect(link);
