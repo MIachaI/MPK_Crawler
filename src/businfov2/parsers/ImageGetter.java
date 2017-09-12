@@ -14,11 +14,11 @@ public abstract class ImageGetter {
         Connection jsoupConnection = Jsoup.connect(html);
         StringBuilder result = new StringBuilder();
         // find print view page (looks nicer)
-        Element printLink = jsoupConnection.get().select("td[style=' width: 100px; '] a[target='_blank']").first();
+        Element printLink = jsoupConnection.userAgent("Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101 Firefox/52.0").followRedirects(true).data("name", "mikel").referrer("https://www.google.pl/").validateTLSCertificates(true).cookie("Cookie","ROZKLADY_JEZYK=PL; ROZKLADY_WIZYTA=20; ROZKLADY_WIDTH=1920; __utma=174679166.1956832196.1504264753.1504264753.1504264753.1; __utmz=174679166.1504264753.1.1.utmcsr=google|utmccn=(organic)|utmcmd=organic|utmctr=(not%20provided); ROZKLADY_OSTATNIA=1505207038; ROZKLADY_LWT=142__2__50").get().select("td[style=' width: 100px; '] a[target='_blank']").first();
         String link = printLink.attr("href");
         // go to print view page
         Connection connection2 = Jsoup.connect(link);
-        Document document2 = connection2.get();
+        Document document2 = connection2.userAgent("Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101 Firefox/52.0").followRedirects(true).data("name", "mikel").referrer("https://www.google.pl/").validateTLSCertificates(true).cookie("Cookie","ROZKLADY_JEZYK=PL; ROZKLADY_WIZYTA=20; ROZKLADY_WIDTH=1920; __utma=174679166.1956832196.1504264753.1504264753.1504264753.1; __utmz=174679166.1504264753.1.1.utmcsr=google|utmccn=(organic)|utmcmd=organic|utmctr=(not%20provided); ROZKLADY_OSTATNIA=1505207038; ROZKLADY_LWT=142__2__50").get();
         Element table = document2.select("table[style=' width: 700px; ']").first();
         Element head = document2.select("head").first();
         // add style absolute path
