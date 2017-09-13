@@ -262,4 +262,11 @@ public class Timetable {
             return this.day;
         }
     }
+
+    public String generateHtmlTable(){
+        StringBuilder result = new StringBuilder();
+
+
+        return result.toString();
+    }
 }

@@ -1,0 +1,41 @@
+body {
+  font-family: Impact, Charcoal, sans-serif, monospace;
+}
+
+th {
+  background-color: lightgrey;
+  text-transform: uppercase;
+  width: 33.33%;
+}
+
+tr.time td:nth-child(2n) {
+  background-color: yellow;
+  white-space: nowrap;
+}
+
+tr.time td:nth-child(2n+1) {
+  background-color: pink;
+  width: 5%;
+}
+
+.wrapper {
+  width: 600px; /* make width dependant of number of columns */
+}
+
+.fill-width {
+  width: 100%;
+  text-align: center;
+}
+
+.line-number{
+  font-weight: bold;
+  font-size: 1.5em;
+}
+
+.stop-name {
+
+}
+
+.vehicle-type {
+
+}
