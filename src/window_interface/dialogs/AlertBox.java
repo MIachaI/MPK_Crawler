@@ -7,7 +7,7 @@ import javafx.scene.control.*;
 import javafx.geometry.*;
 
 public class AlertBox {
-    public static void display(String title, String message){
+    public static AlertBox display(String title, String message){
         Stage window = new Stage();
 
         window.initModality(Modality.APPLICATION_MODAL);
@@ -28,5 +28,6 @@ public class AlertBox {
         Scene scene = new Scene(layout);
         window.setScene(scene);
         window.showAndWait();
+        return null;
     }
 }

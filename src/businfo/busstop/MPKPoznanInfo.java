@@ -4,6 +4,8 @@ import org.jsoup.Connection;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import window_interface.dialogs.AlertBox;
+import window_interface.dialogs.ErrorDialog;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -51,12 +53,17 @@ public class MPKPoznanInfo extends BusInfo {
         // timetable
         Elements rows = document.select("tr[class='MpkTimetableRow'] ");
         for(Element row : rows){
-            String rowHour = row.select("td[class='MpkHours'").first().text();
-            result.append("\n").append(rowHour);
+            try {
+                String rowHour = row.select("td[class='MpkHours'").first().text();
+                result.append("\n").append(rowHour);
 
-            Elements colMinutes = row.select("td[class='MpkMinutes'");
-            for(Element column : colMinutes){
-                result.append("\t").append(column.text());
+                Elements colMinutes = row.select("td[class='MpkMinutes'");
+                for (Element column : colMinutes) {
+                    result.append("\t").append(column.text());
+                }
+            }
+            catch (NullPointerException e){
+                AlertBox.display("Jeden z wybranych przystanków nie istnieje!","Link do tego przystanku: " +html+"\nW razie wątpliwości napisz do wsparcia technicznego.");
             }
         }
 
