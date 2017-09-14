@@ -22,14 +22,16 @@ public abstract class JSONHandler {
      * @param jsonFile path to file containing json
      * @param city city from which to fetch info
      * @return ArrayList containing BusStop objects for a city
-     * @throws IOException upon no file found
+     * @throws IOException when given file path was not found
      * @throws ParseException when wrong format
      * @throws NullPointerException if city name was not found in the json file
      */
     public static ArrayList<BusStop> fetchBusStopArray(String jsonFile, String city) throws IOException, ParseException, NullPointerException {
         ArrayList<BusStop> result = new ArrayList<>();
         JSONParser parser = new JSONParser();
-        Object obj = parser.parse(new FileReader(jsonFile));
+        FileReader file = new FileReader(jsonFile);
+        Object obj = parser.parse(file);
+        file.close();
         JSONObject jsonObject = (JSONObject) obj;
 
         JSONObject busStops = (JSONObject) jsonObject.get(city);
