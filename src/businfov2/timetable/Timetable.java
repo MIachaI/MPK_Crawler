@@ -1,11 +1,12 @@
 package businfov2.timetable;
 
 import businfov2.VehicleType;
+import utils.HtmlUtils;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
-import java.util.regex.Pattern;
+import java.util.HashMap;
 
 /**
  * Stores timetable information about bus and trams departures from a stop
@@ -263,10 +264,69 @@ public class Timetable {
         }
     }
 
-    public String generateHtmlTable(){
-        StringBuilder result = new StringBuilder();
+    /**
+     * Generate HTML representing Timetable object using template
+     * @return HTML code for this Timetable
+     * @throws IOException when template files not found
+     */
+    public String generateHtmlTable() throws IOException {
+        // read styles from file
+        BufferedReader reader = new BufferedReader(new InputStreamReader(Timetable.class.getResourceAsStream("styles/style.css")));
+        StringBuilder styleBuilder = new StringBuilder();
+        String line;
+        while ((line = reader.readLine()) != null){
+            styleBuilder.append(line).append("\n");
+        }
+        reader.close();
+        String style = styleBuilder.toString();
 
+        // read html template
+        BufferedReader htmlReader = new BufferedReader(new InputStreamReader(Timetable.class.getResourceAsStream("styles/template.html")));
+        StringBuilder htmlBuilder = new StringBuilder();
+        while ((line = htmlReader.readLine()) != null){
+            htmlBuilder.append(line).append("\n");
+        }
+        htmlReader.close();
+        String htmlTemplate = htmlBuilder.toString();
 
-        return result.toString();
+        // generate column names
+        StringBuilder columnNames = new StringBuilder();
+        for(Column column : this.columns){
+            columnNames.append(HtmlUtils.wrap(column.name, "th", new HashMap() {{ put("colspan", "2"); }}));
+        }
+
+        // generate rows with departure times
+        StringBuilder rows = new StringBuilder();
+        for(int hour = 0; hour < 24; hour++){
+            boolean notEmpty = false;
+            StringBuilder rowCells = new StringBuilder();
+            for(Column column : this.columns){
+                ArrayList<HourMinute> minutes = column.getDeparturesFromHour(hour);
+                // set notEmpty flag
+                if(!minutes.isEmpty()) notEmpty = true;
+
+                // create row
+                rowCells.append(HtmlUtils.wrap(String.valueOf(hour), "td")).append("\n");
+                StringBuilder minutesString = new StringBuilder();
+                for(HourMinute hourMinute : minutes){
+                    minutesString.append(hourMinute.minute).append(" ");
+                }
+                rowCells.append(HtmlUtils.wrap(minutesString.toString(), "td")).append("\n");
+            }
+            // if row is not empty - add it to table
+            if(notEmpty){
+                rows.append(HtmlUtils.wrap(rowCells.toString(), "tr", new HashMap() {{ put("class", "time"); }})).append("\n");
+            }
+        }
+
+        // replace placeholders with Timetable info
+        htmlTemplate = htmlTemplate.replace("{{ style }}", style);
+        htmlTemplate = htmlTemplate.replace("{{ line-number }}", this.lineNumber);
+        htmlTemplate = htmlTemplate.replace("{{ stop-name }}", this.busStopName);
+        htmlTemplate = htmlTemplate.replace("{{ vehicle-type }}", this.vehicleType.htmlRepresentation());
+        htmlTemplate = htmlTemplate.replace("{{ column-names }}", columnNames.toString());
+        htmlTemplate = htmlTemplate.replace("{{ timetable-rows }}", rows.toString());
+
+        return htmlTemplate;
     }
 }
