@@ -3,19 +3,35 @@ body {
 }
 
 th {
-  background-color: lightgrey;
+  background-color: indigo;
+  color: white;
   text-transform: uppercase;
   width: 33.33%;
 }
 
+td {
+  padding: 3px;
+}
+
 tr.time td:nth-child(2n) {
-  background-color: yellow;
+  /*background-color: yellow;*/
   white-space: nowrap;
+  border-bottom: 1px solid grey;
 }
 
 tr.time td:nth-child(2n+1) {
-  background-color: pink;
+  background-color: lightskyblue;
   width: 5%;
+  border-left: 1px solid grey;
+  border-right: 1px solid grey;
+}
+
+tr td:last-child {
+  border-right: 1px solid grey;
+}
+
+tr:last-child td{
+  border-bottom: 1px solid grey;
 }
 
 .wrapper {
@@ -33,9 +49,9 @@ tr.time td:nth-child(2n+1) {
 }
 
 .stop-name {
-
+  font-size: 1.3em;
 }
 
 .vehicle-type {
-
+  font-style: italic;
 }
