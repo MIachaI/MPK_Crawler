@@ -17,6 +17,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 
 import java.io.*;
+import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -402,7 +403,11 @@ public class Main extends Application{
                         Files.move(source, source.resolveSibling(this.BASE_DIR + File.separator + generateNewJsonFileName()), REPLACE_EXISTING);
                         this.JSON_SOURCE = this.checkJsonExistence();
                         AlertBox.display("Sukces", "Udało się zaktualizować " + city);
-                    } catch (Exception e) {
+                    } catch (UnknownHostException e) {
+                        e.printStackTrace();
+                        ErrorDialog.displayError("Brak połączenia", city.toString(),"Program nie może połączyć się z serwerem");
+                    }
+                    catch (Exception e) {
                         e.printStackTrace();
                         ErrorDialog.displayException(e);
                     }

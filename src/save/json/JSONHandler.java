@@ -92,7 +92,9 @@ public abstract class JSONHandler {
      */
     public static void updateJSONFile(String fileName, String cityName, JSONObject cityObject) throws IOException, ParseException {
         JSONParser parser = new JSONParser();
-        JSONObject mainObj = (JSONObject) parser.parse(new FileReader(fileName));
+        FileReader file = new FileReader(fileName);
+        JSONObject mainObj = (JSONObject) parser.parse(file);
+        file.close();
         mainObj.put(cityName, cityObject);
 
         FileWriter writer = new FileWriter(fileName);

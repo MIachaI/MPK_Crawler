@@ -6,6 +6,7 @@ import org.json.simple.JSONObject;
 import save.json.JSONHandler;
 
 import java.io.IOException;
+import java.security.InvalidParameterException;
 import java.text.ParseException;
 import java.util.ArrayList;
 
@@ -78,9 +79,11 @@ public class CityUpdate {
      * Automatically update given JSON file with provided city name
      * @param cityName city to update. Supported cities can be found inside switch statement
      * @param filename JSON file path
-     * @throws Exception
+     * @throws businfov2.City.NotImplementedException if city is not implemented by application
+     * @throws InvalidParameterException if wrong city name given
      */
-    public static void updateHandler(String cityName, String filename) throws Exception {
+    public static void updateHandler(String cityName, String filename)
+    throws City.NotImplementedException, InvalidParameterException, IOException, org.json.simple.parser.ParseException {
         City city = City.stringToEnum(cityName);
         city.isImplemented();
         ArrayList<BusStop> busStops;
@@ -99,7 +102,7 @@ public class CityUpdate {
                 scanner = new WroclawScanner();
                 break;
             default:
-                throw new Exception("Invalid city");
+                throw new InvalidParameterException("Invalid city");
         }
         busStops = scanner.scan();
         JSONObject cityObject;

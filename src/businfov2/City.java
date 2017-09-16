@@ -1,5 +1,9 @@
 package businfov2;
 
+import org.apache.poi.util.NotImplemented;
+
+import javax.management.Notification;
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 
 public enum City {
@@ -25,10 +29,10 @@ public enum City {
 
     /**
      * Method to call if we want to check if city is implemented
-     * @throws Exception if city is not implemented, else it lets program to continue
+     * @throws NotImplementedException if city is not implemented, else it lets program to continue
      */
-    public void isImplemented() throws Exception {
-        if(!this.implemented) throw new Exception("This city is not implemented");
+    public void isImplemented() throws NotImplementedException {
+        if(!this.implemented) throw new NotImplementedException("This city is not implemented");
     }
 
     public String getEngName(){
@@ -55,7 +59,7 @@ public enum City {
         return result;
     }
 
-    public static City stringToEnum(String cityName) throws Exception {
+    public static City stringToEnum(String cityName) throws InvalidParameterException {
         switch(cityName.toLowerCase()){
             case "kraków":
             case "krakow":
@@ -72,7 +76,16 @@ public enum City {
             case "breslau":
                 return WROCLAW;
             default:
-                throw new Exception("Invalid city");
+                throw new InvalidParameterException("Invalid city");
+        }
+    }
+
+    public static class NotImplementedException extends Exception {
+        NotImplementedException(){
+            super();
+        }
+        NotImplementedException(String message){
+            super(message);
         }
     }
 }
