@@ -271,17 +271,17 @@ public class Timetable {
      */
     public String generateHtmlTable() throws IOException {
         // read styles from file
-        BufferedReader reader = new BufferedReader(new InputStreamReader(Timetable.class.getResourceAsStream("styles/style.css")));
-        StringBuilder styleBuilder = new StringBuilder();
-        String line;
-        while ((line = reader.readLine()) != null){
-            styleBuilder.append(line).append("\n");
-        }
-        reader.close();
-        String style = styleBuilder.toString();
+         BufferedReader reader = new BufferedReader(new InputStreamReader(Timetable.class.getResourceAsStream("styles/wwa_style.css")));
+         StringBuilder styleBuilder = new StringBuilder();
+         String line;
+         while ((line = reader.readLine()) != null){
+             styleBuilder.append(line).append("\n");
+         }
+         reader.close();
+         String style = styleBuilder.toString();
 
         // read html template
-        BufferedReader htmlReader = new BufferedReader(new InputStreamReader(Timetable.class.getResourceAsStream("styles/template.html")));
+        BufferedReader htmlReader = new BufferedReader(new InputStreamReader(Timetable.class.getResourceAsStream("styles/wwa_template.html")));
         StringBuilder htmlBuilder = new StringBuilder();
         while ((line = htmlReader.readLine()) != null){
             htmlBuilder.append(line).append("\n");
@@ -292,7 +292,10 @@ public class Timetable {
         // generate column names
         StringBuilder columnNames = new StringBuilder();
         for(Column column : this.columns){
-            columnNames.append(HtmlUtils.wrap(column.name, "th", new HashMap() {{ put("colspan", "2"); }}));
+            columnNames.append(HtmlUtils.wrap(
+                    column.name, "th",
+                    new HashMap<String, String>() {{ put("colspan", "2"); }}
+                    ));
         }
 
         // generate rows with departure times
@@ -306,7 +309,10 @@ public class Timetable {
                 if(!minutes.isEmpty()) notEmpty = true;
 
                 // create row
-                rowCells.append(HtmlUtils.wrap(String.valueOf(hour), "td")).append("\n");
+                rowCells.append(HtmlUtils.wrap(
+                        String.valueOf(hour), "td",
+                        new HashMap<String, String>() {{ put("class", "gd"); }}
+                        )).append("\n");
                 StringBuilder minutesString = new StringBuilder();
                 for(HourMinute hourMinute : minutes){
                     minutesString.append(hourMinute.minute).append(" ");
@@ -315,7 +321,10 @@ public class Timetable {
             }
             // if row is not empty - add it to table
             if(notEmpty){
-                rows.append(HtmlUtils.wrap(rowCells.toString(), "tr", new HashMap() {{ put("class", "time"); }})).append("\n");
+                rows.append(HtmlUtils.wrap(
+                        rowCells.toString(), "tr",
+                        new HashMap<String, String>() {{ put("class", "time"); }}
+                        )).append("\n");
             }
         }
 

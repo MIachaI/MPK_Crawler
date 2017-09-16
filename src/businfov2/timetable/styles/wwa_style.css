@@ -1,0 +1,97 @@
+body
+{
+	font: normal 11px/13px Verdana, Arial, sans-serif;
+	width: 100%;
+	padding: 0;
+	margin: 0;
+}
+h4
+{
+	font-weight: normal;
+	padding-bottom: 8px;
+	margin: 0;
+}
+
+h4 span
+{
+	font-weight: bold;
+	font-size: 27px;
+	padding-left: 15px;
+}
+
+p
+{
+	margin: 0;
+}
+
+p.RozkladObowiazuje
+{
+	font-weight: bold;
+	margin-top: 7px;
+	margin-bottom: 3px;
+}
+
+.RozkladLegenda p
+{
+	font-size: 10px;
+	line-height: 11px;
+}
+
+#maintable
+{
+	margin-bottom: 10px;
+}
+
+td.last
+{
+	margin-right: 0px;
+}
+
+table
+{
+	border: 1px solid #666;
+	border-collapse: collapse;
+}
+
+td, th
+{
+	border: 1px solid #666;
+	padding: 2px;		
+}
+
+td
+{
+	font: normal 9px/11px Verdana, Arial, sans-serif;
+}
+
+th
+{
+	font: bold 10px/11px Verdana, Arial, sans-serif;
+	background-color: #4b0082;
+	color: #ffffff;
+}		
+
+td span.nr
+{
+	float: left;
+	width: 21px;
+	text-align: left;
+	height: 12px;
+}	
+
+td span.nsp
+{
+	text-decoration: underline;
+}	
+
+td span em
+{
+	font-size: 8px;
+}
+
+td.gd
+{
+	text-align: right;
+	font-weight: bold;
+	background-color: #add8e6;
+}

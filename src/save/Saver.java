@@ -1,9 +1,7 @@
 package save;
 
-import businfo.busstop.lines.LineOnStop;
 import businfov2.BusStop;
 import businfov2.CertificationMethod;
-import businfov2.timetable.Timetable;
 import save.excel.ExcelSaver;
 import save.img.ImageSaver;
 

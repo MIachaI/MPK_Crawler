@@ -15,7 +15,7 @@ public abstract class ImageSaver {
                 String fullPath = directoryPath + File.separator +
                         String.format("%03d", iterator) + "_" + timetable.busStopName.replaceAll("/", "-") + "_" + timetable.lineNumber;
 
-                HtmlToImage.generateImage(timetable.getImageHtml(), fullPath + ".jpg");
+                HtmlToImage.generateImage(timetable.generateHtmlTable(), fullPath + ".jpg");
                 iterator++;
             }
         }

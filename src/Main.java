@@ -417,8 +417,8 @@ public class Main extends Application{
                 try {
                     runAnalysesAndSave();
                 } catch (IOException e) {
-                    ErrorDialog.displayException(e);
                     e.printStackTrace();
+                    ErrorDialog.displayException(e);
                 }
             });
             exitOption.setOnAction(event -> closeProgram());
@@ -490,8 +490,8 @@ public class Main extends Application{
             list.addAll(this.selectedBusStops);
             Saver.saveAll(SELECTED_DIRECTORY, businfov2.BusStop.convertBusStops(selectedCity, list), selectedMethod);
         } catch (Exception e) {
-            ErrorDialog.displayException(e);
             e.printStackTrace();
+            ErrorDialog.displayException(e);
         }
     }
 }

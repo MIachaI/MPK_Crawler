@@ -1,0 +1,26 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<style type="text/css">
+{{ style }}
+</style>
+</head>
+<body>
+<div id="RozkladyJazdy">
+<div id="RozkladContent">
+	<div id="PrzystanekRozklad">
+	<h4><span>{{ line-number }}</span><small>{{ vehicle-type }}</small></h4>
+		<p>przystanek: <strong>{{ stop-name }}</strong></p>
+		<table id="maintable">
+		<tbody>
+			<tr>
+				{{ column-names }}
+			</tr>
+				{{ timetable-rows }}
+		</table>
+	</div>
+</div>
+</div>
+</body>
+</html>
