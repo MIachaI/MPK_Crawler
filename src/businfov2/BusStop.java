@@ -25,8 +25,9 @@ public class BusStop {
     }
     public ArrayList<Timetable> getTimetables() { return this.timetables; }
 
-    public ArrayList<Timetable> getTimetables(CertificationMethod method) throws Exception {
-        if(!method.isImplemented()) throw new  Exception("Method not yet implemented");
+    public ArrayList<Timetable> getTimetables(CertificationMethod method)
+    throws CertificationMethod.NotImplementedException {
+        if(!method.isImplemented()) throw new CertificationMethod.NotImplementedException("Method not yet implemented");
         switch(method){
             case LEED_2009:
                 return this.leed2009Timetables();
@@ -45,7 +46,8 @@ public class BusStop {
         return result;
     }
 
-    public ArrayList<Timetable> getTimetables(VehicleType vehicle, CertificationMethod method) throws Exception {
+    public ArrayList<Timetable> getTimetables(VehicleType vehicle, CertificationMethod method)
+    throws CertificationMethod.NotImplementedException {
         ArrayList<Timetable> result = new ArrayList<>(this.getTimetables(method));
         result.removeIf(timetable -> timetable.vehicleType != vehicle);
         return result;

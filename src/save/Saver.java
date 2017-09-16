@@ -15,7 +15,8 @@ public abstract class Saver {public static String excelName;
         excelName = "Sheet";
         imgPrefix = "";
     }
-    public static void saveAll(String path, ArrayList<BusStop> selectedStops, CertificationMethod method) throws Exception {
+    public static void saveAll(String path, ArrayList<BusStop> selectedStops, CertificationMethod method)
+    throws CertificationMethod.NotImplementedException, IOException {
         new File(path).mkdir();
         ImageSaver.saveAllImages(path + File.separator + imgPrefix, selectedStops, method);
         ExcelSaver.save(path + File.separator + excelName, selectedStops, method);

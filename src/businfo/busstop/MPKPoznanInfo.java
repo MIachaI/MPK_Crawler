@@ -63,6 +63,7 @@ public class MPKPoznanInfo extends BusInfo {
                 }
             }
             catch (NullPointerException e){
+                // wtf michu??
                 AlertBox.display("Jeden z wybranych przystanków nie istnieje!","Link do tego przystanku: " +html+"\nW razie wątpliwości napisz do wsparcia technicznego.");
             }
         }

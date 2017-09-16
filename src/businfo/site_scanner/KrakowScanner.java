@@ -9,6 +9,7 @@ import org.jsoup.select.Elements;
 import utils.DocHacker;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.util.ArrayList;
 
 /**

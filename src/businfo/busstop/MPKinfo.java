@@ -36,7 +36,9 @@ public class MPKinfo extends BusInfo {
 			Elements columns = row.getElementsByTag("td");
 			StringBuilder colText = new StringBuilder();
 			for(Element column : columns){
-				colText.append(column.text()).append("\t"); // separate each column with tabulation
+				String colName = column.text();
+				if(!(colName.toLowerCase().contains("godzina") || colName.toLowerCase().contains("hour")))
+					colText.append(column.text()).append("\t"); // separate each column with tabulation
 			}
 			lines.add(colText.toString());
 		}
@@ -46,7 +48,7 @@ public class MPKinfo extends BusInfo {
 		if(Integer.parseInt(lines.get(0)) > 100) {
 			lines.set(1, "Bus");
 		} else {
-			lines.set(1,"Light train");
+			lines.set(1, "Light train");
 		}
 		lines.remove(lines.size() - 2);
 
