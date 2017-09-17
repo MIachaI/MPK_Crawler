@@ -1,7 +1,5 @@
 package save;
 
-import businfov2.BusStop;
-import businfov2.CertificationMethod;
 import businfov2.timetable.Timetable;
 
 import java.io.IOException;
@@ -15,28 +13,28 @@ import java.util.ArrayList;
 public class TextSaver {
     /**
      * Method saves links to selected timetables in a text file
-     * @param path
+     * @param path to saved file
      * @param timetablesToSave
      */
     public static void saveLinksToTextFile(String path, ArrayList<Timetable> timetablesToSave) throws IOException {
         ArrayList<String> lines = new ArrayList<>();
-        String amountInfo = "";
+        String numeralForm;
         switch(timetablesToSave.size()){
             case 1:
-                amountInfo = "Zapisano {} rozkład jazdy";
+                numeralForm = "rozkład";
                 break;
             case 2:
             case 3:
             case 4:
-                amountInfo = "Zapisano {} rozkłady jazdy";
+                numeralForm = "rozkłady";
                 break;
             default:
-                amountInfo = "Zapisano {} rozkładów jazdy";
+                numeralForm = "rozkładów";
                 break;
         }
 
         lines.add("===========================================================================");
-        lines.add(amountInfo.replace("{}", Integer.toString(timetablesToSave.size())));
+        lines.add(String.format("                         Zapisano %d %s jazdy", timetablesToSave.size(), numeralForm));
         lines.add("===========================================================================");
         lines.add("");
         lines.add("Źródła");

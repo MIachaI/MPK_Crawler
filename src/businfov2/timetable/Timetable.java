@@ -315,7 +315,7 @@ public class Timetable {
                         )).append("\n");
                 StringBuilder minutesString = new StringBuilder();
                 for(HourMinute hourMinute : minutes){
-                    minutesString.append(hourMinute.minute).append(" ");
+                    minutesString.append(String.format("%02d", hourMinute.minute)).append(" ");
                 }
                 rowCells.append(HtmlUtils.wrap(minutesString.toString(), "td")).append("\n");
             }
