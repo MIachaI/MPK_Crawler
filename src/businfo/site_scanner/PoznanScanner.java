@@ -36,11 +36,11 @@ public class PoznanScanner extends SiteScanner {
         Set<String> busStopNames = new HashSet<>();
         ArrayList<BusStop> result = new ArrayList<>();
         JSONParser parser = new JSONParser();
-        String poznan = readUrl("http://www.poznan.pl/mim/plan/map_service.html?mtype=pub_transport&co=cluster");
-        Object primarObject = parser.parse(poznan);
+        String poznanJSON = readUrl("http://www.poznan.pl/mim/plan/map_service.html?mtype=pub_transport&co=cluster");
+        Object initialParse = parser.parse(poznanJSON);
 
-        JSONObject obj = (JSONObject) primarObject;
-        Object initialMatch = obj.get("features");
+        JSONObject poznanJSONObject = (JSONObject) initialParse;
+        Object initialMatch = poznanJSONObject.get("features");
         String linkPattern = "http://www.mpk.poznan.pl/component/transport/";
         String initialBusStop = "Aleje Solidarności";
         BusStop busStop = new BusStop("Aleje Solidarności");

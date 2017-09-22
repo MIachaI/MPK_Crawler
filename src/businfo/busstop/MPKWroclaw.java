@@ -15,6 +15,8 @@ public class MPKWroclaw extends BusInfo {
     public MPKWroclaw(String html) throws IOException {
         super(html);
         this.checkColumnNames(this.columnNames);
+
+
     }
 
     @Override
