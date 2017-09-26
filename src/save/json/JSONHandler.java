@@ -33,8 +33,8 @@ public abstract class JSONHandler {
         Object obj = parser.parse(file);
         file.close();
         JSONObject jsonObject = (JSONObject) obj;
-
         JSONObject busStops = (JSONObject) jsonObject.get(city);
+
         // set with key names in city object (key names = bus stop names)
         Set keySet = busStops.keySet();
         for (Object key : keySet) {

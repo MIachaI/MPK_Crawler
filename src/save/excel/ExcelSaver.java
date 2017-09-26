@@ -219,10 +219,9 @@ public abstract class ExcelSaver {
                 result.getRow(row).getCell(8).setCellValue(tramWeekdaySum+busWeekdaySum);
                 result.getRow(row).getCell(9).setCellValue(tramWeekendAvgSum+busWeekendAvgSum);
             }
-
             fileOut = new FileOutputStream(path + ".xls");
             output.write(fileOut);
-        } // try
+        }
         fileOut.close();
     }
 }

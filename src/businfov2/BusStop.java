@@ -4,6 +4,7 @@ import businfo.busstop.lines.LineOnStop;
 import businfov2.parsers.Parser;
 import businfov2.timetable.Timetable;
 import jdk.nashorn.internal.ir.annotations.Ignore;
+import multiThreading.progressValues;
 
 import java.util.*;
 
@@ -139,9 +140,23 @@ public class BusStop {
     public static ArrayList<BusStop> convertBusStops(City city, ArrayList<businfo.busstop.streets.BusStop> stops) throws Exception {
         city.isImplemented();
         ArrayList<BusStop> result = new ArrayList<>();
+        stops.get(0);
+        int i = 0;
         for(businfo.busstop.streets.BusStop stop : stops){
             ArrayList<Timetable> timetablesToAdd = new ArrayList<>();
             for(LineOnStop line : stop.getBusLines()){
+                i++;
+            }
+        }
+
+        int y = 0;
+        progressValues.progressValues(y,i);
+        for(businfo.busstop.streets.BusStop stop : stops){
+            ArrayList<Timetable> timetablesToAdd = new ArrayList<>();
+            for(LineOnStop line : stop.getBusLines()){
+                y++;
+                progressValues.setValue(y);
+                System.out.println(y);
                 timetablesToAdd.add(Parser.parse(line.getLink(), city));
             }
             result.add(new BusStop(stop.getStreetName(), timetablesToAdd));

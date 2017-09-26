@@ -5,6 +5,8 @@ import businfov2.CertificationMethod;
 import businfov2.City;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
@@ -29,6 +31,7 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import multiThreading.progressValues;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -50,6 +53,7 @@ public class Main extends Application{
     private String JSON_SOURCE;
     private String SELECTED_DIRECTORY = null;
 
+
     // top menu items
     private MenuBar topMenu = new MenuBar();
 
@@ -57,7 +61,10 @@ public class Main extends Application{
     private VBox leftPane = new VBox();
     private ComboBox<City> chooseCityBox = new ComboBox<>();
     private Button homePageButton = new Button("Strona przewoźnika");
+    //public progressValues value = new progressValues();
+    private ProgressBar progressBar = new ProgressBar();
     private ComboBox<CertificationMethod> chooseMethodBox = new ComboBox<>();
+    private Label procenty = new Label("0%");
 
     // center pane items
     private GridPane centerPane = new GridPane();
@@ -85,6 +92,9 @@ public class Main extends Application{
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+
+
+
         //setUserAgentStylesheet(STYLESHEET_CASPIAN);
         this.JSON_SOURCE = this.checkJsonExistence();
         updateSelectedStops();
@@ -129,7 +139,9 @@ public class Main extends Application{
 
         chooseCityBox.setMinWidth(leftPane.getPrefWidth());
         homePageButton.setMinWidth(leftPane.getPrefWidth());
-        leftPane.getChildren().addAll(chooseCityBox, homePageButton);
+        progressBar.setMinWidth(leftPane.getMinWidth());
+
+        leftPane.getChildren().addAll(chooseCityBox, homePageButton, progressBar);
 
 
         // center pane
@@ -192,16 +204,31 @@ public class Main extends Application{
 
         // right pane
         startButton.setOnAction(event -> {
-            try {
-                runAnalysesAndSave();
-            } catch (IOException e) {
-                ErrorDialog.displayException(e);
-                e.printStackTrace();
+            if(SELECTED_DIRECTORY == null){
+                chooseSaveDirectory();
             }
+
+            Task task = new Task<Void>(){
+                @Override public Void call() {
+
+                    try {
+                        //this.updateProgress(progressValues.getValue(),progressValues.getValueLength());
+                        this.updateProgress(1,2);
+                        runAnalysesAndSave();
+                    } catch (IOException e) {
+                        ErrorDialog.displayException(e);
+                        e.printStackTrace();
+                    }
+                    return null;
+                }
+            };
+            progressBar.progressProperty().bind(task.progressProperty());
+            new Thread(task).start();
         });
+
         clearButton.setOnAction(event -> {
-            selectedBusStops.clear();
-            updateSelectedStops();
+            //selectedBusStops.clear();
+           // updateSelectedStops();
         });
         for(CertificationMethod method : CertificationMethod.values()){
             if(method.isImplemented()) chooseMethodBox.getItems().add(method);
@@ -302,8 +329,10 @@ public class Main extends Application{
         if(!file.exists()){
             file.createNewFile();
         }
-        FileWriter fw = new FileWriter(file.getAbsoluteFile());
-        BufferedWriter bw = new BufferedWriter(fw);
+        BufferedWriter bw;
+        try (FileWriter fw = new FileWriter(file.getAbsoluteFile())) {
+            bw = new BufferedWriter(fw);
+        }
 
         bw.write("{}"); // required for JSON library to work properly
         bw.close();
@@ -484,9 +513,6 @@ public class Main extends Application{
         if(selectedMethod == null) {
             AlertBox.display("Uwaga", "Przed rozpoczęciem analizy musisz wybrać metodę obliczeń");
             return ;
-        }
-        if(SELECTED_DIRECTORY == null){
-            chooseSaveDirectory();
         }
         if(SELECTED_DIRECTORY == null) return ;
         try {
