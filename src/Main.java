@@ -1,10 +1,11 @@
 import businfo.busstop.streets.BusStop;
 import businfo.site_scanner.CityUpdate;
-import businfo.site_scanner.PoznanScanner;
 import businfov2.CertificationMethod;
 import businfov2.City;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.WorkerStateEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
@@ -34,6 +35,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import save.Saver;
 import save.json.JSONHandler;
+import tasks.SaveAllTask;
 import window_interface.dialogs.AlertBox;
 import window_interface.dialogs.ConfirmBox;
 import window_interface.dialogs.ErrorDialog;
@@ -48,7 +50,7 @@ public class Main extends Application{
     public final String STYLESHEET_DIR = "file:src/window_interface/css/Theme.css";
     private final String ICON_DIR = "file:src/window_interface/img/31771-200.png";
     private String JSON_SOURCE;
-    private String SELECTED_DIRECTORY = null;
+    private String selectedDirectory = null;
 
     // top menu items
     private MenuBar topMenu = new MenuBar();
@@ -58,6 +60,9 @@ public class Main extends Application{
     private ComboBox<City> chooseCityBox = new ComboBox<>();
     private Button homePageButton = new Button("Strona przewoźnika");
     private ComboBox<CertificationMethod> chooseMethodBox = new ComboBox<>();
+    private ProgressBar progressBar = new ProgressBar(0);
+    private ProgressIndicator progressIndicator = new ProgressIndicator();
+    private Label statusLabel = new Label("");
 
     // center pane items
     private GridPane centerPane = new GridPane();
@@ -129,7 +134,10 @@ public class Main extends Application{
 
         chooseCityBox.setMinWidth(leftPane.getPrefWidth());
         homePageButton.setMinWidth(leftPane.getPrefWidth());
-        leftPane.getChildren().addAll(chooseCityBox, homePageButton);
+        progressBar.setMinWidth(leftPane.getPrefWidth());
+        progressBar.setPadding(new Insets(310, 0, 0, 0));
+        statusLabel.setMaxWidth(leftPane.getPrefWidth());
+        leftPane.getChildren().addAll(chooseCityBox, homePageButton, progressBar, statusLabel);
 
 
         // center pane
@@ -475,8 +483,8 @@ public class Main extends Application{
         chooser.setTitle("Wybierz folder do zapisu");
         File defaultDir = new File(this.BASE_DIR);
         chooser.setInitialDirectory(defaultDir);
-        this.SELECTED_DIRECTORY = chooser.showDialog(window).toString();
-        System.out.println(this.SELECTED_DIRECTORY);
+        this.selectedDirectory = chooser.showDialog(window).toString();
+        System.out.println(this.selectedDirectory);
     }
 
     private void runAnalysesAndSave() throws IOException {
@@ -485,15 +493,53 @@ public class Main extends Application{
             AlertBox.display("Uwaga", "Przed rozpoczęciem analizy musisz wybrać metodę obliczeń");
             return ;
         }
-        if(SELECTED_DIRECTORY == null){
+        if(selectedDirectory == null){
             chooseSaveDirectory();
         }
-        if(SELECTED_DIRECTORY == null) return ;
+        if(selectedDirectory == null) return ;
         try {
             City selectedCity = chooseCityBox.getValue();
             ArrayList<BusStop> list = new ArrayList<>();
             list.addAll(this.selectedBusStops);
-            Saver.saveAll(SELECTED_DIRECTORY, businfov2.BusStop.convertBusStops(selectedCity, list), selectedMethod);
+
+            // disable start button
+            startButton.setDisable(true);
+            topMenu.getMenus().get(0).setDisable(true); // disable action menu
+            progressBar.progressProperty().unbind();
+            progressIndicator.progressProperty().unbind();
+            progressBar.setProgress(0);
+            progressIndicator.setProgress(0);
+
+            // create task
+            SaveAllTask saveAllTask = new SaveAllTask(selectedCity, list);
+            // set progress bar
+            progressBar.progressProperty().bind(saveAllTask.progressProperty());
+            progressIndicator.progressProperty().bind(saveAllTask.progressProperty());
+
+            // bind status label
+            statusLabel.textProperty().unbind();
+            statusLabel.textProperty().bind(saveAllTask.messageProperty());
+
+            // when completed the task:
+            saveAllTask.addEventHandler(WorkerStateEvent.WORKER_STATE_SUCCEEDED, (EventHandler<WorkerStateEvent>) event -> {
+                ArrayList<businfov2.BusStop> stops = (ArrayList<businfov2.BusStop>) saveAllTask.getValue();
+                try {
+                    Saver.saveAll(selectedDirectory, stops, selectedMethod);
+                } catch (CertificationMethod.NotImplementedException | IOException e) {
+                    ErrorDialog.displayException(e);
+                    e.printStackTrace();
+                }
+
+                // clear selected stops
+                selectedBusStops.clear();
+                stopsList.setText("");
+                topMenu.getMenus().get(0).setDisable(false); // enable action menu back again
+                // clear selected directory
+                selectedDirectory = null;
+            });
+
+            new Thread(saveAllTask).start();
+
         } catch (Exception e) {
             e.printStackTrace();
             ErrorDialog.displayException(e);

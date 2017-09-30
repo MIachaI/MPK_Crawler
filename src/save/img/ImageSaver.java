@@ -20,4 +20,20 @@ public abstract class ImageSaver {
             iterator++;
         }
     }
+
+    /**
+     * Save JPg copy of a Timetable.
+     * @param timetable to save
+     * @param fullPath full path to save image
+     * @throws IOException when save fails
+     */
+    public static void saveImage(Timetable timetable, String fullPath)
+    throws IOException {
+        HtmlToImage.generateImage(timetable.generateHtmlTable(), fullPath + ".jpg");
+    }
+
+    public static void saveImage(Timetable timetable, String directory, String filename)
+    throws IOException {
+        saveImage(timetable, directory + File.separator + filename);
+    }
 }
