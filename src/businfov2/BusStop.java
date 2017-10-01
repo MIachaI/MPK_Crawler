@@ -3,7 +3,6 @@ package businfov2;
 import businfo.busstop.lines.LineOnStop;
 import businfov2.parsers.Parser;
 import businfov2.timetable.Timetable;
-import jdk.nashorn.internal.ir.annotations.Ignore;
 
 import java.util.*;
 
@@ -11,7 +10,7 @@ public class BusStop {
     public static final String UNDEFINED = "undefined";
 
     private String name;
-    private ArrayList<Timetable> timetables;
+    public ArrayList<Timetable> timetables;
 
     public BusStop(String name, ArrayList<Timetable> timetables){
         this.name = name;
@@ -56,7 +55,6 @@ public class BusStop {
     /**
      * @return timetables meeting BREEAM method requirements
      */
-    @Ignore
     private ArrayList<Timetable> breeamTimetables() {
         ArrayList<Timetable> result = new ArrayList<>();
         HashMap<String, Timetable> lineTimetable = new HashMap<>();
@@ -136,7 +134,12 @@ public class BusStop {
         return result;
     }
 
-    public static ArrayList<BusStop> convertBusStops(City city, ArrayList<businfo.busstop.streets.BusStop> stops) throws Exception {
+    /**
+     * Now SaveAllTask class takes care of this
+     */
+    @Deprecated
+    public static ArrayList<BusStop> convertBusStops(City city, ArrayList<businfo.busstop.streets.BusStop> stops)
+    throws Exception {
         city.isImplemented();
         ArrayList<BusStop> result = new ArrayList<>();
         for(businfo.busstop.streets.BusStop stop : stops){

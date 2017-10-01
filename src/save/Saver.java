@@ -20,7 +20,8 @@ public abstract class Saver {
         logName = "linki.txt";
     }
 
-    public static ArrayList<Timetable> getTimetablesToSave(ArrayList<BusStop> selectedStops, CertificationMethod method) throws CertificationMethod.NotImplementedException {
+    public static ArrayList<Timetable> getTimetablesToSave(ArrayList<BusStop> selectedStops, CertificationMethod method)
+    throws CertificationMethod.NotImplementedException {
         ArrayList<Timetable> result = new ArrayList<>();
         for(BusStop busStop : selectedStops){
             result.addAll(busStop.getTimetables(method));
